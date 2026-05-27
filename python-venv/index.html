@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Python仮想環境</title>
+<style>
+:root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+.cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.9em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; }
+.cmd:active { background:var(--accent); color:var(--bg); }
+.label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+.desc { font-size:0.9em; margin-bottom:4px; }
+pre { background:var(--code-bg); padding:12px; border-radius:8px; font-size:0.85em; overflow-x:auto; color:var(--text); margin:4px 0; }
+.tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.9em; }
+th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+td { padding:8px; border-bottom:1px solid var(--border); }
+a { color:var(--accent); text-decoration:none; }
+.back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+<h1>Python仮想環境（venv）</h1>
+
+<h2>なぜ仮想環境が必要？</h2>
+<div class="card">
+<p class="desc">Pythonプロジェクトごとにパッケージを分離する仕組みです。これがないと：</p>
+<ul style="margin:8px 0 0 20px;">
+<li>プロジェクトAとBで違うバージョンのライブラリが必要 → <span style="color:var(--red)">競合する</span></li>
+<li>システムPythonを汚す → <span style="color:var(--red)">OSが壊れることも</span></li>
+<li>他のPCで動かない → <span style="color:var(--red)">再現できない</span></li>
+</ul>
+<div class="tip">仮想環境 = プロジェクト専用の「箱」。箱の中だけでパッケージが有効になります。</div>
+</div>
+
+<h2>基本コマンド一覧</h2>
+<div class="card">
+<table>
+<tr><th>操作</th><th>コマンド</th></tr>
+<tr><td>仮想環境の作成</td><td><span class="cmd" onclick="copyCmd(this)">python -m venv .venv</span></td></tr>
+<tr><td>有効化（WSL/Linux）</td><td><span class="cmd" onclick="copyCmd(this)">source .venv/bin/activate</span></td></tr>
+<tr><td>有効化（Windows CMD）</td><td><span class="cmd" onclick="copyCmd(this)">.venv\Scripts\activate.bat</span></td></tr>
+<tr><td>有効化（Windows PS）</td><td><span class="cmd" onclick="copyCmd(this)">.venv\Scripts\Activate.ps1</span></td></tr>
+<tr><td>無効化</td><td><span class="cmd" onclick="copyCmd(this)">deactivate</span></td></tr>
+<tr><td>パッケージインストール</td><td><span class="cmd" onclick="copyCmd(this)">pip install パッケージ名</span></td></tr>
+<tr><td>インストール一覧</td><td><span class="cmd" onclick="copyCmd(this)">pip list</span></td></tr>
+<tr><td>一覧をファイル出力</td><td><span class="cmd" onclick="copyCmd(this)">pip freeze > requirements.txt</span></td></tr>
+<tr><td>ファイルから一括インストール</td><td><span class="cmd" onclick="copyCmd(this)">pip install -r requirements.txt</span></td></tr>
+<tr><td>仮想環境の削除</td><td><span class="cmd" onclick="copyCmd(this)">rm -rf .venv</span></td></tr>
+</table>
+</div>
+
+<h2>作成から有効化まで</h2>
+<div class="card">
+<p class="label">ステップ1: プロジェクトフォルダに移動</p>
+<div class="cmd" onclick="copyCmd(this)">cd ~/projects/my-app</div>
+<p class="label">ステップ2: 仮想環境を作成</p>
+<div class="cmd" onclick="copyCmd(this)">python -m venv .venv</div>
+<p class="desc">.venvフォルダが作られます（名前は自由だが .venv が一般的）</p>
+<p class="label">ステップ3: 有効化（WSL/Linux）</p>
+<div class="cmd" onclick="copyCmd(this)">source .venv/bin/activate</div>
+<p class="desc">プロンプトの先頭に <code style="color:var(--green);">(.venv)</code> が付いたら成功！</p>
+<p class="label">ステップ4: パッケージをインストール</p>
+<div class="cmd" onclick="copyCmd(this)">pip install requests fastapi uvicorn</div>
+</div>
+
+<h2>requirements.txt の使い方</h2>
+<div class="card">
+<p class="desc">プロジェクトで使っているパッケージを記録するファイルです。他のPCでも同じ環境を再現できます。</p>
+<p class="label">現在の環境を保存</p>
+<div class="cmd" onclick="copyCmd(this)">pip freeze > requirements.txt</div>
+<p class="desc">生成されるファイルの中身の例：</p>
+<pre>requests==2.31.0
+fastapi==0.104.1
+uvicorn==0.24.0
+pydantic==2.5.2</pre>
+<p class="label">新しい環境で復元</p>
+<div class="cmd" onclick="copyCmd(this)">pip install -r requirements.txt</div>
+<div class="tip">必ず requirements.txt はGitで管理しましょう。.venvフォルダは .gitignore に入れます。</div>
+</div>
+
+<h2>実践ワークフロー例</h2>
+<div class="card">
+<p class="desc">新プロジェクト「my-scraper」を始める流れ：</p>
+<pre>
+# 1. プロジェクト作成
+mkdir ~/projects/my-scraper && cd ~/projects/my-scraper
+git init
+
+# 2. 仮想環境作成 ＆ 有効化
+python -m venv .venv
+source .venv/bin/activate
+
+# 3. 必要なパッケージをインストール
+pip install requests beautifulsoup4
+
+# 4. requirements.txt に記録
+pip freeze > requirements.txt
+
+# 5. .gitignore に .venv を追加
+echo ".venv/" >> .gitignore
+
+# 6. コードを書いてコミット
+git add . && git commit -m "init"
+
+# 7. 作業終了時
+deactivate
+</pre>
+</div>
+
+<h2>よくある間違い</h2>
+<div class="card">
+<table>
+<tr><th>間違い</th><th>正しい方法</th></tr>
+<tr><td><span style="color:var(--red);">仮想環境を有効化せずに pip install</span></td><td>必ず <code>source .venv/bin/activate</code> を先に実行</td></tr>
+<tr><td><span style="color:var(--red);">.venv をGitにコミット</span></td><td>.gitignore に <code>.venv/</code> を追加</td></tr>
+<tr><td><span style="color:var(--red);">pip install しても requirements.txt を更新しない</span></td><td>毎回 <code>pip freeze > requirements.txt</code></td></tr>
+<tr><td><span style="color:var(--red);">Python 2 の virtualenv を使う</span></td><td>Python 3 では標準の <code>venv</code> を使う</td></tr>
+<tr><td><span style="color:var(--red);">グローバルにインストールしたつもり</span></td><td>プロンプトに (.venv) があるか確認</td></tr>
+</table>
+<div class="tip">どのPythonを使っているか確認：<code>which python</code>（.venv内を指していればOK）</div>
+</div>
+
+<h2>仮想環境の削除</h2>
+<div class="card">
+<p class="desc">不要になった仮想環境はフォルダごと削除するだけです。</p>
+<p class="label">まず無効化</p>
+<div class="cmd" onclick="copyCmd(this)">deactivate</div>
+<p class="label">フォルダごと削除</p>
+<div class="cmd" onclick="copyCmd(this)">rm -rf .venv</div>
+<div class="tip">requirements.txt があればいつでも <code>python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt</code> で復元できます。</div>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+<script>function copyCmd(el){const t=el.textContent.trim();navigator.clipboard.writeText(t).then(()=>{el.style.background='var(--green)';el.style.color='var(--bg)';setTimeout(()=>{el.style.background='';el.style.color='';},500);});}</script>
+</body>
+</html>

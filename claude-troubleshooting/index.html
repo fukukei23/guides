@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code トラブルシューティング</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.9em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; }
+  .cmd:active { background:var(--accent); color:var(--bg); }
+  .label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+  .desc { font-size:0.9em; margin-bottom:4px; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.9em; }
+  th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+  td { padding:8px; border-bottom:1px solid var(--border); }
+  a { color:var(--accent); text-decoration:none; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+<h1>Claude Code トラブルシューティング</h1>
+
+<div class="card">
+  <h2>settings.json エラーで起動しない</h2>
+  <div class="desc"><b>症状</b>: hooksエラーが表示されて設定がスキップされる</div>
+  <div class="desc"><b>原因</b>: hooksの構造が間違っている</div>
+  <table>
+    <tr><th>NG（直接command）</th><th>OK（hooks配列内）</th></tr>
+    <tr>
+      <td><pre style="margin:0">{ "matcher":"",
+  "command":"script.sh",
+  "timeout":5000 }</pre></td>
+      <td><pre style="margin:0">{ "matcher":"",
+  "hooks":[{
+    "type":"command",
+    "command":"script.sh",
+    "timeout":5000
+  }]}</pre></td>
+    </tr>
+  </table>
+  <div class="tip">全hookエントリに <code>hooks: [{"type":"command","command":"..."}]</code> 構造が必要</div>
+</div>
+
+<div class="card">
+  <h2>コンテキストウィンドウ超過</h2>
+  <div class="desc"><b>症状</b>: 会話が長すぎてエラーになる</div>
+  <div class="desc"><b>対処</b>:</div>
+  <div class="desc">1. <code>/compact</code> で会話を要約</div>
+  <div class="desc">2. <code>/clear</code> で会話履歴をリセット</div>
+  <div class="desc">3. 新しいセッションを開始</div>
+  <div class="tip">長い作業は適宜 <code>/compact</code> で節約するのがコツ</div>
+</div>
+
+<div class="card">
+  <h2>MCPサーバー接続エラー</h2>
+  <div class="desc"><b>症状</b>: MCP tool not found や connection error</div>
+  <div class="desc"><b>対処</b>:</div>
+  <div class="desc">1. settings.jsonのmcpServers設定を確認</div>
+  <div class="desc">2. コマンドパスが正しいか確認: <code>which コマンド名</code></div>
+  <div class="desc">3. APIキーが有効か確認</div>
+  <div class="desc">4. Claude Codeを再起動</div>
+</div>
+
+<div class="card">
+  <h2>権限エラー（Permission denied）</h2>
+  <div class="desc"><b>症状</b>: ツール実行時に権限確認が出続ける</div>
+  <div class="desc"><b>対処</b>:</div>
+  <div class="desc">1. settings.jsonの <code>defaultMode</code> を確認</div>
+  <div class="desc">2. <code>permissions.allow</code> に対象コマンドを追加</div>
+  <div class="desc">3. bypassPermissions で全許可も可能（個人開発向け）</div>
+</div>
+
+<div class="card">
+  <h2>レート制限（Rate limit）</h2>
+  <div class="desc"><b>症状</b>: 429 Too Many Requests エラー</div>
+  <div class="desc"><b>対処</b>:</div>
+  <div class="desc">1. 少し待ってから再実行</div>
+  <div class="desc">2. ローカルプロキシ（glm_rate_proxy等）で制御</div>
+  <div class="desc">3. フォールバックモデルに切り替え</div>
+</div>
+
+<div class="card">
+  <h2>応答が遅い・止まってる</h2>
+  <div class="desc"><b>対処</b>:</div>
+  <div class="desc">1. <code>Esc</code> で現在の応答をキャンセル</div>
+  <div class="desc">2. ネットワーク接続を確認</div>
+  <div class="desc">3. <code>/model</code> で別モデルに切り替え</div>
+  <div class="desc">4. tmuxを使っているならセッションは維持される</div>
+</div>
+
+<div class="card">
+  <h2>CLAUDE.mdが読み込まれない</h2>
+  <div class="desc"><b>原因</b>: カレントディレクトリが間違っている</div>
+  <div class="desc"><b>対処</b>: プロジェクトディレクトリで起動する</div>
+  <div class="cmd">cd ~/projects/my-project && claude</div>
+</div>
+
+<script>function copyCmd(el){const t=el.textContent.trim();navigator.clipboard.writeText(t).then(()=>{el.style.background='var(--green)';el.style.color='var(--bg)';setTimeout(()=>{el.style.background='';el.style.color='';},500);});}</script>
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

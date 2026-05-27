@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API基礎（REST + curl）</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.9em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; }
+  .cmd:active { background:var(--accent); color:var(--bg); }
+  .label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+  .desc { font-size:0.9em; margin-bottom:4px; }
+  pre { background:var(--code-bg); padding:12px; border-radius:8px; font-size:0.85em; overflow-x:auto; color:var(--text); margin:4px 0; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.9em; }
+  th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+  td { padding:8px; border-bottom:1px solid var(--border); }
+  a { color:var(--accent); text-decoration:none; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+<h1>API基礎（REST + curl）</h1>
+
+<div class="card">
+  <h2>APIとは</h2>
+  <p class="desc">Application Programming Interface。別のプログラムと通信する窓口。「データをください」と頼むと「はい、これです」と返してくれる。</p>
+  <div class="tip">例: 天気APIに「東京の天気は？」と聞く → 「晴れ、25度」と返ってくる</div>
+</div>
+
+<div class="card">
+  <h2>HTTPメソッド（操作の種類）</h2>
+  <table>
+    <tr><th>メソッド</th><th>意味</th><th>例</th></tr>
+    <tr><td><code>GET</code></td><td>取得</td><td>ユーザー一覧を取得</td></tr>
+    <tr><td><code>POST</code></td><td>作成</td><td>新しいユーザーを作成</td></tr>
+    <tr><td><code>PUT</code></td><td>全体更新</td><td>ユーザー情報を全更新</td></tr>
+    <tr><td><code>PATCH</code></td><td>部分更新</td><td>名前だけ変更</td></tr>
+    <tr><td><code>DELETE</code></td><td>削除</td><td>ユーザーを削除</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>ステータスコード（結果の種類）</h2>
+  <table>
+    <tr><th>コード</th><th>意味</th><th>説明</th></tr>
+    <tr><td style="color:var(--green);">200</td><td>成功</td><td>要求が正常に処理された</td></tr>
+    <tr><td style="color:var(--green);">201</td><td>作成成功</td><td>新しいリソースが作られた</td></tr>
+    <tr><td style="color:var(--yellow);">400</td><td> bad request</td><td>リクエストの書き方が間違ってる</td></tr>
+    <tr><td style="color:var(--yellow);">401</td><td>認証エラー</td><td>ログインが必要 or APIキーが違う</td></tr>
+    <tr><td style="color:var(--yellow);">403</td><td>権限なし</td><td>アクセスする権限がない</td></tr>
+    <tr><td style="color:var(--yellow);">404</td><td>見つからない</td><td>URLが間違ってる or データがない</td></tr>
+    <tr><td style="color:var(--red);">429</td><td>リクエスト過多</td><td>使いすぎ。少し待ってから再試行</td></tr>
+    <tr><td style="color:var(--red);">500</td><td>サーバーエラー</td><td>相手側の問題。こちらでは対処不可</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>curlコマンド（ターミナルからAPIを叩く）</h2>
+  <div class="label">GET（データ取得）</div>
+  <div class="cmd">curl https://api.example.com/users</div>
+  <div class="label">POST（データ作成）</div>
+  <div class="cmd">curl -X POST -H "Content-Type: application/json" -d '{"name":"Yamada"}' https://api.example.com/users</div>
+  <div class="label">ヘッダー付き（APIキー認証）</div>
+  <div class="cmd">curl -H "Authorization: Bearer YOUR_API_KEY" https://api.example.com/data</div>
+  <div class="label">見やすく整形（jq）</div>
+  <div class="cmd">curl -s https://api.example.com/users | python3 -m json.tool</div>
+</div>
+
+<div class="card">
+  <h2>Python requests（コードからAPIを叩く）</h2>
+  <pre>import requests
+
+# GET
+response = requests.get("https://api.example.com/users")
+data = response.json()  # JSON → 辞書に変換
+print(data)
+
+# POST（認証付き）
+headers = {"Authorization": "Bearer YOUR_KEY"}
+payload = {"name": "Yamada"}
+response = requests.post("https://api.example.com/users",
+                         json=payload, headers=headers)
+
+# ステータス確認
+if response.status_code == 200:
+    print("成功!")
+else:
+    print(f"エラー: {response.status_code}")</pre>
+</div>
+
+<div class="card">
+  <h2>JSON形式（APIの共通言語）</h2>
+  <div class="desc">APIのリクエストもレスポンスもJSON形式が基本</div>
+  <pre>{
+  "users": [
+    {"id": 1, "name": "Yamada", "age": 30},
+    {"id": 2, "name": "Sato", "age": 25}
+  ],
+  "total": 2
+}</pre>
+  <div class="tip">JSONは Pythonの辞書/リスト とほぼ同じ書き方</div>
+</div>
+
+<script>function copyCmd(el){const t=el.textContent.trim();navigator.clipboard.writeText(t).then(()=>{el.style.background='var(--green)';el.style.color='var(--bg)';setTimeout(()=>{el.style.background='';el.style.color='';},500);});}</script>
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

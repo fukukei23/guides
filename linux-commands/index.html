@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Linux基本コマンド</title>
+<style>
+:root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+.cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.9em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; }
+.cmd:active { background:var(--accent); color:var(--bg); }
+.label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+.desc { font-size:0.9em; margin-bottom:4px; }
+pre { background:var(--code-bg); padding:12px; border-radius:8px; font-size:0.85em; overflow-x:auto; color:var(--text); margin:4px 0; }
+.tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.9em; }
+th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+td { padding:8px; border-bottom:1px solid var(--border); }
+a { color:var(--accent); text-decoration:none; }
+.back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+
+<h1>Linux基本コマンド</h1>
+
+<div class="tip">クリックでコマンドをコピーできます。初心者は「ファイル操作」と「ファイル閲覧」から始めましょう。</div>
+
+<h2>📁 ファイル操作</h2>
+<div class="card">
+<table>
+<tr><th>コマンド</th><th>説明</th><th>使用例</th></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">ls</td><td>ディレクトリの中身を表示</td><td class="cmd" onclick="copyCmd(this)">ls -la</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">cd</td><td>ディレクトリ移動</td><td class="cmd" onclick="copyCmd(this)">cd /home/user/projects</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">cp</td><td>ファイル・ディレクトリのコピー</td><td class="cmd" onclick="copyCmd(this)">cp -r src/ backup/</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">mv</td><td>ファイルの移動・名前変更</td><td class="cmd" onclick="copyCmd(this)">mv old.txt new.txt</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">rm</td><td>ファイル・ディレクトリの削除</td><td class="cmd" onclick="copyCmd(this)">rm -rf temp/</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">mkdir</td><td>ディレクトリ作成</td><td class="cmd" onclick="copyCmd(this)">mkdir -p a/b/c</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">touch</td><td>空ファイル作成・タイムスタンプ更新</td><td class="cmd" onclick="copyCmd(this)">touch newfile.txt</td></tr>
+</table>
+</div>
+
+<h2>📄 ファイル閲覧</h2>
+<div class="card">
+<table>
+<tr><th>コマンド</th><th>説明</th><th>使用例</th></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">cat</td><td>ファイル全体を表示</td><td class="cmd" onclick="copyCmd(this)">cat config.yaml</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">head</td><td>先頭行を表示（デフォルト10行）</td><td class="cmd" onclick="copyCmd(this)">head -20 log.txt</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">tail</td><td>末尾行を表示</td><td class="cmd" onclick="copyCmd(this)">tail -f log.txt</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">less</td><td>ページャーでファイル閲覧</td><td class="cmd" onclick="copyCmd(this)">less largefile.log</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">grep</td><td>パターン検索</td><td class="cmd" onclick="copyCmd(this)">grep "ERROR" log.txt</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">wc</td><td>行数・単語数・バイト数</td><td class="cmd" onclick="copyCmd(this)">wc -l file.txt</td></tr>
+</table>
+</div>
+
+<h2>🔍 検索</h2>
+<div class="card">
+<table>
+<tr><th>コマンド</th><th>説明</th><th>使用例</th></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">find</td><td>ファイル名・条件で検索</td><td class="cmd" onclick="copyCmd(this)">find . -name "*.py" -type f</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">grep -r</td><td>ディレクトリ内を再帰検索</td><td class="cmd" onclick="copyCmd(this)">grep -r "TODO" src/</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">which</td><td>コマンドのパスを表示</td><td class="cmd" onclick="copyCmd(this)">which python3</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">locate</td><td>ファイル名の高速検索</td><td class="cmd" onclick="copyCmd(this)">locate settings.json</td></tr>
+</table>
+</div>
+
+<h2>🔒 権限管理</h2>
+<div class="card">
+<table>
+<tr><th>コマンド</th><th>説明</th><th>使用例</th></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">chmod</td><td>ファイル権限の変更</td><td class="cmd" onclick="copyCmd(this)">chmod 755 script.sh</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">chown</td><td>ファイル所有者の変更</td><td class="cmd" onclick="copyCmd(this)">chown user:group file.txt</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">sudo</td><td>管理者権限で実行</td><td class="cmd" onclick="copyCmd(this)">sudo apt update</td></tr>
+</table>
+<div class="tip">権限の数字: 7=rwx, 6=rw-, 5=r-x, 4=r--, 0=---<br>例: 755 → 所有者=rwx, グループ=r-x, その他=r-x</div>
+</div>
+
+<h2>⚙️ プロセス管理</h2>
+<div class="card">
+<table>
+<tr><th>コマンド</th><th>説明</th><th>使用例</th></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">ps</td><td>実行中プロセスの表示</td><td class="cmd" onclick="copyCmd(this)">ps aux</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">kill</td><td>プロセスの終了</td><td class="cmd" onclick="copyCmd(this)">kill -9 12345</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">top</td><td>プロセスのリアルタイム監視</td><td class="cmd" onclick="copyCmd(this)">top</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">htop</td><td>topの高機能版</td><td class="cmd" onclick="copyCmd(this)">htop</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">bg / fg</td><td>バックグラウンド/フォアグラウンド</td><td class="cmd" onclick="copyCmd(this)">bg %1</td></tr>
+</table>
+</div>
+
+<h2>💾 ディスク使用量</h2>
+<div class="card">
+<table>
+<tr><th>コマンド</th><th>説明</th><th>使用例</th></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">df</td><td>ディスク空き容量</td><td class="cmd" onclick="copyCmd(this)">df -h</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">du</td><td>ディレクトリ使用量</td><td class="cmd" onclick="copyCmd(this)">du -sh *</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">ncdu</td><td>対話式ディスク分析</td><td class="cmd" onclick="copyCmd(this)">ncdu /home</td></tr>
+</table>
+</div>
+
+<h2>🌐 ネットワーク</h2>
+<div class="card">
+<table>
+<tr><th>コマンド</th><th>説明</th><th>使用例</th></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">ping</td><td>ネットワーク接続確認</td><td class="cmd" onclick="copyCmd(this)">ping google.com</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">curl</td><td>HTTPリクエスト送信</td><td class="cmd" onclick="copyCmd(this)">curl -O https://example.com/file.zip</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">ssh</td><td>リモート接続</td><td class="cmd" onclick="copyCmd(this)">ssh user@192.168.1.1</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">scp</td><td>リモートファイルコピー</td><td class="cmd" onclick="copyCmd(this)">scp file.txt user@host:/tmp/</td></tr>
+<tr><td class="cmd" onclick="copyCmd(this)">ip</td><td>ネットワークインターフェース</td><td class="cmd" onclick="copyCmd(this)">ip addr show</td></tr>
+</table>
+</div>
+
+<h2>📦 便利な組み合わせ</h2>
+<div class="card">
+<div class="label">直近のエラーログを探す</div>
+<div class="cmd" onclick="copyCmd(this)">tail -100 app.log | grep -i error</div>
+<div class="label">Pythonファイルを一覧して内容を確認</div>
+<div class="cmd" onclick="copyCmd(this)">find . -name "*.py" -exec grep -l "main" {} \;</div>
+<div class="label">ディスクの大容量ファイルTOP10</div>
+<div class="cmd" onclick="copyCmd(this)">du -ah / | sort -rh | head -10</div>
+<div class="label">プロセスを名前で探して終了</div>
+<div class="cmd" onclick="copyCmd(this)">ps aux | grep node | grep -v grep | awk '{print $2}' | xargs kill</div>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+
+<script>function copyCmd(el){const t=el.textContent.trim();navigator.clipboard.writeText(t).then(()=>{el.style.background='var(--green)';el.style.color='var(--bg)';setTimeout(()=>{el.style.background='';el.style.color='';},500);});}</script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VS Code + WSL2</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.9em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; }
+  .cmd:active { background:var(--accent); color:var(--bg); }
+  .label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+  .desc { font-size:0.9em; margin-bottom:4px; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.9em; }
+  th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+  td { padding:8px; border-bottom:1px solid var(--border); }
+  a { color:var(--accent); text-decoration:none; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+<h1>VS Code + WSL2</h1>
+
+<div class="card">
+  <h2>概要</h2>
+  <p class="desc">VS CodeからWSL2のLinux環境を直接使える拡張機能。Windows上のVS CodeでLinuxのコードを編集・実行できる。</p>
+</div>
+
+<div class="card">
+  <h2>セットアップ</h2>
+  <div class="desc"><b>1.</b> VS Codeに拡張機能をインストール:</div>
+  <div class="cmd">code --install-extension ms-vscode-remote.remote-wsl</div>
+  <div class="desc"><b>2.</b> WSLターミナルからVS Codeを起動:</div>
+  <div class="cmd">cd ~/projects/my-app && code .</div>
+  <div class="tip">左下に「WSL: Ubuntu」と表示されれば接続成功</div>
+</div>
+
+<div class="card">
+  <h2>推奨拡張機能</h2>
+  <table>
+    <tr><th>拡張機能</th><th>用途</th></tr>
+    <tr><td>Python</td><td>Python開発（必須）</td></tr>
+    <tr><td>Pylance</td><td>型チェック・補完</td></tr>
+    <tr><td>GitLens</td><td>Git履歴の表示</td></tr>
+    <tr><td>ESLint</td><td>JavaScript/TypeScript Linter</td></tr>
+    <tr><td>Prettier</td><td>コードフォーマッター</td></tr>
+    <tr><td>Thunder Client</td><td>API テスト（Postman代替）</td></tr>
+    <tr><td>Error Lens</td><td>エラーをインライン表示</td></tr>
+  </table>
+  <div class="tip">拡張機能は「WSL側」と「Windows側」それぞれにインストールが必要。WSL接続時にインストール推奨。</div>
+</div>
+
+<div class="card">
+  <h2>ターミナル統合</h2>
+  <div class="desc">VS Code内でWSLターミナルが使える:</div>
+  <div class="desc">Ctrl+` でターミナルを開く（自動的にWSLシェル）</div>
+  <div class="desc">複数ターミナル: ターミナル → 新しいターミナル</div>
+</div>
+
+<div class="card">
+  <h2>よくあるトラブル</h2>
+  <table>
+    <tr><th>症状</th><th>対処</th></tr>
+    <tr><td>「WSL接続中」のまま</td><td>WSLが起動しているか確認: <code>wsl</code></td></tr>
+    <tr><td>拡張機能が使えない</td><td>WSL側にもインストールする（接続中に「WSLにインストール」を押す）</td></tr>
+    <tr><td>ファイルが開けない</td><td>WSL内のパスを開いているか確認（\\wsl$でないパス）</td></tr>
+    <tr><td>重い</td><td>WSLのメモリ制限を .wslconfig で設定</td></tr>
+  </table>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

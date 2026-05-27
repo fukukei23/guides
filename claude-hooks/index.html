@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code hooks設定</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  pre { background:var(--code-bg); padding:12px; border-radius:8px; font-size:0.85em; overflow-x:auto; color:var(--text); margin:4px 0; }
+  .label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+  .desc { font-size:0.9em; margin-bottom:4px; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.9em; }
+  th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+  td { padding:8px; border-bottom:1px solid var(--border); }
+  a { color:var(--accent); text-decoration:none; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+<h1>Claude Code hooks設定</h1>
+
+<div class="card">
+  <h2>hooksとは</h2>
+  <p class="desc">特定のタイミングで自動実行されるスクリプト。Claude Codeの動作をカスタマイズできる。</p>
+  <div class="tip">設定ファイル: <code>~/.claude/settings.json</code></div>
+</div>
+
+<div class="card">
+  <h2>hookの種類</h2>
+  <table>
+    <tr><th>タイミング</th><th>説明</th><th>用途例</th></tr>
+    <tr><td><code>SessionStart</code></td><td>セッション開始時</td><td>環境確認・INDEX更新</td></tr>
+    <tr><td><code>PreToolUse</code></td><td>ツール実行前</td><td>危険コマンドのブロック</td></tr>
+    <tr><td><code>PostToolUse</code></td><td>ツール実行後</td><td>ログ記録・自動整形</td></tr>
+    <tr><td><code>PostToolUseFailure</code></td><td>ツール失敗時</td><td>エラー記録</td></tr>
+    <tr><td><code>Stop</code></td><td>セッション終了時</td><td>ログ保存・ハンドオフ生成</td></tr>
+    <tr><td><code>Notification</code></td><td>通知時</td><td>Discord通知等</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>基本構造</h2>
+  <pre>"hooks": {
+  "SessionStart": [
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "/path/to/script.sh",
+          "timeout": 5000
+        }
+      ]
+    }
+  ]
+}</pre>
+  <div class="desc"><code>matcher</code>: ツール名で絞り込み。<code>""</code> = 全ツール、<code>"Bash"</code> = Bashのみ、<code>"Edit|Write"</code> = 複数指定</div>
+  <div class="tip">必ず <code>hooks</code> 配列の中に <code>type</code> と <code>command</code> を入れること。直接 <code>command</code> を書くとエラーになる。</div>
+</div>
+
+<div class="card">
+  <h2>実例: セッション開始時に挨拶</h2>
+  <pre>"SessionStart": [
+  {
+    "matcher": "",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "echo 'セッション開始しました'",
+        "timeout": 3000
+      }
+    ]
+  }
+]</pre>
+</div>
+
+<div class="card">
+  <h2>実例: 危険コマンドをブロック</h2>
+  <pre>"PreToolUse": [
+  {
+    "matcher": "Bash",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "/path/to/guard-destructive.sh",
+        "timeout": 3000
+      }
+    ]
+  }
+]</pre>
+  <div class="desc">スクリプトが exit 1 を返すとツール実行がブロックされる</div>
+</div>
+
+<div class="card">
+  <h2>実例: 編集後に自動処理</h2>
+  <pre>"PostToolUse": [
+  {
+    "matcher": "Edit|Write",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "echo '$TOOL_INPUT' | python3 check.py",
+        "timeout": 5000
+      }
+    ]
+  }
+]</pre>
+  <div class="desc"><code>$TOOL_INPUT</code> でツールの入力内容（JSON）にアクセス可能</div>
+</div>
+
+<div class="card">
+  <h2>トラブルシューティング</h2>
+  <table>
+    <tr><th>症状</th><th>原因</th><th>対処</th></tr>
+    <tr><td>hooksエラーで起動失敗</td><td>JSON構文エラー</td><td><code>hooks</code> 配列構造を確認</td></tr>
+    <tr><td>hookが実行されない</td><td>matcherが合ってない</td><td>ツール名とmatcherを確認</td></tr>
+    <tr><td>タイムアウトする</td><td>スクリプトが重い</td><td>timeout値を増やす or スクリプトを軽くする</td></tr>
+  </table>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

@@ -11,17 +11,7 @@
   h1 { color:var(--accent); font-size:1.3em; margin-bottom:8px; text-align:center; }
   .subtitle { text-align:center; opacity:0.5; font-size:0.85em; margin-bottom:20px; }
   .guide-list { max-width:500px; margin:0 auto; }
-  .guide-card {
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:14px 18px;
-    margin-bottom:10px;
-    text-decoration:none;
-    color:var(--text);
-    display:block;
-    transition:border-color 0.2s;
-  }
+  .guide-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 18px; margin-bottom:10px; text-decoration:none; color:var(--text); display:block; transition:border-color 0.2s; }
   .guide-card:hover,.guide-card:active { border-color:var(--accent); }
   .guide-title { color:var(--accent); font-size:1.05em; font-weight:bold; margin-bottom:3px; }
   .guide-desc { font-size:0.82em; opacity:0.7; }
@@ -30,61 +20,132 @@
 </head>
 <body>
 <h1>📖 ガイド一覧</h1>
-<p class="subtitle">fukukei23 のクイックリファレンス集</p>
+<p class="subtitle">fukukei23 のクイックリファレンス集（25冊）</p>
 <div class="guide-list">
   <a class="guide-card" href="claude-code/">
     <div class="guide-title">Claude Code クイックスタート</div>
     <div class="guide-desc">インストール・基本操作・スラッシュコマンド・CLAUDE.md・権限設定</div>
-    <span class="guide-tag">Claude Code</span>
-    <span class="guide-tag">CLI</span>
+    <span class="guide-tag">Claude Code</span><span class="guide-tag">CLI</span>
   </a>
   <a class="guide-card" href="ssh-guide/">
     <div class="guide-title">Android SSH接続ガイド</div>
     <div class="guide-desc">スマホからClaude Code CLIを操作する手順（Tailscale + SSH + tmux）</div>
-    <span class="guide-tag">Android</span>
-    <span class="guide-tag">SSH</span>
+    <span class="guide-tag">Android</span><span class="guide-tag">SSH</span>
   </a>
   <a class="guide-card" href="git-cheatsheet/">
     <div class="guide-title">Git 逆引きチートシート</div>
     <div class="guide-desc">やりたいことから引けるGitコマンド集</div>
-    <span class="guide-tag">Git</span>
-    <span class="guide-tag">チートシート</span>
+    <span class="guide-tag">Git</span><span class="guide-tag">チートシート</span>
   </a>
   <a class="guide-card" href="tmux-cheatsheet/">
     <div class="guide-title">tmux チートシート</div>
     <div class="guide-desc">セッション・ウィンドウ・ペイン操作まとめ</div>
-    <span class="guide-tag">tmux</span>
-    <span class="guide-tag">チートシート</span>
+    <span class="guide-tag">tmux</span><span class="guide-tag">チートシート</span>
   </a>
   <a class="guide-card" href="wsl2-setup/">
     <div class="guide-title">WSL2 セットアップガイド</div>
     <div class="guide-desc">Windows上でLinuxを使う設定手順</div>
-    <span class="guide-tag">WSL2</span>
-    <span class="guide-tag">Windows</span>
+    <span class="guide-tag">WSL2</span><span class="guide-tag">Windows</span>
   </a>
   <a class="guide-card" href="tailscale-setup/">
     <div class="guide-title">Tailscale VPN セットアップ</div>
     <div class="guide-desc">デバイス間をVPNで繋ぐ設定手順</div>
-    <span class="guide-tag">VPN</span>
-    <span class="guide-tag">ネットワーク</span>
+    <span class="guide-tag">VPN</span><span class="guide-tag">ネットワーク</span>
   </a>
   <a class="guide-card" href="python-basics/">
     <div class="guide-title">Python基礎 学習ロードマップ</div>
     <div class="guide-desc">変数からクラスまで8ステップで基礎を学ぶ</div>
-    <span class="guide-tag">Python</span>
-    <span class="guide-tag">学習</span>
+    <span class="guide-tag">Python</span><span class="guide-tag">学習</span>
   </a>
   <a class="guide-card" href="gh-cheatsheet/">
     <div class="guide-title">GitHub CLI (gh) 逆引き</div>
     <div class="guide-desc">Issue・PR・Actions・API操作</div>
-    <span class="guide-tag">GitHub</span>
-    <span class="guide-tag">CLI</span>
+    <span class="guide-tag">GitHub</span><span class="guide-tag">CLI</span>
   </a>
   <a class="guide-card" href="docker-basics/">
     <div class="guide-title">Docker 基礎ガイド</div>
     <div class="guide-desc">イメージ・コンテナ・Composeの基本操作</div>
-    <span class="guide-tag">Docker</span>
-    <span class="guide-tag">コンテナ</span>
+    <span class="guide-tag">Docker</span><span class="guide-tag">コンテナ</span>
+  </a>
+  <a class="guide-card" href="linux-commands/">
+    <div class="guide-title">Linux基本コマンド</div>
+    <div class="guide-desc">ファイル操作・検索・権限・プロセス管理</div>
+    <span class="guide-tag">Linux</span><span class="guide-tag">コマンド</span>
+  </a>
+  <a class="guide-card" href="regex-cheatsheet/">
+    <div class="guide-title">正規表現チートシート</div>
+    <div class="guide-desc">パターン・メタ文字・実用例まとめ</div>
+    <span class="guide-tag">正規表現</span><span class="guide-tag">チートシート</span>
+  </a>
+  <a class="guide-card" href="markdown-guide/">
+    <div class="guide-title">Markdown書き方</div>
+    <div class="guide-desc">見出し・リスト・リンク・テーブル・コードブロック</div>
+    <span class="guide-tag">Markdown</span><span class="guide-tag">書き方</span>
+  </a>
+  <a class="guide-card" href="error-reading/">
+    <div class="guide-title">エラーメッセージ読み方</div>
+    <div class="guide-desc">Python/Git/ネットワーク系エラーの読み解き方</div>
+    <span class="guide-tag">エラー</span><span class="guide-tag">デバッグ</span>
+  </a>
+  <a class="guide-card" href="json-yaml-basics/">
+    <div class="guide-title">JSON/YAML基本</div>
+    <div class="guide-desc">データ型・書き方・比較・よくあるミス</div>
+    <span class="guide-tag">JSON</span><span class="guide-tag">YAML</span>
+  </a>
+  <a class="guide-card" href="ssh-basics/">
+    <div class="guide-title">SSH基本（鍵・config）</div>
+    <div class="guide-desc">鍵作成・登録・ショートカット・ファイル転送</div>
+    <span class="guide-tag">SSH</span><span class="guide-tag">ネットワーク</span>
+  </a>
+  <a class="guide-card" href="claude-hooks/">
+    <div class="guide-title">Claude Code hooks設定</div>
+    <div class="guide-desc">hookの種類・構造・実例・トラブルシューティング</div>
+    <span class="guide-tag">Claude Code</span><span class="guide-tag">hooks</span>
+  </a>
+  <a class="guide-card" href="github-actions/">
+    <div class="guide-title">GitHub Actions基礎</div>
+    <div class="guide-desc">ワークフロー構造・トリガー・アクション・シークレット</div>
+    <span class="guide-tag">GitHub</span><span class="guide-tag">CI/CD</span>
+  </a>
+  <a class="guide-card" href="python-venv/">
+    <div class="guide-title">Python仮想環境</div>
+    <div class="guide-desc">venv作成・有効化・requirements.txt・ワークフロー</div>
+    <span class="guide-tag">Python</span><span class="guide-tag">仮想環境</span>
+  </a>
+  <a class="guide-card" href="api-basics/">
+    <div class="guide-title">API基礎（REST + curl）</div>
+    <div class="guide-desc">HTTPメソッド・ステータスコード・curl・Python requests</div>
+    <span class="guide-tag">API</span><span class="guide-tag">REST</span>
+  </a>
+  <a class="guide-card" href="claude-mcp/">
+    <div class="guide-title">Claude Code MCP設定</div>
+    <div class="guide-desc">MCPサーバーの追加・管理・デバッグ</div>
+    <span class="guide-tag">Claude Code</span><span class="guide-tag">MCP</span>
+  </a>
+  <a class="guide-card" href="vscode-wsl/">
+    <div class="guide-title">VS Code + WSL2</div>
+    <div class="guide-desc">Remote接続・拡張機能・ターミナル統合</div>
+    <span class="guide-tag">VS Code</span><span class="guide-tag">WSL2</span>
+  </a>
+  <a class="guide-card" href="npm-bun/">
+    <div class="guide-title">npm/bun パッケージ管理</div>
+    <div class="guide-desc">npm vs bun・基本コマンド・package.json</div>
+    <span class="guide-tag">npm</span><span class="guide-tag">bun</span>
+  </a>
+  <a class="guide-card" href="obsidian-guide/">
+    <div class="guide-title">Obsidian使い方</div>
+    <div class="guide-desc">Vault・Wikilink・タグ・プラグイン・Git同期</div>
+    <span class="guide-tag">Obsidian</span><span class="guide-tag">メモ</span>
+  </a>
+  <a class="guide-card" href="security-basics/">
+    <div class="guide-title">セキュリティ基本</div>
+    <div class="guide-desc">API鍵管理・.gitignore・.env・漏洩時の対処</div>
+    <span class="guide-tag">セキュリティ</span><span class="guide-tag">API鍵</span>
+  </a>
+  <a class="guide-card" href="claude-troubleshooting/">
+    <div class="guide-title">Claude Code トラブルシューティング</div>
+    <div class="guide-desc">設定エラー・コンテキスト超過・MCP・権限・レート制限</div>
+    <span class="guide-tag">Claude Code</span><span class="guide-tag">トラブル</span>
   </a>
 </div>
 </body>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Actions基礎</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  pre { background:var(--code-bg); padding:12px; border-radius:8px; font-size:0.85em; overflow-x:auto; color:var(--text); margin:4px 0; }
+  .label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+  .desc { font-size:0.9em; margin-bottom:4px; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.9em; }
+  th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+  td { padding:8px; border-bottom:1px solid var(--border); }
+  a { color:var(--accent); text-decoration:none; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+<h1>GitHub Actions基礎</h1>
+
+<div class="card">
+  <h2>GitHub Actionsとは</h2>
+  <p class="desc">GitHub上でコードを自動実行する仕組み。push時にテストを走らせたり、定時にスクリプトを実行したりできる。</p>
+  <div class="tip">設定ファイル: <code>.github/workflows/〇〇.yml</code></div>
+</div>
+
+<div class="card">
+  <h2>最小のワークフロー</h2>
+  <pre>name: テスト実行
+on:
+  push:
+    branches: [main]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - run: pytest</pre>
+</div>
+
+<div class="card">
+  <h2>構造の説明</h2>
+  <table>
+    <tr><th>項目</th><th>説明</th><th>例</th></tr>
+    <tr><td><code>name</code></td><td>ワークフロー名</td><td><code>CI</code></td></tr>
+    <tr><td><code>on</code></td><td>実行タイミング</td><td>push, schedule, workflow_dispatch</td></tr>
+    <tr><td><code>jobs</code></td><td>ジョブ定義</td><td>test, build, deploy</td></tr>
+    <tr><td><code>runs-on</code></td><td>実行環境</td><td>ubuntu-latest, windows-latest</td></tr>
+    <tr><td><code>steps</code></td><td>実行手順</td><td>uses or run</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>トリガー（実行タイミング）</h2>
+  <pre># push時
+on:
+  push:
+    branches: [main]
+
+# プルリクエスト時
+on:
+  pull_request:
+
+# 定期実行（毎日3時UTC）
+on:
+  schedule:
+    - cron: '0 3 * * *'
+
+# 手動実行ボタン
+on:
+  workflow_dispatch:</pre>
+</div>
+
+<div class="card">
+  <h2>よく使うアクション</h2>
+  <table>
+    <tr><th>アクション</th><th>用途</th></tr>
+    <tr><td><code>actions/checkout@v4</code></td><td>コードをチェックアウト（必須）</td></tr>
+    <tr><td><code>actions/setup-python@v5</code></td><td>Python環境のセットアップ</td></tr>
+    <tr><td><code>actions/setup-node@v4</code></td><td>Node.js環境</td></tr>
+    <tr><td><code>actions/cache@v4</code></td><td>キャッシュで高速化</td></tr>
+    <tr><td><code>actions/upload-artifact@v4</code></td><td>成果物の保存</td></tr>
+    <tr><td><code>actions/deploy-pages@v4</code></td><td>GitHub Pagesデプロイ</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>環境変数・シークレット</h2>
+  <pre>steps:
+  - name: API呼び出し
+    env:
+      API_KEY: ${{ secrets.MY_API_KEY }}
+    run: python3 script.py</pre>
+  <div class="tip">シークレットは Settings → Secrets and variables → Actions で設定。ログには表示されない。</div>
+</div>
+
+<div class="card">
+  <h2>確認方法</h2>
+  <div class="desc">リポジトリの Actions タブで実行履歴・ログを確認</div>
+  <div class="desc">CLI: <code>gh run list</code> / <code>gh run view</code> / <code>gh run watch</code></div>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

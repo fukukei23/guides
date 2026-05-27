@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>npm/bun パッケージ管理</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.9em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; }
+  .cmd:active { background:var(--accent); color:var(--bg); }
+  .label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+  .desc { font-size:0.9em; margin-bottom:4px; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.9em; }
+  th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+  td { padding:8px; border-bottom:1px solid var(--border); }
+  a { color:var(--accent); text-decoration:none; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+<h1>npm / bun パッケージ管理</h1>
+
+<div class="card">
+  <h2>パッケージマネージャーとは</h2>
+  <p class="desc">外部ライブラリ（他人が作った便利コード）をインストール・管理するツール。</p>
+</div>
+
+<div class="card">
+  <h2>npm vs bun 比較</h2>
+  <table>
+    <tr><th></th><th>npm</th><th>bun</th></tr>
+    <tr><td>速さ</td><td>普通</td><td>高速（10倍程度）</td></tr>
+    <tr><td>標準搭載</td><td>Node.jsに同梱</td><td>別途インストール</td></tr>
+    <tr><td>lockfile</td><td>package-lock.json</td><td>bun.lockb</td></tr>
+    <tr><td>実行</td><td><code>npx</code></td><td><code>bunx</code></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>基本コマンド比較</h2>
+  <table>
+    <tr><th>やること</th><th>npm</th><th>bun</th></tr>
+    <tr><td>初期化</td><td><code>npm init -y</code></td><td><code>bun init</code></td></tr>
+    <tr><td>インストール</td><td><code>npm install パッケージ</code></td><td><code>bun add パッケージ</code></td></tr>
+    <tr><td>開発用インストール</td><td><code>npm install -D パッケージ</code></td><td><code>bun add -d パッケージ</code></td></tr>
+    <tr><td>全インストール</td><td><code>npm install</code></td><td><code>bun install</code></td></tr>
+    <tr><td>アンインストール</td><td><code>npm uninstall パッケージ</code></td><td><code>bun remove パッケージ</code></td></tr>
+    <tr><td>スクリプト実行</td><td><code>npm run dev</code></td><td><code>bun run dev</code></td></tr>
+    <tr><td>直接実行</td><td><code>npx コマンド</code></td><td><code>bunx コマンド</code></td></tr>
+    <tr><td>更新確認</td><td><code>npm outdated</code></td><td><code>bun outdated</code></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>package.json（設定ファイル）</h2>
+  <pre>{
+  "name": "my-app",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "node server.js",
+    "test": "pytest"
+  },
+  "dependencies": {
+    "express": "^4.18.0"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0"
+  }
+}</pre>
+  <div class="desc"><code>dependencies</code> = 本番で使う / <code>devDependencies</code> = 開発時のみ</div>
+</div>
+
+<div class="card">
+  <h2>よく使うパッケージ</h2>
+  <table>
+    <tr><th>用途</th><th>パッケージ</th></tr>
+    <tr><td>Webサーバー</td><td>express</td></tr>
+    <tr><td>テスト</td><td>jest, vitest</td></tr>
+    <tr><td>Linter</td><td>eslint</td></tr>
+    <tr><td>フォーマッター</td><td>prettier</td></tr>
+    <tr><td>型チェック</td><td>typescript</td></tr>
+  </table>
+</div>
+
+<script>function copyCmd(el){const t=el.textContent.trim();navigator.clipboard.writeText(t).then(()=>{el.style.background='var(--green)';el.style.color='var(--bg)';setTimeout(()=>{el.style.background='';el.style.color='';},500);});}</script>
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

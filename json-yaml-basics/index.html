@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JSON/YAML基本</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  pre { background:var(--code-bg); padding:12px; border-radius:8px; font-size:0.85em; overflow-x:auto; color:var(--text); margin:4px 0; }
+  .label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+  .desc { font-size:0.9em; margin-bottom:4px; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.9em; }
+  th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+  td { padding:8px; border-bottom:1px solid var(--border); }
+  a { color:var(--accent); text-decoration:none; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+<h1>JSON / YAML基本</h1>
+
+<div class="card">
+  <h2>JSONとは</h2>
+  <p class="desc">JavaScript Object Notation。データを文字列で表す形式。API通信や設定ファイルで広く使われる。</p>
+  <pre>{
+  "name": "Yamada",
+  "age": 30,
+  "skills": ["Python", "JavaScript"],
+  "active": true,
+  "address": null
+}</pre>
+</div>
+
+<div class="card">
+  <h2>JSONのデータ型</h2>
+  <table>
+    <tr><th>型</th><th>例</th><th>説明</th></tr>
+    <tr><td>文字列</td><td><code>"hello"</code></td><td>必ずダブルクォート</td></tr>
+    <tr><td>数値</td><td><code>42</code> <code>3.14</code></td><td>クォートなし</td></tr>
+    <tr><td>真偽値</td><td><code>true</code> <code>false</code></td><td>小文字のみ</td></tr>
+    <tr><td>null</td><td><code>null</code></td><td>値がない</td></tr>
+    <tr><td>配列</td><td><code>[1, 2, 3]</code></td><td>順序付きリスト</td></tr>
+    <tr><td>オブジェクト</td><td><code>{"key": "value"}</code></td><td>キーと値のペア</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>YAMLとは</h2>
+  <p class="desc">YAML Ain't Markup Language。インデントで構造を表す。設定ファイル（GitHub Actions等）でよく使う。</p>
+  <pre>name: Yamada
+age: 30
+skills:
+  - Python
+  - JavaScript
+active: true
+address: null</pre>
+</div>
+
+<div class="card">
+  <h2>JSON vs YAML 比較</h2>
+  <table>
+    <tr><th></th><th>JSON</th><th>YAML</th></tr>
+    <tr><td>カッコ</td><td><code>{}</code> <code>[]</code></td><td>なし（インデント）</td></tr>
+    <tr><td>文字列</td><td>必ず<code>""</code></td><td>省略可能</td></tr>
+    <tr><td>コメント</td><td>書けない</td><td><code># コメント</code></td></tr>
+    <tr><td>カンマ</td><td>要素の区切りに必要</td><td>不要</td></tr>
+    <tr><td>用途</td><td>API通信・データ</td><td>設定ファイル</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>よくあるミス</h2>
+  <table>
+    <tr><th>ミス</th><th>NG</th><th>OK</th></tr>
+    <tr><td>末尾カンマ</td><td><code>"a": 1,</code></td><td><code>"a": 1</code></td></tr>
+    <tr><td>シングルクォート</td><td><code>'hello'</code></td><td><code>"hello"</code></td></tr>
+    <tr><td>コメント</td><td><code>// comment</code></td><td>（JSONでは不可）</td></tr>
+    <tr><td>インデント（YAML）</td><td>タブ混在</td><td>スペース2個統一</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>バリデーション（確認方法）</h2>
+  <pre># JSONの構文チェック
+python3 -c "import json; json.load(open('file.json'))"
+
+# YAMLの構文チェック
+python3 -c "import yaml; yaml.safe_load(open('file.yml'))"</pre>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

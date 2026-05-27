@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSH基本（鍵・config）</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.9em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; }
+  .cmd:active { background:var(--accent); color:var(--bg); }
+  .label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+  .desc { font-size:0.9em; margin-bottom:4px; }
+  pre { background:var(--code-bg); padding:12px; border-radius:8px; font-size:0.85em; overflow-x:auto; color:var(--text); margin:4px 0; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.9em; }
+  th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+  td { padding:8px; border-bottom:1px solid var(--border); }
+  a { color:var(--accent); text-decoration:none; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+<h1>SSH基本（鍵・config）</h1>
+
+<div class="card">
+  <h2>SSHとは</h2>
+  <p class="desc">Secure SHell。暗号化通信で別のコンピュータに安全にログインする仕組み。</p>
+</div>
+
+<div class="card">
+  <h2>鍵の作成</h2>
+  <div class="label">推奨: ed25519（高速・安全）</div>
+  <div class="cmd">ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519</div>
+  <div class="desc"><code>-N ""</code> = パスフレーズなし、<code>-f</code> = 保存先</div>
+  <div class="label">従来: RSA（互換性重視）</div>
+  <div class="cmd">ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa</div>
+  <div class="tip">鍵はペア: 秘密鍵（id_ed25519）と公開鍵（id_ed25519.pub）。秘密鍵は絶対に共有しない。</div>
+</div>
+
+<div class="card">
+  <h2>公開鍵を相手に登録</h2>
+  <div class="label">自動コピー（簡単）</div>
+  <div class="cmd">ssh-copy-id user@hostname</div>
+  <div class="label">手動コピー</div>
+  <div class="cmd">cat ~/.ssh/id_ed25519.pub | ssh user@hostname "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys"</div>
+</div>
+
+<div class="card">
+  <h2>~/.ssh/config（接続ショートカット）</h2>
+  <pre>Host myserver
+    HostName 192.168.1.100
+    User myname
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+
+Host github
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519</pre>
+  <div class="desc">これで <code>ssh myserver</code> だけで接続できる</div>
+</div>
+
+<div class="card">
+  <h2>よく使うオプション</h2>
+  <table>
+    <tr><th>オプション</th><th>意味</th><th>例</th></tr>
+    <tr><td><code>-p</code></td><td>ポート指定</td><td><code>ssh -p 2222 user@host</code></td></tr>
+    <tr><td><code>-i</code></td><td>鍵ファイル指定</td><td><code>ssh -i ~/.ssh/mykey user@host</code></td></tr>
+    <tr><td><code>-L</code></td><td>ポート転送</td><td><code>ssh -L 8080:localhost:80 user@host</code></td></tr>
+    <tr><td><code>-v</code></td><td>デバッグ出力</td><td>繋がらない時に原因調査</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>ファイル転送（scp）</h2>
+  <div class="label">ローカル → リモート</div>
+  <div class="cmd">scp file.txt user@host:/path/to/dest</div>
+  <div class="label">リモート → ローカル</div>
+  <div class="cmd">scp user@host:/path/to/file.txt ./</div>
+  <div class="label">ディレクトリごと</div>
+  <div class="cmd">scp -r ./dir user@host:/path/</div>
+</div>
+
+<div class="card">
+  <h2>つながらない時</h2>
+  <table>
+    <tr><th>エラー</th><th>原因</th><th>対処</th></tr>
+    <tr><td>Connection refused</td><td>SSHサーバーが動いてない</td><td>相手側で sshd 起動</td></tr>
+    <tr><td>Connection timed out</td><td>ネットワーク不通</td><td>IP/ポート/ファイアウォール確認</td></tr>
+    <tr><td>Permission denied</td><td>鍵が登録されてない</td><td><code>ssh-copy-id</code> を実行</td></tr>
+    <tr><td>Host key verification failed</td><td>初回接続 or 鍵変更</td><td><code>ssh-keygen -R hostname</code> で削除後再接続</td></tr>
+  </table>
+</div>
+
+<script>function copyCmd(el){const t=el.textContent.trim();navigator.clipboard.writeText(t).then(()=>{el.style.background='var(--green)';el.style.color='var(--bg)';setTimeout(()=>{el.style.background='';el.style.color='';},500);});}</script>
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>エラーメッセージ読み方</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  pre { background:var(--code-bg); padding:12px; border-radius:8px; font-size:0.85em; overflow-x:auto; color:var(--text); margin:4px 0; }
+  .label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+  .desc { font-size:0.9em; margin-bottom:4px; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.9em; }
+  th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+  td { padding:8px; border-bottom:1px solid var(--border); }
+  a { color:var(--accent); text-decoration:none; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+<h1>エラーメッセージ読み方</h1>
+
+<div class="card">
+  <h2>基本: 3つのポイントを見る</h2>
+  <div class="desc">エラーが出たら、以下の順で確認:</div>
+  <table>
+    <tr><th>順番</th><th>見る場所</th><th>理由</th></tr>
+    <tr><td>1</td><td><b>最後の行</b>（エラーの種類）</td><td>何が起きたか一目でわかる</td></tr>
+    <tr><td>2</td><td><b>ファイル名と行番号</b></td><td>どこで起きたか特定</td></tr>
+    <tr><td>3</td><td>エラーメッセージ本文</td><td>詳細な原因</td></tr>
+  </table>
+  <div class="tip">赤い文字がたくさん出てもパニックにならない。最後の1行を読めば大体わかる。</div>
+</div>
+
+<div class="card">
+  <h2>Python よくあるエラー</h2>
+  <table>
+    <tr><th>エラー名</th><th>意味</th><th>よくある原因</th></tr>
+    <tr><td><code>SyntaxError</code></td><td>文法エラー</td><td>コロン忘れ、カッコ閉じ忘れ</td></tr>
+    <tr><td><code>IndentationError</code></td><td>インデントエラー</td><td>スペースとタブの混在</td></tr>
+    <tr><td><code>NameError</code></td><td>名前が見つからない</td><td>変数名のタイプミス</td></tr>
+    <tr><td><code>TypeError</code></td><td>型が違う</td><td>文字列に数値演算等</td></tr>
+    <tr><td><code>KeyError</code></td><td>辞書のキーがない</td><td>存在しないキーを指定</td></tr>
+    <tr><td><code>IndexError</code></td><td>インデックス超過</td><td>リスト範囲外アクセス</td></tr>
+    <tr><td><code>FileNotFoundError</code></td><td>ファイルがない</td><td>パス間違い</td></tr>
+    <tr><td><code>ModuleNotFoundError</code></td><td>モジュールがない</td><td>pip install 忘れ</td></tr>
+    <tr><td><code>PermissionError</code></td><td>権限がない</td><td>読み取り専用ファイルに書込</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>Python Tracebackの読み方</h2>
+  <pre>Traceback (most recent call last):
+  File "main.py", line 10, in &lt;module&gt;
+    result = calculate(data)
+  File "main.py", line 25, in calculate
+    return data["key"] + 1
+KeyError: 'key'</pre>
+  <div class="desc"><b>読む順序</b>:</div>
+  <div class="desc">1. <code>KeyError: 'key'</code> ← 最後の行: 辞書に 'key' がない</div>
+  <div class="desc">2. <code>main.py, line 25</code> ← 原因の場所</div>
+  <div class="desc">3. <code>main.py, line 10</code> ← 呼び出し元（参考）</div>
+</div>
+
+<div class="card">
+  <h2>Git よくあるエラー</h2>
+  <table>
+    <tr><th>メッセージ</th><th>意味</th><th>対処</th></tr>
+    <tr><td>merge conflict</td><td>競合</td><td>ファイルを開いて手動で修正</td></tr>
+    <tr><td>rejected (non-fast-forward)</td><td>リモートが進んでる</td><td><code>git pull</code> してから push</td></tr>
+    <tr><td>detached HEAD</td><td>特定コミットにいる</td><td><code>git checkout main</code> で戻る</td></tr>
+    <tr><td>not a git repository</td><td>git管理下じゃない</td><td>ディレクトリ確認</td></tr>
+    <tr><td>Permission denied (publickey)</td><td>SSH鍵エラー</td><td>鍵の設定確認</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>ネットワーク系エラー</h2>
+  <table>
+    <tr><th>メッセージ</th><th>意味</th><th>対処</th></tr>
+    <tr><td>Connection refused</td><td>サーバーが動いてない</td><td>サービス起動確認</td></tr>
+    <tr><td>Connection timed out</td><td>繋がらない</td><td>URL/ネットワーク/ファイアウォール確認</td></tr>
+    <tr><td>401 Unauthorized</td><td>認証エラー</td><td>APIキー/ログイン確認</td></tr>
+    <tr><td>429 Too Many Requests</td><td>使いすぎ</td><td>少し待って再試行</td></tr>
+  </table>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

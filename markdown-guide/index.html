@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Markdown書き方</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  pre { background:var(--code-bg); padding:12px; border-radius:8px; font-size:0.85em; overflow-x:auto; color:var(--text); margin:4px 0; }
+  .label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+  .result { background:#1a2540; padding:10px 12px; border-radius:0 8px 8px 0; font-size:0.9em; margin:4px 0; border-left:3px solid var(--green); }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.9em; }
+  th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+  td { padding:8px; border-bottom:1px solid var(--border); }
+  a { color:var(--accent); text-decoration:none; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+<h1>Markdown書き方</h1>
+
+<div class="card">
+  <h2>見出し</h2>
+  <pre># 見出し1（h1）
+## 見出し2（h2）
+### 見出し3（h3）
+#### 見出し4（h4）</pre>
+</div>
+
+<div class="card">
+  <h2>テキスト装飾</h2>
+  <table>
+    <tr><th>書き方</th><th>結果</th></tr>
+    <tr><td><code>**太字**</code></td><td><b>太字</b></td></tr>
+    <tr><td><code>*斜体*</code></td><td><i>斜体</i></td></tr>
+    <tr><td><code>~~取り消し線~~</code></td><td><s>取り消し線</s></td></tr>
+    <tr><td><code>`インラインコード`</code></td><td><code>インラインコード</code></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>リスト</h2>
+  <pre>- 箇条書き1
+- 箇条書き2
+  - ネスト（インデント2スペース）
+
+1. 番号付き1
+2. 番号付き2
+
+- [ ] チェックボックス（未完了）
+- [x] チェックボックス（完了）</pre>
+</div>
+
+<div class="card">
+  <h2>リンク・画像</h2>
+  <pre>[リンクテキスト](https://example.com)
+[相対リンク](./other-page.md)
+
+![画像の説明](image.png)
+![画像](https://example.com/img.png)</pre>
+</div>
+
+<div class="card">
+  <h2>コードブロック</h2>
+  <pre>```python
+def hello():
+    print("Hello!")
+```</pre>
+  <div class="tip">言語名を指定するとシンタックスハイライトが効く: python, javascript, bash, json, yaml等</div>
+</div>
+
+<div class="card">
+  <h2>テーブル</h2>
+  <pre>| 列1 | 列2 | 列3 |
+|------|------|------|
+| A    | B    | C    |
+| D    | E    | F    |</pre>
+  <div class="tip">配置: <code>:---</code> 左寄せ、<code>:---:</code> 中央、<code>---:</code> 右寄せ</div>
+</div>
+
+<div class="card">
+  <h2>引用・水平線</h2>
+  <pre>> 引用文
+>> ネストした引用
+
+---
+
+ハイフン3つ以上で水平線</pre>
+</div>
+
+<div class="card">
+  <h2>Obsidian専用（Wikilink）</h2>
+  <pre>[[ファイル名]]               ← リンク
+[[ファイル名|表示テキスト]]    ← 別名リンク
+[[ファイル名#見出し]]          ← 見出しへのリンク</pre>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>
