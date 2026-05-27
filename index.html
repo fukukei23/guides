@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ガイド一覧 - fukukei23</title>
+<style>
+  :root {
+    --bg: #1a1b26;
+    --card: #24283b;
+    --text: #c0caf5;
+    --accent: #7aa2f7;
+    --green: #9ece6a;
+    --border: #3b4261;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); padding: 24px 16px; }
+  h1 { color: var(--accent); font-size: 1.3em; margin-bottom: 20px; text-align: center; }
+  .guide-list { max-width: 500px; margin: 0 auto; }
+  .guide-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    text-decoration: none;
+    color: var(--text);
+    display: block;
+    transition: border-color 0.2s;
+  }
+  .guide-card:hover, .guide-card:active { border-color: var(--accent); }
+  .guide-title { color: var(--accent); font-size: 1.1em; font-weight: bold; margin-bottom: 4px; }
+  .guide-desc { font-size: 0.85em; opacity: 0.7; }
+  .guide-tag { display: inline-block; background: #1a2540; color: var(--green); padding: 2px 8px; border-radius: 4px; font-size: 0.75em; margin-top: 8px; }
+</style>
+</head>
+<body>
+<h1>📖 ガイド一覧</h1>
+<div class="guide-list">
+  <a class="guide-card" href="ssh-guide/">
+    <div class="guide-title">Android SSH接続ガイド</div>
+    <div class="guide-desc">スマホからClaude Code CLIを操作する手順（Tailscale + SSH + tmux）</div>
+    <span class="guide-tag">Android</span>
+    <span class="guide-tag">SSH</span>
+  </a>
+</div>
+</body>
+</html>
