@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tailscale VPN セットアップガイド</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.9em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; }
+  .cmd:active { background:var(--accent); color:var(--bg); }
+  .label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+  .desc { font-size:0.9em; margin-bottom:4px; }
+  .step { font-size:0.9em; margin:6px 0; padding-left:8px; }
+  .step-num { color:var(--accent); font-weight:bold; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  a { color:var(--accent); text-decoration:none; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+<h1>Tailscale VPN セットアップガイド</h1>
+
+<div class="card">
+  <h2>Tailscale とは</h2>
+  <p class="desc">無料のVPNサービス。デバイス同士をプライベートネットワーク（tailnet）で繋ぐ。設定不要で、インストール＋ログインだけで使える。</p>
+  <div class="tip">自宅PCと外出先のスマホを繋いで、どこからでも自宅PCにアクセス可能にする</div>
+</div>
+
+<div class="card">
+  <h2>PC（Windows）へのインストール</h2>
+  <div class="step"><span class="step-num">1.</span> インストール</div>
+  <div class="cmd">winget install Tailscale.Tailscale</div>
+  <div class="step"><span class="step-num">2.</span> 起動してログイン（Google/GitHub/Microsoft アカウント）</div>
+  <div class="step"><span class="step-num">3.</span> タスクバーのアイコンから接続確認</div>
+</div>
+
+<div class="card">
+  <h2>スマホ（Android）へのインストール</h2>
+  <div class="step"><span class="step-num">1.</span> Play Store で「Tailscale」をインストール</div>
+  <div class="step"><span class="step-num">2.</span> PCと同じアカウントでログイン</div>
+  <div class="step"><span class="step-num">3.</span> VPN接続をオンにする</div>
+  <div class="tip">PCと同じアカウントを使うことが重要。違うアカウントだと繋がらない</div>
+</div>
+
+<div class="card">
+  <h2>接続確認</h2>
+  <div class="label">自分のIP確認（PC側）</div>
+  <div class="cmd">tailscale ip -4</div>
+  <div class="label">スマホからPCにping</div>
+  <div class="cmd">ping 100.xxx.xxx.xxx</div>
+  <div class="label">スマホからPCにSSH接続</div>
+  <div class="cmd">ssh ユーザー名@100.xxx.xxx.xxx</div>
+</div>
+
+<div class="card">
+  <h2>管理コンソール</h2>
+  <div class="desc">https://login.tailscale.com/admin/machines でデバイス一覧・接続状態を確認</div>
+  <table style="width:100%;border-collapse:collapse;font-size:0.9em;">
+    <tr style="background:var(--code-bg);"><th style="padding:8px;color:var(--accent);text-align:left;">確認項目</th><th style="padding:8px;color:var(--accent);text-align:left;">場所</th></tr>
+    <tr><td style="padding:8px;border-bottom:1px solid var(--border);">デバイス一覧</td><td style="padding:8px;border-bottom:1px solid var(--border);">Machines</td></tr>
+    <tr><td style="padding:8px;border-bottom:1px solid var(--border);">接続状態</td><td style="padding:8px;border-bottom:1px solid var(--border);">各デバイスの緑/灰色アイコン</td></tr>
+    <tr><td style="padding:8px;">IPアドレス確認</td><td style="padding:8px;">各デバイスの詳細</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>よくあるトラブル</h2>
+  <table style="width:100%;border-collapse:collapse;font-size:0.9em;">
+    <tr style="background:var(--code-bg);"><th style="padding:8px;color:var(--accent);text-align:left;">症状</th><th style="padding:8px;color:var(--accent);text-align:left;">対処</th></tr>
+    <tr><td style="padding:8px;border-bottom:1px solid var(--border);">デバイスが表示されない</td><td style="padding:8px;border-bottom:1px solid var(--border);">アカウントが同じか確認</td></tr>
+    <tr><td style="padding:8px;border-bottom:1px solid var(--border);">pingが通らない</td><td style="padding:8px;border-bottom:1px solid var(--border);">両デバイスでTailscale起動確認</td></tr>
+    <tr><td style="padding:8px;">会社のWi-Fiで繋がらない</td><td style="padding:8px;">ファイアウォールでブロックされている可能性。DERPリレー経由で自動接続を試みる</td></tr>
+  </table>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

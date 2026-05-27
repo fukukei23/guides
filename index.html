@@ -5,43 +5,86 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ガイド一覧 - fukukei23</title>
 <style>
-  :root {
-    --bg: #1a1b26;
-    --card: #24283b;
-    --text: #c0caf5;
-    --accent: #7aa2f7;
-    --green: #9ece6a;
-    --border: #3b4261;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); padding: 24px 16px; }
-  h1 { color: var(--accent); font-size: 1.3em; margin-bottom: 20px; text-align: center; }
-  .guide-list { max-width: 500px; margin: 0 auto; }
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --yellow:#e0af68; --border:#3b4261; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:24px 16px; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:8px; text-align:center; }
+  .subtitle { text-align:center; opacity:0.5; font-size:0.85em; margin-bottom:20px; }
+  .guide-list { max-width:500px; margin:0 auto; }
   .guide-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px 20px;
-    margin-bottom: 12px;
-    text-decoration: none;
-    color: var(--text);
-    display: block;
-    transition: border-color 0.2s;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px 18px;
+    margin-bottom:10px;
+    text-decoration:none;
+    color:var(--text);
+    display:block;
+    transition:border-color 0.2s;
   }
-  .guide-card:hover, .guide-card:active { border-color: var(--accent); }
-  .guide-title { color: var(--accent); font-size: 1.1em; font-weight: bold; margin-bottom: 4px; }
-  .guide-desc { font-size: 0.85em; opacity: 0.7; }
-  .guide-tag { display: inline-block; background: #1a2540; color: var(--green); padding: 2px 8px; border-radius: 4px; font-size: 0.75em; margin-top: 8px; }
+  .guide-card:hover,.guide-card:active { border-color:var(--accent); }
+  .guide-title { color:var(--accent); font-size:1.05em; font-weight:bold; margin-bottom:3px; }
+  .guide-desc { font-size:0.82em; opacity:0.7; }
+  .guide-tag { display:inline-block; background:#1a2540; color:var(--green); padding:1px 7px; border-radius:4px; font-size:0.72em; margin-top:6px; margin-right:4px; }
 </style>
 </head>
 <body>
 <h1>📖 ガイド一覧</h1>
+<p class="subtitle">fukukei23 のクイックリファレンス集</p>
 <div class="guide-list">
+  <a class="guide-card" href="claude-code/">
+    <div class="guide-title">Claude Code クイックスタート</div>
+    <div class="guide-desc">インストール・基本操作・スラッシュコマンド・CLAUDE.md・権限設定</div>
+    <span class="guide-tag">Claude Code</span>
+    <span class="guide-tag">CLI</span>
+  </a>
   <a class="guide-card" href="ssh-guide/">
     <div class="guide-title">Android SSH接続ガイド</div>
     <div class="guide-desc">スマホからClaude Code CLIを操作する手順（Tailscale + SSH + tmux）</div>
     <span class="guide-tag">Android</span>
     <span class="guide-tag">SSH</span>
+  </a>
+  <a class="guide-card" href="git-cheatsheet/">
+    <div class="guide-title">Git 逆引きチートシート</div>
+    <div class="guide-desc">やりたいことから引けるGitコマンド集</div>
+    <span class="guide-tag">Git</span>
+    <span class="guide-tag">チートシート</span>
+  </a>
+  <a class="guide-card" href="tmux-cheatsheet/">
+    <div class="guide-title">tmux チートシート</div>
+    <div class="guide-desc">セッション・ウィンドウ・ペイン操作まとめ</div>
+    <span class="guide-tag">tmux</span>
+    <span class="guide-tag">チートシート</span>
+  </a>
+  <a class="guide-card" href="wsl2-setup/">
+    <div class="guide-title">WSL2 セットアップガイド</div>
+    <div class="guide-desc">Windows上でLinuxを使う設定手順</div>
+    <span class="guide-tag">WSL2</span>
+    <span class="guide-tag">Windows</span>
+  </a>
+  <a class="guide-card" href="tailscale-setup/">
+    <div class="guide-title">Tailscale VPN セットアップ</div>
+    <div class="guide-desc">デバイス間をVPNで繋ぐ設定手順</div>
+    <span class="guide-tag">VPN</span>
+    <span class="guide-tag">ネットワーク</span>
+  </a>
+  <a class="guide-card" href="python-basics/">
+    <div class="guide-title">Python基礎 学習ロードマップ</div>
+    <div class="guide-desc">変数からクラスまで8ステップで基礎を学ぶ</div>
+    <span class="guide-tag">Python</span>
+    <span class="guide-tag">学習</span>
+  </a>
+  <a class="guide-card" href="gh-cheatsheet/">
+    <div class="guide-title">GitHub CLI (gh) 逆引き</div>
+    <div class="guide-desc">Issue・PR・Actions・API操作</div>
+    <span class="guide-tag">GitHub</span>
+    <span class="guide-tag">CLI</span>
+  </a>
+  <a class="guide-card" href="docker-basics/">
+    <div class="guide-title">Docker 基礎ガイド</div>
+    <div class="guide-desc">イメージ・コンテナ・Composeの基本操作</div>
+    <span class="guide-tag">Docker</span>
+    <span class="guide-tag">コンテナ</span>
   </a>
 </div>
 </body>

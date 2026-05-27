@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub CLI (gh) 逆引き</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.9em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; }
+  .cmd:active { background:var(--accent); color:var(--bg); }
+  .label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+  .desc { font-size:0.9em; margin-bottom:4px; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  a { color:var(--accent); text-decoration:none; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+<h1>GitHub CLI (gh) 逆引き</h1>
+
+<div class="card">
+  <h2>初期設定</h2>
+  <div class="cmd">gh auth login</div>
+  <div class="label">状態確認</div>
+  <div class="cmd">gh auth status</div>
+</div>
+
+<div class="card">
+  <h2>リポジトリ操作</h2>
+  <div class="label">リポジトリ一覧</div>
+  <div class="cmd">gh repo list</div>
+  <div class="label">リポジトリ作成</div>
+  <div class="cmd">gh repo create 名前 --public --clone</div>
+  <div class="label">リポジトリ削除</div>
+  <div class="cmd">gh repo delete owner/repo --yes</div>
+  <div class="label">ブラウザで開く</div>
+  <div class="cmd">gh repo view --web</div>
+</div>
+
+<div class="card">
+  <h2>Issue（課題）</h2>
+  <div class="label">Issue一覧</div>
+  <div class="cmd">gh issue list</div>
+  <div class="label">Issue作成</div>
+  <div class="cmd">gh issue create --title "タイトル" --body "本文"</div>
+  <div class="label">Issue詳細</div>
+  <div class="cmd">gh issue view 123</div>
+  <div class="label">Issue閉じる</div>
+  <div class="cmd">gh issue close 123</div>
+  <div class="label">自分の担当Issue</div>
+  <div class="cmd">gh issue list --assignee @me</div>
+</div>
+
+<div class="card">
+  <h2>Pull Request</h2>
+  <div class="label">PR一覧</div>
+  <div class="cmd">gh pr list</div>
+  <div class="label">PR作成</div>
+  <div class="cmd">gh pr create --title "タイトル" --body "本文"</div>
+  <div class="label">PR詳細</div>
+  <div class="cmd">gh pr view 456</div>
+  <div class="label">PRをマージ</div>
+  <div class="cmd">gh pr merge 456 --squash</div>
+  <div class="label">PRのチェック状態</div>
+  <div class="cmd">gh pr checks 456</div>
+  <div class="label">ローカルにチェックアウト</div>
+  <div class="cmd">gh pr checkout 456</div>
+</div>
+
+<div class="card">
+  <h2>Actions（CI/CD）</h2>
+  <div class="label">実行履歴</div>
+  <div class="cmd">gh run list</div>
+  <div class="label">特定の実行を確認</div>
+  <div class="cmd">gh run view</div>
+  <div class="label">リアルタイム監視</div>
+  <div class="cmd">gh run watch</div>
+</div>
+
+<div class="card">
+  <h2>Gist</h2>
+  <div class="label">Gist作成</div>
+  <div class="cmd">gh gist create file.txt --public</div>
+  <div class="label">Gist一覧</div>
+  <div class="cmd">gh gist list</div>
+</div>
+
+<div class="card">
+  <h2>便利な使い方</h2>
+  <div class="label">API直接叩く</div>
+  <div class="cmd">gh api repos/owner/repo/issues</div>
+  <div class="label">JSONで出力</div>
+  <div class="cmd">gh issue list --json title,state,url</div>
+  <div class="label">リリース作成</div>
+  <div class="cmd">gh release create v1.0.0 --title "v1.0.0" --notes "変更内容"</div>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

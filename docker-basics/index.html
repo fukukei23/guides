@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docker 基礎ガイド</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.9em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; }
+  .cmd:active { background:var(--accent); color:var(--bg); }
+  .label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+  .desc { font-size:0.9em; margin-bottom:4px; }
+  pre { background:var(--code-bg); padding:12px; border-radius:8px; font-size:0.85em; overflow-x:auto; color:var(--text); margin:4px 0; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  a { color:var(--accent); text-decoration:none; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+<h1>Docker 基礎ガイド</h1>
+
+<div class="card">
+  <h2>Docker とは</h2>
+  <p class="desc">アプリを「コンテナ」という箱に入れて動かす仕組み。環境の違いを気にせず、どこでも同じように動く。</p>
+  <div class="tip">「自分のPCでは動くけど、他のPCでは動かない」を解決する技術</div>
+</div>
+
+<div class="card">
+  <h2>基本概念</h2>
+  <table style="width:100%;border-collapse:collapse;font-size:0.9em;">
+    <tr style="background:var(--code-bg);"><th style="padding:8px;color:var(--accent);text-align:left;">用語</th><th style="padding:8px;color:var(--accent);text-align:left;">説明</th></tr>
+    <tr><td style="padding:8px;border-bottom:1px solid var(--border);">イメージ</td><td style="padding:8px;border-bottom:1px solid var(--border);">コンテナの設計図（テンプレート）</td></tr>
+    <tr><td style="padding:8px;border-bottom:1px solid var(--border);">コンテナ</td><td style="padding:8px;border-bottom:1px solid var(--border);">イメージから作られた実行環境</td></tr>
+    <tr><td style="padding:8px;border-bottom:1px solid var(--border);">Dockerfile</td><td style="padding:8px;border-bottom:1px solid var(--border);">イメージを作る手順書</td></tr>
+    <tr><td style="padding:8px;">docker-compose.yml</td><td style="padding:8px;">複数コンテナを一括管理する設定ファイル</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>イメージ操作</h2>
+  <div class="label">イメージ取得</div>
+  <div class="cmd">docker pull python:3.12</div>
+  <div class="label">イメージ一覧</div>
+  <div class="cmd">docker images</div>
+  <div class="label">イメージ削除</div>
+  <div class="cmd">docker rmi イメージ名</div>
+</div>
+
+<div class="card">
+  <h2>コンテナ操作</h2>
+  <div class="label">コンテナ起動</div>
+  <div class="cmd">docker run -d --name myapp -p 8080:80 nginx</div>
+  <div class="desc">-d: バックグラウンド、--name: 名前、-p: ポート転送（PC:コンテナ）</div>
+  <div class="label">起動中コンテナ一覧</div>
+  <div class="cmd">docker ps</div>
+  <div class="label">全コンテナ一覧（停止含む）</div>
+  <div class="cmd">docker ps -a</div>
+  <div class="label">コンテナ停止</div>
+  <div class="cmd">docker stop myapp</div>
+  <div class="label">コンテナ起動（再開）</div>
+  <div class="cmd">docker start myapp</div>
+  <div class="label">コンテナ削除</div>
+  <div class="cmd">docker rm myapp</div>
+  <div class="label">コンテナ内でコマンド実行</div>
+  <div class="cmd">docker exec -it myapp bash</div>
+  <div class="label">ログ確認</div>
+  <div class="cmd">docker logs myapp</div>
+</div>
+
+<div class="card">
+  <h2>Docker Compose</h2>
+  <div class="label">起動</div>
+  <div class="cmd">docker compose up -d</div>
+  <div class="label">停止</div>
+  <div class="cmd">docker compose down</div>
+  <div class="label">ログ確認</div>
+  <div class="cmd">docker compose logs -f</div>
+  <div class="label">状態確認</div>
+  <div class="cmd">docker compose ps</div>
+</div>
+
+<div class="card">
+  <h2>お掃除</h2>
+  <div class="label">未使用イメージ一括削除</div>
+  <div class="cmd">docker image prune -a</div>
+  <div class="label">未使用コンテナ一括削除</div>
+  <div class="cmd">docker container prune</div>
+  <div class="label">全部まとめてお掃除</div>
+  <div class="cmd">docker system prune -a</div>
+  <div class="tip">ディスク容量が圧迫されてきたら system prune を実行</div>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

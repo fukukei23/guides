@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WSL2 セットアップガイド</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.9em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; }
+  .cmd:active { background:var(--accent); color:var(--bg); }
+  .label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+  .desc { font-size:0.9em; margin-bottom:4px; }
+  .step { font-size:0.9em; margin:6px 0; padding-left:8px; }
+  .step-num { color:var(--accent); font-weight:bold; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  a { color:var(--accent); text-decoration:none; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+<h1>WSL2 セットアップガイド</h1>
+
+<div class="card">
+  <h2>WSL2 とは</h2>
+  <p class="desc">Windows上でLinux（Ubuntu等）を動かす仕組み。Windowsを再起動せずにLinuxコマンドが使える。</p>
+  <div class="tip">仮想マシンではなく、WindowsとLinuxが同時に動くイメージ。ファイル共有も可能。</div>
+</div>
+
+<div class="card">
+  <h2>インストール</h2>
+  <div class="step"><span class="step-num">1.</span> PowerShell（管理者）を開く</div>
+  <div class="cmd">wsl --install</div>
+  <div class="step"><span class="step-num">2.</span> PCを再起動</div>
+  <div class="step"><span class="step-num">3.</span> ユーザー名・パスワードを設定</div>
+  <div class="tip">デフォルトでUbuntu 24.04が入る。他のディストリビューションも可能: <code>wsl --install -d Debian</code></div>
+</div>
+
+<div class="card">
+  <h2>基本コマンド</h2>
+  <div class="label">WSL起動</div>
+  <div class="cmd">wsl</div>
+  <div class="label">Windows側からLinuxのファイルにアクセス</div>
+  <div class="cmd">\\wsl.localhost\Ubuntu\home\ユーザー名\</div>
+  <div class="label">Linux側からWindowsのファイルにアクセス</div>
+  <div class="cmd">/mnt/c/Users/ユーザー名/</div>
+  <div class="label">WSLの状態確認</div>
+  <div class="cmd">wsl --status</div>
+  <div class="label">WSLのシャットダウン</div>
+  <div class="cmd">wsl --shutdown</div>
+</div>
+
+<div class="card">
+  <h2>初期設定（推奨）</h2>
+  <div class="label">パッケージ更新</div>
+  <div class="cmd">sudo apt update && sudo apt upgrade -y</div>
+  <div class="label">Git設定</div>
+  <div class="cmd">git config --global user.name "名前"</div>
+  <div class="cmd">git config --global user.email "email@example.com"</div>
+  <div class="label">Node.js（fnm経由）</div>
+  <div class="cmd">curl -fsSL https://fnm.vercel.app/install | bash</div>
+  <div class="cmd">fnm install 22 && fnm default 22</div>
+  <div class="label">Python</div>
+  <div class="cmd">sudo apt install python3 python3-pip -y</div>
+</div>
+
+<div class="card">
+  <h2>つまずきポイント</h2>
+  <table style="width:100%;border-collapse:collapse;font-size:0.9em;">
+    <tr style="background:var(--code-bg);"><th style="padding:8px;color:var(--accent);text-align:left;">症状</th><th style="padding:8px;color:var(--accent);text-align:left;">対処</th></tr>
+    <tr><td style="padding:8px;border-bottom:1px solid var(--border);">wslコマンドがない</td><td style="padding:8px;border-bottom:1px solid var(--border);">Windows Update → 再起動 → 再インストール</td></tr>
+    <tr><td style="padding:8px;border-bottom:1px solid var(--border);">画面閉じるとWSLが終了する</td><td style="padding:8px;border-bottom:1px solid var(--border);">Windows設定 → 電源 → カバー閉じても「何もしない」</td></tr>
+    <tr><td style="padding:8px;border-bottom:1px solid var(--border);">Windowsからのパスが長い</td><td style="padding:8px;border-bottom:1px solid var(--border);">エクスプローラーのアドレス欄に <code>\\wsl$</code> と入力</td></tr>
+    <tr><td style="padding:8px;">メモリ使用量が多い</td><td style="padding:8px;"><code>%UserProfile%\.wslconfig</code> で制限設定</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>.wslconfig の例</h2>
+  <div class="label">%UserProfile%\.wslconfig（Windows側）</div>
+  <pre style="background:var(--code-bg);padding:12px;border-radius:8px;font-size:0.85em;overflow-x:auto;color:var(--text);">[wsl2]
+memory=8GB
+processors=4
+swap=4GB</pre>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

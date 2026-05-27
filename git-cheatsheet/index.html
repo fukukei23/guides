@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Git 逆引きチートシート</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.9em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; position:relative; }
+  .cmd:active { background:var(--accent); color:var(--bg); }
+  .label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+  .desc { font-size:0.9em; margin-bottom:4px; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  a { color:var(--accent); text-decoration:none; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+<h1>Git 逆引きチートシート</h1>
+
+<div class="card">
+  <h2>初期設定</h2>
+  <div class="desc">名前とメールを設定</div>
+  <div class="cmd">git config --global user.name "名前"</div>
+  <div class="cmd">git config --global user.email "email@example.com"</div>
+  <div class="desc">設定確認</div>
+  <div class="cmd">git config --list</div>
+</div>
+
+<div class="card">
+  <h2>リポジトリ操作</h2>
+  <div class="label">新規作成</div>
+  <div class="cmd">git init</div>
+  <div class="label">クローン</div>
+  <div class="cmd">git clone https://github.com/user/repo.git</div>
+  <div class="label">状態確認</div>
+  <div class="cmd">git status</div>
+  <div class="label">変更履歴</div>
+  <div class="cmd">git log --oneline -10</div>
+</div>
+
+<div class="card">
+  <h2>コミット</h2>
+  <div class="label">全ファイルをステージング</div>
+  <div class="cmd">git add -A</div>
+  <div class="label">特定ファイルのみ</div>
+  <div class="cmd">git add file1.md file2.py</div>
+  <div class="label">コミット</div>
+  <div class="cmd">git commit -m "メッセージ"</div>
+  <div class="label">ステージング + コミット（一括）</div>
+  <div class="cmd">git commit -am "メッセージ"</div>
+  <div class="tip">追跡済みファイル（既にgit管理下）のみ -am で一括可能。新規ファイルは git add が必要</div>
+</div>
+
+<div class="card">
+  <h2>リモート操作</h2>
+  <div class="label">プッシュ</div>
+  <div class="cmd">git push</div>
+  <div class="label">初回プッシュ（追跡設定）</div>
+  <div class="cmd">git push -u origin main</div>
+  <div class="label">プル</div>
+  <div class="cmd">git pull</div>
+  <div class="label">リモート一覧</div>
+  <div class="cmd">git remote -v</div>
+  <div class="label">リモート変更（HTTPS→SSH）</div>
+  <div class="cmd">git remote set-url origin git@github.com:user/repo.git</div>
+</div>
+
+<div class="card">
+  <h2>ブランチ</h2>
+  <div class="label">一覧</div>
+  <div class="cmd">git branch -a</div>
+  <div class="label">作成 + 切り替え</div>
+  <div class="cmd">git checkout -b feature/new-feature</div>
+  <div class="label">切り替え</div>
+  <div class="cmd">git checkout main</div>
+  <div class="label">削除</div>
+  <div class="cmd">git branch -d feature/new-feature</div>
+</div>
+
+<div class="card">
+  <h2>取り消し</h2>
+  <div class="label">ステージング取消（ファイルはそのまま）</div>
+  <div class="cmd">git restore --staged file.md</div>
+  <div class="label">変更を破棄（元に戻す）</div>
+  <div class="cmd">git restore file.md</div>
+  <div class="label">直前のコミットを取り消し（変更は残る）</div>
+  <div class="cmd">git reset HEAD~1</div>
+  <div class="tip">git reset --hard は変更も消えるので注意！</div>
+</div>
+
+<div class="card">
+  <h2>確認・調査</h2>
+  <div class="label">差分確認</div>
+  <div class="cmd">git diff</div>
+  <div class="label">ステージング済み差分</div>
+  <div class="cmd">git diff --staged</div>
+  <div class="label">誰がいつ変更したか</div>
+  <div class="cmd">git blame file.md</div>
+  <div class="label">特定コミットの詳細</div>
+  <div class="cmd">git show abc1234</div>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

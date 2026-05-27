@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python基礎 学習ロードマップ</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.9em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; }
+  .cmd:active { background:var(--accent); color:var(--bg); }
+  .label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+  .desc { font-size:0.9em; margin-bottom:4px; }
+  pre { background:var(--code-bg); padding:12px; border-radius:8px; font-size:0.85em; overflow-x:auto; color:var(--text); margin:4px 0; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  a { color:var(--accent); text-decoration:none; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+<h1>Python基礎 学習ロードマップ</h1>
+
+<div class="card">
+  <h2>ステップ1: 変数と型</h2>
+  <pre># 数値
+x = 10          # 整数
+y = 3.14        # 小数
+name = "Python" # 文字列
+flag = True     # 真偽値
+
+# 型確認
+type(x)  # &lt;class 'int'&gt;</pre>
+</div>
+
+<div class="card">
+  <h2>ステップ2: リストと辞書</h2>
+  <pre># リスト（順序あり）
+fruits = ["apple", "banana", "cherry"]
+fruits[0]       # "apple"
+fruits.append("date")
+
+# 辞書（キーと値）
+person = {"name": "Yamada", "age": 30}
+person["name"]  # "Yamada"
+person["city"] = "Tokyo"</pre>
+</div>
+
+<div class="card">
+  <h2>ステップ3: 条件分岐</h2>
+  <pre>score = 85
+
+if score >= 90:
+    print("优秀")
+elif score >= 70:
+    print("良好")
+else:
+    print("要努力")</pre>
+</div>
+
+<div class="card">
+  <h2>ステップ4: 繰り返し</h2>
+  <pre># for文
+for fruit in fruits:
+    print(fruit)
+
+# range
+for i in range(5):
+    print(i)  # 0,1,2,3,4
+
+# while文
+count = 0
+while count < 5:
+    count += 1</pre>
+</div>
+
+<div class="card">
+  <h2>ステップ5: 関数</h2>
+  <pre>def greet(name):
+    return f"Hello, {name}!"
+
+result = greet("World")
+print(result)  # Hello, World!
+
+# デフォルト引数
+def add(a, b=0):
+    return a + b</pre>
+</div>
+
+<div class="card">
+  <h2>ステップ6: ファイル読み書き</h2>
+  <pre># 読み込み
+with open("data.txt", "r") as f:
+    content = f.read()
+
+# 書き込み
+with open("output.txt", "w") as f:
+    f.write("Hello")</pre>
+</div>
+
+<div class="card">
+  <h2>ステップ7: クラス（オブジェクト指向）</h2>
+  <pre>class Dog:
+    def __init__(self, name):
+        self.name = name
+
+    def bark(self):
+        return f"{self.name} says woof!"
+
+dog = Dog("Pochi")
+print(dog.bark())  # Pochi says woof!</pre>
+</div>
+
+<div class="card">
+  <h2>ステップ8: よく使う標準ライブラリ</h2>
+  <pre>import os           # ファイル・ディレクトリ操作
+import json         # JSON読み書き
+import datetime     # 日付時刻
+import re           # 正規表現
+import pathlib      # パス操作（推奨）</pre>
+  <div class="tip">pathlib.Path は os.path よりモダンで使いやすい</div>
+</div>
+
+<div class="card">
+  <h2>コード読解のコツ</h2>
+  <pre># 1. import を見る → 何のライブラリを使ってるか把握
+# 2. class/function を見る → 全体構造を把握
+# 3. if __name__ == "__main__" → エントリーポイント（開始地点）
+# 4. 上から下に読むのではなく、呼び出し元から追う</pre>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

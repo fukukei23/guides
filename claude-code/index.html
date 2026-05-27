@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code クイックスタート</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.9em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; position:relative; }
+  .cmd:active { background:var(--accent); color:var(--bg); }
+  table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.9em; }
+  th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+  td { padding:8px; border-bottom:1px solid var(--border); }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  .label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+  a { color:var(--accent); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+<h1>Claude Code クイックスタート</h1>
+
+<div class="card">
+  <h2>インストール</h2>
+  <div class="label">Node.js 18+ が必要</div>
+  <div class="cmd">npm install -g @anthropic-ai/claude-code</div>
+  <div class="label">バージョン確認</div>
+  <div class="cmd">claude --version</div>
+</div>
+
+<div class="card">
+  <h2>起動</h2>
+  <div class="label">プロジェクトディレクトリで実行</div>
+  <div class="cmd">cd ~/projects/my-app</div>
+  <div class="cmd">claude</div>
+  <div class="tip">プロジェクトの CLAUDE.md が自動読み込みされる</div>
+</div>
+
+<div class="card">
+  <h2>基本操作</h2>
+  <table>
+    <tr><th>操作</th><th>方法</th></tr>
+    <tr><td>質問する</td><td>そのままテキストを入力</td></tr>
+    <tr><td>ファイルを読む</td><td>「〇〇.mdを読んで」と指示</td></tr>
+    <tr><td>コードを修正</td><td>「〇〇のバグを修正して」と指示</td></tr>
+    <tr><td>終了</td><td><code>/exit</code> または <code>Ctrl+C</code></td></tr>
+    <tr><td>ヘルプ</td><td><code>/help</code></td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>便利なスラッシュコマンド</h2>
+  <table>
+    <tr><th>コマンド</th><th>説明</th></tr>
+    <tr><td><code>/help</code></td><td>ヘルプ表示</td></tr>
+    <tr><td><code>/exit</code></td><td>終了</td></tr>
+    <tr><td><code>/clear</code></td><td>会話履歴をクリア</td></tr>
+    <tr><td><code>/compact</code></td><td>会話を要約してコンテキスト節約</td></tr>
+    <tr><td><code>/cost</code></td><td>現在のセッションのトークン使用量</td></tr>
+    <tr><td><code>/model</code></td><td>モデル切り替え</td></tr>
+    <tr><td><code>/permissions</code></td><td>権限設定の確認</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>CLAUDE.md（プロジェクト設定）</h2>
+  <div class="label">プロジェクトルートに配置</div>
+  <div class="cmd">CLAUDE.md</div>
+  <div class="tip">コーディング規約、使用技術、禁止事項などを書いておくと自動で守ってくれる</div>
+  <div class="label">書き方の例</div>
+  <pre style="background:var(--code-bg);padding:12px;border-radius:8px;font-size:0.85em;overflow-x:auto;color:var(--text);">
+# プロジェクト名
+- 言語: Python 3.12
+- テスト: pytest
+- コミットメッセージは日本語で
+- rm -rf は禁止</pre>
+</div>
+
+<div class="card">
+  <h2>権限モード</h2>
+  <table>
+    <tr><th>モード</th><th>説明</th></tr>
+    <tr><td>default</td><td>危険操作のみ確認</td></tr>
+    <tr><td>plan</td><td>実行前に計画を提示</td></tr>
+    <tr><td>bypassPermissions</td><td>全自動（確認なし）</td></tr>
+  </table>
+  <div class="tip">settings.json の defaultMode で設定</div>
+</div>
+
+<div class="card">
+  <h2>tmuxと組み合わせる（常時稼働）</h2>
+  <div class="cmd">tmux new -s claude</div>
+  <div class="cmd">claude</div>
+  <div class="label">デタッチ（セッション維持）</div>
+  <div class="cmd">Ctrl+B → D</div>
+  <div class="label">復帰</div>
+  <div class="cmd">tmux attach -t claude</div>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>
