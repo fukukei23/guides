@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>私のClaude Code武器庫 — 全体図解説</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.8; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:6px; text-align:center; }
+  .subtitle { text-align:center; opacity:0.5; font-size:0.85em; margin-bottom:20px; }
+  h2 { color:var(--accent); font-size:1.1em; margin:24px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  h3 { color:var(--yellow); font-size:0.95em; margin:14px 0 6px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .card p { font-size:0.9em; margin-bottom:6px; }
+  .metaphor { background:#1a2540; border-left:3px solid var(--green); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  .metaphor strong { color:var(--green); }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.88em; }
+  th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+  td { padding:8px; border-bottom:1px solid var(--border); }
+  .tag { display:inline-block; background:#1a2540; color:var(--green); padding:1px 7px; border-radius:4px; font-size:0.75em; margin:2px; }
+  .arrow { text-align:center; color:var(--accent); font-size:1.2em; margin:6px 0; }
+  .flow-box { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin:10px 0; }
+  .flow-item { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:8px 12px; font-size:0.85em; text-align:center; min-width:80px; }
+  .flow-item.active { border-color:var(--accent); color:var(--accent); }
+  a { color:var(--accent); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+
+<h1>私のClaude Code武器庫</h1>
+<p class="subtitle">7つの仕組みで開発生産性を最大化している全体図</p>
+
+<div class="card">
+  <h2>はじめに — なぜこれが「武器」なのか</h2>
+  <p>普通、Claude Codeは「チャットでコードを書いてもらうツール」として使います。ですが、以下の7つの仕組みを組み合わせると、<strong>24時間自動で開発を続けるシステム</strong>になります。</p>
+  <div class="metaphor">
+    <strong>例え話:</strong> Claude Codeを「1人の優秀な助手」とするなら、この武器庫は「助手を束ねる工場の仕組み」です。助手がミスをしないように見張り（Hooks）、手順書を渡し（Skills）、外部ツールを使えるようにし（MCP）、複数の助手を同時に動かし（Subagent）、助手が忘れないようにメモを残し（Memory）、定期的に自動で仕事をさせる（CronCreate）、そしてコストを抑える（LLMルーティング）。
+  </div>
+</div>
+
+<div class="card">
+  <h2>全体図 — 7つの仕組みの関係</h2>
+  <div class="flow-box">
+    <div class="flow-item active">LLMルーティング<br><small>（コスト管理）</small></div>
+  </div>
+  <div class="arrow">↓ どのAIを使うか決める</div>
+  <div class="flow-box">
+    <div class="flow-item">Hooks<br><small>（見張り）</small></div>
+    <div class="flow-item">Skills<br><small>（手順書）</small></div>
+    <div class="flow-item">MCP<br><small>（外部ツール）</small></div>
+  </div>
+  <div class="arrow">↓ 実際の作業</div>
+  <div class="flow-box">
+    <div class="flow-item">Subagent<br><small>（並列実行）</small></div>
+    <div class="flow-item">Memory<br><small>（記憶）</small></div>
+  </div>
+  <div class="arrow">↓ 定期実行</div>
+  <div class="flow-box">
+    <div class="flow-item active">CronCreate<br><small>（自動ループ）</small></div>
+  </div>
+</div>
+
+<h2>① LLMルーティング — AIを使い分けてコスト削減</h2>
+<div class="card">
+  <h3>一言でいうと</h3>
+  <p>「高いAI（Sonnet）は必要な時だけ使って、普段は安いAI（GLM・MiniMax）で済ませる」仕組み。</p>
+
+  <h3>具体例</h3>
+  <table>
+    <tr><th>AIモデル</th><th>使う割合</th><th>月額コスト</th><th>役割</th></tr>
+    <tr><td>GLM-5.1</td><td>85%</td><td rowspan="3">合計 $180/月</td><td>日常の開発・コード生成</td></tr>
+    <tr><td>MiniMax</td><td>14%</td><td>GLMが失敗した時の予備</td></tr>
+    <tr><td>Sonnet</td><td>1%未満</td><td>難しい判断が必要な時だけ</td></tr>
+  </table>
+
+  <div class="metaphor">
+    <strong>例え話:</strong> 自動車で例えると、GLMは「通勤用の軽自動車」（安くて十分）、MiniMaxは「軽が壊れた時の代車」、Sonnetは「高速道路を飛ばす時のスポーツカー」です。普段は軽で十分ですが、必要な時だけスポーツカーを使います。
+  </div>
+
+  <div class="tip">
+    <strong>すごいところ:</strong> Sonnetだけを使うと月$1,000以上かかるところを、$180/月に抑えています。<strong>コスト82%削減</strong>。
+  </div>
+  <span class="tag">コスト削減</span> <span class="tag">GLM-5.1</span> <span class="tag">MiniMax</span>
+</div>
+
+<h2>② Hooks — 自動で見張る番人</h2>
+<div class="card">
+  <h3>一言でいうと</h3>
+  <p>「特定のタイミングで自動的にスクリプトを実行する」仕組み。AIが危険な操作をしようとしたら止めたり、作業ログを自動で取ったりします。</p>
+
+  <h3>5種類のHooks</h3>
+  <table>
+    <tr><th>種類</th><th>タイミング</th><th>何をするか</th></tr>
+    <tr><td>PreToolUse</td><td>ツールを使う<strong>前</strong></td><td>19種類の危険コマンドをブロック（例: rm -rf * を防止）</td></tr>
+    <tr><td>PostToolUse</td><td>ツールを使った<strong>後</strong></td><td>作業内容をCSVファイルに自動記録</td></tr>
+    <tr><td>SessionStart</td><td>セッション開始時</td><td>前回の続き情報を表示（ハンドオフ）</td></tr>
+    <tr><td>Stop</td><td>セッション終了時</td><td>日記に終了時刻を自動追記</td></tr>
+    <tr><td>Notification</td><td>エラー発生時</td><td>Discordに通知を送る</td></tr>
+  </table>
+
+  <div class="metaphor">
+    <strong>例え話:</strong> 工場の「安全管理者」です。作業員が危ない機械を触ろうとしたら止め（PreToolUse）、作業が終わったら記録を残し（PostToolUse）、シフトが始まったら前回の引き継ぎを表示し（SessionStart）、終わったら日報を書き（Stop）、トラブルが起きたら連絡する（Notification）。
+  </div>
+  <span class="tag">安全</span> <span class="tag">自動ログ</span> <span class="tag">Discord連携</span>
+</div>
+
+<h2>③ Skills — 再利用可能な手順書</h2>
+<div class="card">
+  <h3>一言でいうと</h3>
+  <p>「よく使う作業手順をテンプレート化して、いつでも呼び出せる」仕組み。</p>
+
+  <h3>主なSkills</h3>
+  <table>
+    <tr><th>Skill名</th><th>何をするか</th></tr>
+    <tr><td>TDD（テスト駆動開発）</td><td>「テストを先に書く → コードを書く → テストを通す」の流れを自動で実行</td></tr>
+    <tr><td>体系的デバッグ</td><td>バグを見つけた時の「原因特定→修正→確認」の手順をなぞる</td></tr>
+    <tr><td>コードレビュー</td><td>コードの品質をチェックする手順書</td></tr>
+    <tr><td>プラン執行</td><td>計画を立てて、1つずつ確実に実行する</td></tr>
+  </table>
+
+  <div class="metaphor">
+    <strong>例え話:</strong> 料理の「レシピ集」です。「カレーを作る時はこの手順」「パスタを作る時はこの手順」と決めておけば、毎回ゼロから考えなくて済みます。
+  </div>
+  <span class="tag">テンプレート</span> <span class="tag">TDD</span> <span class="tag">デバッグ</span>
+</div>
+
+<h2>④ MCP — 外部ツールとの橋渡し</h2>
+<div class="card">
+  <h3>一言でいうと</h3>
+  <p>「Claude Codeから、他のサービス（GitHub、ブラウザ、検索エンジン等）を直接操作できる」仕組み。</p>
+
+  <h3>統合している外部ツール（10+）</h3>
+  <table>
+    <tr><th>ツール</th><th>何ができるか</th></tr>
+    <tr><td>Brave Search</td><td>Web検索して最新情報を取得</td></tr>
+    <tr><td>GitHub</td><td>Issue作成、PR確認、コード検索</td></tr>
+    <tr><td>Playwright</td><td>ブラウザを自動操作してスクリーンショット撮影</td></tr>
+    <tr><td>Discord</td><td>メッセージ送受信、通知</td></tr>
+    <tr><td>Context7</td><td>最新のライブラリドキュメントを取得</td></tr>
+    <tr><td>Exa</td><td>精度の高いWeb検索</td></tr>
+  </table>
+
+  <div class="metaphor">
+    <strong>例え話:</strong> 「万能リモコン」です。TV、エアコン、照明、カーテン等、別々のメーカーの機器を1つのリモコンで操作できるようなもの。
+  </div>
+  <span class="tag">GitHub</span> <span class="tag">ブラウザ自動操作</span> <span class="tag">検索</span> <span class="tag">Discord</span>
+</div>
+
+<h2>⑤ Subagent — 複数の作業を同時に実行</h2>
+<div class="card">
+  <h3>一言でいうと</h3>
+  <p>「独立した複数のタスクを、4つ同時に別々のAIに頼める」仕組み。</p>
+
+  <h3>具体例</h3>
+  <p>例えば「コードレビュー」「テスト実行」「バグ調査」「ドキュメント作成」の4つを同時に進められます。</p>
+
+  <div class="flow-box">
+    <div class="flow-item active">メインセッション<br><small>（指揮役）</small></div>
+  </div>
+  <div class="arrow">↓ タスクを振り分け</div>
+  <div class="flow-box">
+    <div class="flow-item">Subagent A<br><small>コードレビュー</small></div>
+    <div class="flow-item">Subagent B<br><small>テスト実行</small></div>
+    <div class="flow-item">Subagent C<br><small>バグ調査</small></div>
+    <div class="flow-item">Subagent D<br><small>ドキュメント作成</small></div>
+  </div>
+  <div class="arrow">↓ 結果をまとめる</div>
+  <div class="flow-box">
+    <div class="flow-item active">メインセッション<br><small>（結果確認）</small></div>
+  </div>
+
+  <div class="metaphor">
+    <strong>例え話:</strong> 「4人の部下に同時に別の仕事を頼む」ようなもの。自分が1つずつ順番にやると4時間かかる作業が、4人で同時にやれば1時間で終わります。
+  </div>
+  <span class="tag">並列実行</span> <span class="tag">4倍速</span>
+</div>
+
+<h2>⑥ Memory — セッションをまたぐ記憶</h2>
+<div class="card">
+  <h3>一言でいうと</h3>
+  <p>「前のセッションで話した内容を、次のセッションでも覚えている」仕組み。</p>
+
+  <h3>3種類の記憶</h3>
+  <table>
+    <tr><th>種類</th><th>何を覚えているか</th><th>具体例</th></tr>
+    <tr><td>ユーザー情報</td><td>あなたの属性や好み</td><td>「公務員」「コードは読めない」「結論ファーストが好き」</td></tr>
+    <tr><td>フィードバック</td><td>過去に指示された方針</td><td>「featureブランチ禁止」「settings.json変更時はSSOTも更新」</td></tr>
+    <tr><td>プロジェクト</td><td>進行中の作業の文脈</td><td>「NexusCoreはv8.2.5」「reserve-optimizerはPhase 4-3完了」</td></tr>
+  </table>
+
+  <div class="metaphor">
+    <strong>例え話:</strong> 毎回違うバイトの店員が来るコンビニで、「いつもの」と言うだけで通じるシステム。店員は毎日代わるけど、お客さんの好みは記録されている。
+  </div>
+  <span class="tag">永続記憶</span> <span class="tag">コンテキスト維持</span>
+</div>
+
+<h2>⑦ CronCreate — 定期自動実行</h2>
+<div class="card">
+  <h3>一言でいうと</h3>
+  <p>「指定した時刻に、AIが自動でタスクを実行する」仕組み。人が寝ている間も開発が進みます。</p>
+
+  <h3>稼働中の自動タスク例</h3>
+  <table>
+    <tr><th>スケジュール</th><th>何をするか</th></tr>
+    <tr><td>5分ごと</td><td>obsidian-ssotの自動コミット＆push</td></tr>
+    <tr><td>毎時</td><td>NexusCore / atelier-kyo-manager の自律開発ループ</td></tr>
+    <tr><td>毎日0時</td><td>その日の日記テンプレートを自動生成</td></tr>
+    <tr><td>週3回</td><td>ナレッジリント（情報の整合性チェック）</td></tr>
+  </table>
+
+  <div class="metaphor">
+    <strong>例え話:</strong> 「工場の夜勤」です。日中は人間が指示を出し、夜間は自動で工場が動き続ける。朝起きたら、夜の間に部品ができあがっている状態。
+  </div>
+  <span class="tag">自動化</span> <span class="tag">無人開発</span> <span class="tag">定期実行</span>
+</div>
+
+<h2>まとめ — すべてを組み合わせるとどうなるか</h2>
+<div class="card">
+  <p>この7つを組み合わせることで、以下のような開発フローが実現できます:</p>
+  <table>
+    <tr><th>状況</th><th>何が起こるか</th></tr>
+    <tr><td>開発中</td><td>GLMが安くコード生成 → Hooksが危険操作を防止 → Memoryが文脈を維持</td></tr>
+    <tr><td>作業を分けたい時</td><td>Subagentが4つ同時に別タスクを実行</td></tr>
+    <tr><td>調べたい時</td><td>MCPがWeb検索・GitHub検索・ブラウザ操作を即座に実行</td></tr>
+    <tr><td>決まった手順</td><td>Skillsが「TDD」「デバッグ」等の手順を確実に実行</td></tr>
+    <tr><td>夜間・外出中</td><td>CronCreateが自動で定期タスクを実行</td></tr>
+    <tr><td>コスト管理</td><td>LLMルーティングが$180/月に抑える（通常$1,000+）</td></tr>
+  </table>
+  <div class="tip">
+    <strong>結果:</strong> 1人で20+のプロジェクトを同時に開発・運用できる環境が完成しています。
+  </div>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+
+</body>
+</html>
