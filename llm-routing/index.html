@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code LLM切り替えガイド</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.85em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; position:relative; white-space:pre-wrap; }
+  .cmd:active { background:var(--accent); color:var(--bg); }
+  table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.9em; }
+  th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+  td { padding:8px; border-bottom:1px solid var(--border); }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  .warn { background:#2a1a1a; border-left:3px solid var(--red); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  .label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+  a { color:var(--accent); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+  code { background:var(--code-bg); padding:2px 6px; border-radius:4px; font-size:0.9em; }
+</style>
+</head>
+<body>
+<h1>Claude Code LLM切り替えガイド</h1>
+
+<div class="card">
+  <h2>概要</h2>
+  <p>Claude CodeはAnthropic API互換のエンドポイントなら<strong>任意のLLMプロバイダー</strong>に接続できます。環境変数かsettings.jsonでBase URLとモデル名を変更するだけです。</p>
+</div>
+
+<div class="card">
+  <h2>設定方法</h2>
+  <div class="label">方法1: settings.json（推奨・永続的）</div>
+  <div class="cmd">~/.claude/settings.json の env セクション:
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://api.example.com/v1",
+    "ANTHROPIC_AUTH_TOKEN": "sk-xxxxx",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "モデル名",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "モデル名",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "モデル名"
+  }
+}</div>
+
+  <div class="label">方法2: 環境変数（一時的）</div>
+  <div class="cmd">export ANTHROPIC_BASE_URL="https://api.example.com/v1"
+export ANTHROPIC_AUTH_TOKEN="sk-xxxxx"
+claude</div>
+
+  <div class="label">方法3: ローカルプロキシ経由</div>
+  <div class="cmd">ANTHROPIC_BASE_URL="http://127.0.0.1:8787"</div>
+  <div class="tip">ローカルプロキシを使うと、使用量に応じてモデル自動切替やピーク時間ブロックなど高度なルーティングが可能</div>
+</div>
+
+<div class="card">
+  <h2>主要プロバイダー一覧</h2>
+  <table>
+    <tr><th>プロバイダー</th><th>Base URL</th><th>モデル例</th><th>備考</th></tr>
+    <tr><td>Anthropic（公式）</td><td><code>https://api.anthropic.com</code></td><td>claude-sonnet-4-6</td><td>OAuth or API Key</td></tr>
+    <tr><td>Z.AI</td><td><code>https://api.z.ai/api/anthropic</code></td><td>GLM-5.1, GLM-4.7</td><td>Anthropic互換</td></tr>
+    <tr><td>MiniMax</td><td><code>https://api.minimax.io/anthropic/v1</code></td><td>MiniMax-M2.7</td><td>Anthropic互換</td></tr>
+    <tr><td>OpenRouter</td><td><code>https://openrouter.ai/api/v1</code></td><td>多数</td><td>Anthropic互換</td></tr>
+    <tr><td>ローカルプロキシ</td><td><code>http://127.0.0.1:PORT</code></td><td>（設定次第）</td><td>カスタムルーティング</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>モデルマッピングの仕組み</h2>
+  <p>Claude Codeは内部的に3つのモデルスロットを使います。各スロットに任意のモデル名を割り当てられます。</p>
+  <table>
+    <tr><th>スロット</th><th>設定変数</th><th>デフォルト</th><th>用途</th></tr>
+    <tr><td>sonnet</td><td><code>ANTHROPIC_DEFAULT_SONNET_MODEL</code></td><td>claude-sonnet-4-6</td><td>標準タスク</td></tr>
+    <tr><td>opus</td><td><code>ANTHROPIC_DEFAULT_OPUS_MODEL</code></td><td>claude-opus-4-7</td><td>最高品質</td></tr>
+    <tr><td>haiku</td><td><code>ANTHROPIC_DEFAULT_HAIKU_MODEL</code></td><td>claude-haiku-4-5</td><td>高速・低コスト</td></tr>
+  </table>
+  <div class="tip">Z.AIの例: sonnet→GLM-4.7, opus→GLM-5.1, haiku→GLM-4.5-Air</div>
+</div>
+
+<div class="card">
+  <h2>設定例: Z.AI（GLM）</h2>
+  <div class="cmd">~/.claude/settings.json:
+"env": {
+  "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
+  "ANTHROPIC_AUTH_TOKEN": "zai-のAPIキー",
+  "ANTHROPIC_DEFAULT_SONNET_MODEL": "GLM-4.7",
+  "ANTHROPIC_DEFAULT_OPUS_MODEL": "GLM-5.1",
+  "ANTHROPIC_DEFAULT_HAIKU_MODEL": "GLM-4.5-Air"
+}</div>
+</div>
+
+<div class="card">
+  <h2>設定例: ローカルプロキシ経由（Z.AI + MiniMax自動切替）</h2>
+  <div class="cmd">~/.claude/settings.json:
+"env": {
+  "ANTHROPIC_BASE_URL": "http://127.0.0.1:8787",
+  "ANTHROPIC_AUTH_TOKEN": "zai-のAPIキー"
+}</div>
+  <div class="tip">プロキシ側で使用量・時間帯に応じてGLM↔MiniMaxを自動切替。モデルマッピングはプロキシ側で管理。</div>
+</div>
+
+<div class="card">
+  <h2>設定例: OpenRouter</h2>
+  <div class="cmd">~/.claude/settings.json:
+"env": {
+  "ANTHROPIC_BASE_URL": "https://openrouter.ai/api/v1",
+  "ANTHROPIC_AUTH_TOKEN": "sk-or-のAPIキー",
+  "ANTHROPIC_DEFAULT_SONNET_MODEL": "anthropic/claude-sonnet-4-6"
+}</div>
+</div>
+
+<div class="card">
+  <h2>トラブルシューティング</h2>
+  <table>
+    <tr><th>症状</th><th>原因</th><th>解決</th></tr>
+    <tr><td>接続エラー</td><td>Base URL間違い</td><td>URL末尾の <code>/v1</code> の有無を確認</td></tr>
+    <tr><td>401 Unauthorized</td><td>APIキー不一致</td><td><code>ANTHROPIC_AUTH_TOKEN</code> を確認</td></tr>
+    <tr><td>モデル不明エラー</td><td>モデル名間違い</td><td>プロバイダーのモデル一覧を確認</td></tr>
+    <tr><td>設定が反映されない</td><td>環境変数が優先</td><td>既存の <code>export</code> を確認、再起動</td></tr>
+  </table>
+  <div class="warn">設定変更後はClaude Codeの再起動が必要です（環境変数は起動時に読み込まれます）。</div>
+</div>
+
+<div class="card">
+  <h2>現在の設定確認方法</h2>
+  <div class="cmd"># プロキシの状態確認
+curl http://127.0.0.1:8787/proxy/status</div>
+  <div class="cmd"># settings.jsonの確認
+grep ANTHROPIC_BASE_URL ~/.claude/settings.json</div>
+  <div class="cmd"># 環境変数の確認
+echo $ANTHROPIC_BASE_URL</div>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>
