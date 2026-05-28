@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLAUDE.md 書き方ガイド</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:6px; text-align:center; }
+  .subtitle { text-align:center; opacity:0.5; font-size:0.85em; margin-bottom:20px; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.88em; }
+  th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+  td { padding:8px; border-bottom:1px solid var(--border); }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  .warn { background:#2e2a1a; border-left:3px solid var(--yellow); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  .bad { background:#2e1a1a; border-left:3px solid var(--red); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  .good { background:#1a2e1a; border-left:3px solid var(--green); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  code { background:var(--code-bg); padding:2px 6px; border-radius:4px; font-size:0.9em; }
+  pre { background:var(--code-bg); padding:12px; border-radius:8px; font-size:0.85em; overflow-x:auto; color:var(--text); }
+  a { color:var(--accent); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+
+<h1>CLAUDE.md 書き方ガイド</h1>
+<p class="subtitle">Claude Codeの行動を変える設定ファイルの書き方ノウハウ</p>
+
+<!-- CLAUDE.mdとは -->
+<div class="card">
+  <h2>CLAUDE.mdとは</h2>
+  <p style="font-size:0.9em;margin-bottom:8px;"><b>CLAUDE.md</b>は、Claude Codeがセッション開始時に自動で読み込む指示書です。</p>
+  <p style="font-size:0.9em;">プロジェクトのルール、技術スタック、禁止事項などを書いておくと、毎回同じ説明をする必要がなくなります。</p>
+  <div class="tip">
+    <code>/init</code> で対話的にCLAUDE.mdを作成できます。
+  </div>
+</div>
+
+<!-- 配置場所 -->
+<div class="card">
+  <h2>配置場所（3階層）</h2>
+  <table>
+    <tr><th>場所</th><th>スコープ</th><th>Git共有</th></tr>
+    <tr><td><code>~/.claude/CLAUDE.md</code></td><td>全プロジェクト共通（ユーザー設定）</td><td>しない</td></tr>
+    <tr><td><code>./CLAUDE.md</code></td><td>そのプロジェクトのみ</td><td>する</td></tr>
+    <tr><td><code>./CLAUDE.local.md</code></td><td>そのプロジェクトの個人設定</td><td>しない（自動.gitignore）</td></tr>
+    <tr><td><code>./.claude/rules/*.md</code></td><td>条件付きルール（特定ファイル時のみ適用）</td><td>する</td></tr>
+    <tr><td><code>./subdir/CLAUDE.md</code></td><td>サブディレクトリのファイル読み時のみ</td><td>する</td></tr>
+  </table>
+  <div class="tip">
+    上の階層から順に読み込まれます。プロジェクト固有の設定は <code>./CLAUDE.md</code> に、個人の好みは <code>CLAUDE.local.md</code> に書くのが基本。
+  </div>
+</div>
+
+<!-- サイズと精度 -->
+<div class="card">
+  <h2>サイズと精度の関係</h2>
+  <table>
+    <tr><th>行数</th><th>精度</th><th>評価</th></tr>
+    <tr><td>〜40行</td><td>最高</td><td>最も効果的。核心だけを書いた状態</td></tr>
+    <tr><td>〜100行</td><td>高い</td><td>推奨上限。十分に実用的</td></tr>
+    <tr><td>〜300行</td><td>やや低下</td><td>限界ライン。重要な指示が埋もれ始める</td></tr>
+    <tr><td>300行超</td><td>著しく低下</td><td>避けるべき。指示が無視される可能性大</td></tr>
+  </table>
+  <div class="warn">
+    <b>なぜ長いとダメなのか:</b> LLMには「理解できる指示数」に上限があります。長すぎると一部の指示が無視されたり、矛盾する指示に混乱したりします。システムプロンプト自体が約50個の指示を使っているため、CLAUDE.mdに書ける余裕は限られています。
+  </div>
+  <div class="tip">
+    <b>解決策:</b> 詳細は別ファイル（docs/配下等）に置き、CLAUDE.mdには「参照先」だけを書く。
+  </div>
+</div>
+
+<!-- 書くべきこと -->
+<div class="card">
+  <h2>書くべきこと</h2>
+  <table>
+    <tr><th>カテゴリ</th><th>内容</th><th>例</th></tr>
+    <tr><td>プロジェクト概要</td><td>何のプロジェクトか、技術スタック</td><td>「React Native（Expo SDK 52）のコンテンツクリエイター向けアプリ」</td></tr>
+    <tr><td>プロジェクト構造</td><td>主要ディレクトリの役割</td><td>「app/ = ルーティング、components/ = UI部品」</td></tr>
+    <tr><td>開発コマンド</td><td>ビルド・テスト・検証コマンド</td><td>「npm run dev」「npm test」</td></tr>
+    <tr><td>禁止事項</td><td>絶対にやってはいけないこと</td><td>「rm -rf禁止」「mainにforce push禁止」</td></tr>
+    <tr><td>重要な決定</td><td>なぜその技術・設計を選んだか</td><td>「認証はNextAuth.js（深層リンク対応のため）」</td></tr>
+    <tr><td>検証手順</td><td>変更後の確認方法</td><td>「変更後必ず: npm run typecheck && npm test」</td></tr>
+  </table>
+</div>
+
+<!-- 書かないこと -->
+<div class="card">
+  <h2>書かないこと</h2>
+  <table>
+    <tr><th>書かないこと</th><th>理由</th><th>代わりにやること</th></tr>
+    <tr><td>詳細なコードスタイル</td><td>LLMは既存コードから学習する</td><td>リンター（Biome/ESLint）を使う</td></tr>
+    <tr><td>当たり前のこと</td><td>「エラーハンドリングをして」等は不要</td><td>Claudeはすでに知っている</td></tr>
+    <tr><td>タスク固有の指示</td><td>特定APIの書き方等はCLAUDE.mdの役割外</td><td>スコープ付きルールを使う</td></tr>
+    <tr><td>一時的な修正ルール</td><td>「〇〇のバグを回避するために〜」</td><td>Hook または <code>/code-review</code> で対処</td></tr>
+  </table>
+</div>
+
+<!-- Before/After -->
+<div class="card">
+  <h2>良い例 / 悪い例</h2>
+
+  <h3 style="color:var(--red);">悪い例（長すぎ・詳細すぎ）</h3>
+  <div class="bad">
+<pre style="background:transparent;padding:0;"># プロジェクト設定
+このプロジェクトはReactアプリです。以下の規約を厳守してください。
+
+## コードスタイル
+- インデントはスペース2つ
+- 最大行長は80文字
+- 変数名はcamelCase
+- 関数名はsnake_case
+- クラス名はPascalCase
+- コメントは日本語で...
+
+## テスト
+- テストファイルは__tests__ディレクトリに配置
+- Jestを使用
+- テストカバレッジは90%以上
+- モックはsinonを使用
+...</pre>
+  </div>
+
+  <h3 style="color:var(--green);">良い例（核心だけ40行以内）</h3>
+  <div class="good">
+<pre style="background:transparent;padding:0;"># Content App — コンテンツ管理ツール
+
+## スタック
+- Frontend: Next.js 14, TypeScript, Tailwind CSS
+- Backend: Next.js API Routes, Prisma
+- DB: PostgreSQL / 認証: NextAuth.js
+
+## プロジェクト構造
+- app/ — App Router（ページ・API）
+- components/ — 共有UIコンポーネント
+- lib/ — ユーティリティ、ヘルパー
+- prisma/ — スキーマ定義、マイグレーション
+
+## コマンド
+- npm run dev — 開発サーバー起動
+- npm run typecheck — TypeScriptチェック
+- npm test — テスト実行
+
+## 検証
+変更後必ず: npm run typecheck && npm test
+
+## 主要パターン
+- 認証: NextAuth.js（lib/auth.ts参照）
+- データ取得: React Query + Prisma</pre>
+  </div>
+</div>
+
+<!-- Memory vs CLAUDE.md -->
+<div class="card">
+  <h2>Memory vs CLAUDE.md — 使い分け</h2>
+  <table>
+    <tr><th></th><th>CLAUDE.md</th><th>Memory</th></tr>
+    <tr><td>用途</td><td>プロジェクトの基本ルール</td><td>セッション間で保持したい知識</td></tr>
+    <tr><td>誰が書く</td><td>人間が手動で書く</td><td>Claudeが自動で記録</td></tr>
+    <tr><td>変更頻度</td><td>ほぼ変わらない</td><td>頻繁に更新される</td></tr>
+    <tr><td>内容例</td><td>「テストはpytest」「コミットは日本語」</td><td>「ユーザーはfeatureブランチ禁止を好む」</td></tr>
+    <tr><td>Git共有</td><td>プロジェクトなら共有</td><td>個人環境のみ</td></tr>
+  </table>
+  <div class="tip">
+    <b>基本方針:</b> プロジェクトの「変わらないルール」はCLAUDE.mdへ。「ユーザーの好みや学習結果」はMemoryへ。
+  </div>
+</div>
+
+<!-- チェックリスト -->
+<div class="card">
+  <h2>書く前のチェックリスト</h2>
+  <table>
+    <tr><th>確認項目</th><th></th></tr>
+    <tr><td>100行以内に収まっているか</td><td>核心だけを書く</td></tr>
+    <tr><td>すべての指示が「常に適用」されるか</td><td>特定タスク用ならルールファイルへ</td></tr>
+    <tr><td>プロジェクト概要が含まれているか</td><td>スタック・構造・目的</td></tr>
+    <tr><td>正確なビルド/テストコマンドがあるか</td><td>動かないコマンドは書かない</td></tr>
+    <tr><td>コードスタイルルールを書いていないか</td><td>リンターに任せる</td></tr>
+    <tr><td>「当たり前」を書いていないか</td><td>Claudeは知っている</td></tr>
+  </table>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+
+</body>
+</html>

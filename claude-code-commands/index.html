@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code コマンド＆スキル集</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:6px; text-align:center; }
+  .subtitle { text-align:center; opacity:0.5; font-size:0.85em; margin-bottom:20px; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.88em; }
+  th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+  td { padding:8px; border-bottom:1px solid var(--border); }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  .tag { display:inline-block; background:#1a2540; color:var(--green); padding:1px 7px; border-radius:4px; font-size:0.75em; margin:2px; }
+  .tag-star { background:#2e2a1a; color:var(--yellow); }
+  code { background:var(--code-bg); padding:2px 6px; border-radius:4px; font-size:0.9em; }
+  a { color:var(--accent); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+
+<h1>Claude Code コマンド＆スキル集</h1>
+<p class="subtitle">スラッシュコマンド全覧 ＋ 内蔵スキル一覧（2026年5月時点）</p>
+
+<div class="tip">
+  <code>/help</code> で常に最新の一覧を確認できます。バージョンにより利用可能なコマンドが異なる場合があります。
+</div>
+
+<!-- よく使うTop 15 -->
+<div class="card">
+  <h2>よく使うコマンド Top 15</h2>
+  <table>
+    <tr><th>コマンド</th><th>説明</th></tr>
+    <tr><td><code>/compact</code></td><td>会話を要約してコンテキスト節約 <span class="tag tag-star">必須</span></td></tr>
+    <tr><td><code>/model</code></td><td>モデル切り替え（Sonnet/Opus/Haiku等）</td></tr>
+    <tr><td><code>/cost</code></td><td>現在のセッションのトークン使用量・料金</td></tr>
+    <tr><td><code>/clear</code></td><td>会話履歴をクリア（新規開始）</td></tr>
+    <tr><td><code>/plan</code></td><td>実行前に計画を立てるモードに入る</td></tr>
+    <tr><td><code>/code-review</code></td><td>コードのバグ・品質をレビュー <span class="tag tag-star">便利</span></td></tr>
+    <tr><td><code>/review</code></td><td>PRをローカルでレビュー</td></tr>
+    <tr><td><code>/diff</code></td><td>変更差分を対話的に確認</td></tr>
+    <tr><td><code>/memory</code></td><td>CLAUDE.md・メモリファイルを編集</td></tr>
+    <tr><td><code>/context</code></td><td>コンテキスト使用量をビジュアル表示</td></tr>
+    <tr><td><code>/loop</code></td><td>同じプロンプトを繰り返し実行（自動化）</td></tr>
+    <tr><td><code>/run</code></td><td>アプリを起動して動作確認</td></tr>
+    <tr><td><code>/verify</code></td><td>ビルド＋実行で変更が動くか確認</td></tr>
+    <tr><td><code>/batch</code></td><td>大規模な変更を並列実行</td></tr>
+    <tr><td><code>/fast</code></td><td>高速モード切替（Opus高速出力）</td></tr>
+  </table>
+</div>
+
+<!-- セッション管理 -->
+<div class="card">
+  <h2>セッション管理</h2>
+  <table>
+    <tr><th>コマンド</th><th>説明</th></tr>
+    <tr><td><code>/exit</code></td><td>CLI終了（エイリアス: <code>/quit</code>）</td></tr>
+    <tr><td><code>/clear</code></td><td>会話クリア（エイリアス: <code>/reset</code> <code>/new</code>）</td></tr>
+    <tr><td><code>/add-dir &lt;path&gt;</code></td><td>作業ディレクトリを追加</td></tr>
+    <tr><td><code>/branch [name]</code></td><td>会話を分岐（エイリアス: <code>/fork</code>）</td></tr>
+    <tr><td><code>/resume [id]</code></td><td>過去のセッションを再開（エイリアス: <code>/continue</code>）</td></tr>
+    <tr><td><code>/background</code></td><td>バックグラウンドで実行（エイリアス: <code>/bg</code>）</td></tr>
+    <tr><td><code>/stop</code></td><td>バックグラウンドセッションを停止</td></tr>
+    <tr><td><code>/rename [name]</code></td><td>セッション名を変更</td></tr>
+    <tr><td><code>/export [file]</code></td><td>会話をテキストファイルに出力</td></tr>
+    <tr><td><code>/recap</code></td><td>セッションの1行サマリーを生成</td></tr>
+  </table>
+</div>
+
+<!-- コンテキスト・記憶 -->
+<div class="card">
+  <h2>コンテキスト・記憶</h2>
+  <table>
+    <tr><th>コマンド</th><th>説明</th></tr>
+    <tr><td><code>/compact</code></td><td>会話を要約してコンテキスト解放</td></tr>
+    <tr><td><code>/context [all]</code></td><td>コンテキスト使用量を色付きグリッドで表示</td></tr>
+    <tr><td><code>/memory</code></td><td>CLAUDE.mdとメモリファイルを管理</td></tr>
+    <tr><td><code>/init</code></td><td>プロジェクトにCLAUDE.mdを作成</td></tr>
+    <tr><td><code>/copy [N]</code></td><td>直前の回答をクリップボードにコピー</td></tr>
+  </table>
+</div>
+
+<!-- 作業・開発 -->
+<div class="card">
+  <h2>作業・開発</h2>
+  <table>
+    <tr><th>コマンド</th><th>説明</th></tr>
+    <tr><td><code>/plan [desc]</code></td><td>計画モードに入る（実行前に設計）</td></tr>
+    <tr><td><code>/goal [cond]</code></td><td>セッションの目標を設定</td></tr>
+    <tr><td><code>/loop [interval]</code></td><td>プロンプトを繰り返し実行（エイリアス: <code>/proactive</code>）</td></tr>
+    <tr><td><code>/batch &lt;inst&gt;</code></td><td>コードベース全体に大規模変更を並列適用</td></tr>
+    <tr><td><code>/run</code></td><td>アプリを起動して動作確認</td></tr>
+    <tr><td><code>/verify</code></td><td>ビルド＋テストで変更を検証</td></tr>
+    <tr><td><code>/tasks</code></td><td>バックグラウンドタスク一覧（エイリアス: <code>/bashes</code>）</td></tr>
+    <tr><td><code>/btw &lt;Q&gt;</code></td><td>本筋に関係ない質問をサクッと（履歴に残らない）</td></tr>
+  </table>
+</div>
+
+<!-- コード品質 -->
+<div class="card">
+  <h2>コード品質</h2>
+  <table>
+    <tr><th>コマンド</th><th>説明</th></tr>
+    <tr><td><code>/code-review [level]</code></td><td>コードレビュー（low/medium/high/max/ultra）</td></tr>
+    <tr><td><code>/review [PR]</code></td><td>PRをローカルでレビュー</td></tr>
+    <tr><td><code>/diff</code></td><td>対話型diffビューアーを開く</td></tr>
+    <tr><td><code>/simplify</code></td><td>コードをシンプルに整理（= <code>/code-review --fix</code>）</td></tr>
+    <tr><td><code>/security-review</code></td><td>保留中の変更をセキュリティ観点で分析</td></tr>
+    <tr><td><code>/debug</code></td><td>デバッグログを有効化</td></tr>
+  </table>
+  <div class="tip">
+    <code>/code-review ultra</code> は複数エージェントによる深いレビュー（<code>/ultrareview</code>と同等）
+  </div>
+</div>
+
+<!-- 設定・カスタマイズ -->
+<div class="card">
+  <h2>設定・カスタマイズ</h2>
+  <table>
+    <tr><th>コマンド</th><th>説明</th></tr>
+    <tr><td><code>/model [model]</code></td><td>モデル切替（デフォルトに保存）</td></tr>
+    <tr><td><code>/effort [level]</code></td><td>推論の深さ設定（low/medium/high/xhigh/max/ultracode）</td></tr>
+    <tr><td><code>/fast [on|off]</code></td><td>高速モード切替</td></tr>
+    <tr><td><code>/config</code></td><td>設定画面を開く（エイリアス: <code>/settings</code>）</td></tr>
+    <tr><td><code>/theme</code></td><td>カラーテーマ変更</td></tr>
+    <tr><td><code>/tui [mode]</code></td><td>ターミナルUI切替（default/fullscreen）</td></tr>
+    <tr><td><code>/statusline</code></td><td>ステータスライン設定</td></tr>
+    <tr><td><code>/color [color]</code></td><td>プロンプトバーの色を変更</td></tr>
+    <tr><td><code>/permissions</code></td><td>権限ルール管理（エイリアス: <code>/allowed-tools</code>）</td></tr>
+    <tr><td><code>/sandbox</code></td><td>サンドボックスモード切替</td></tr>
+    <tr><td><code>/mcp</code></td><td>MCPサーバー接続管理</td></tr>
+    <tr><td><code>/hooks</code></td><td>フック設定を表示</td></tr>
+    <tr><td><code>/agents</code></td><td>エージェント設定管理</td></tr>
+    <tr><td><code>/plugin</code></td><td>プラグイン管理</td></tr>
+    <tr><td><code>/skills</code></td><td>利用可能なスキル一覧</td></tr>
+  </table>
+</div>
+
+<!-- 分析・統計 -->
+<div class="card">
+  <h2>分析・統計</h2>
+  <table>
+    <tr><th>コマンド</th><th>説明</th></tr>
+    <tr><td><code>/cost</code></td><td>セッションのトークン使用量（エイリアス: <code>/usage</code> <code>/stats</code>）</td></tr>
+    <tr><td><code>/insights</code></td><td>セッション分析レポートを生成</td></tr>
+    <tr><td><code>/doctor</code></td><td>インストール診断・検証</td></tr>
+  </table>
+</div>
+
+<!-- 連携・外部 -->
+<div class="card">
+  <h2>連携・外部ツール</h2>
+  <table>
+    <tr><th>コマンド</th><th>説明</th></tr>
+    <tr><td><code>/desktop</code></td><td>デスクトップアプリにセッションを引き継ぎ</td></tr>
+    <tr><td><code>/mobile</code></td><td>モバイルアプリ用QRコード表示（エイリアス: <code>/ios</code> <code>/android</code>）</td></tr>
+    <tr><td><code>/voice [mode]</code></td><td>音声入力切替（hold/tap/off）</td></tr>
+    <tr><td><code>/feedback</code></td><td>フィードバック送信（エイリアス: <code>/bug</code> <code>/share</code>）</td></tr>
+    <tr><td><code>/release-notes</code></td><td>チェンジログを対話形式で表示</td></tr>
+    <tr><td><code>/login</code> / <code>/logout</code></td><td>Anthropic アカウント認証</td></tr>
+    <tr><td><code>/keybindings</code></td><td>キーバインド設定</td></tr>
+    <tr><td><code>/terminal-setup</code></td><td>ターミナルのキーバインド設定</td></tr>
+    <tr><td><code>/reload-plugins</code></td><td>プラグインを再読み込み</td></tr>
+    <tr><td><code>/reload-skills</code></td><td>スキルディレクトリを再スキャン</td></tr>
+  </table>
+</div>
+
+<!-- 内蔵スキル -->
+<div class="card">
+  <h2>内蔵スキル一覧</h2>
+  <p style="font-size:0.9em;margin-bottom:8px;">スキルは <code>/skill名</code> で呼び出せる事前定義のワークフローです。</p>
+  <table>
+    <tr><th>スキル</th><th>説明</th></tr>
+    <tr><td><code>/code-review</code></td><td>コードレビュー（バグ・品質チェック）</td></tr>
+    <tr><td><code>/batch</code></td><td>大規模変更の並列オーケストレーション</td></tr>
+    <tr><td><code>/run</code></td><td>アプリ起動＋動作確認</td></tr>
+    <tr><td><code>/verify</code></td><td>ビルド＋テストで変更検証</td></tr>
+    <tr><td><code>/loop</code></td><td>プロンプトの定期実行</td></tr>
+    <tr><td><code>/debug</code></td><td>デバッグログの有効化</td></tr>
+    <tr><td><code>/fewer-permission-prompts</code></td><td>権限プロンプトを減らす設定</td></tr>
+  </table>
+  <div class="tip">
+    プラグインで追加したスキルは <code>/skills</code> で確認できます。MCPサーバーが提供するプロンプトは <code>/mcp__サーバー名__プロンプト名</code> 形式で呼び出せます。
+  </div>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+
+</body>
+</html>

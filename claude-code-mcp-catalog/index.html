@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code MCPサーバーカタログ</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:6px; text-align:center; }
+  .subtitle { text-align:center; opacity:0.5; font-size:0.85em; margin-bottom:20px; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.88em; }
+  th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+  td { padding:8px; border-bottom:1px solid var(--border); }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  .tag { display:inline-block; background:#1a2540; color:var(--green); padding:1px 7px; border-radius:4px; font-size:0.75em; margin:2px; }
+  code { background:var(--code-bg); padding:2px 6px; border-radius:4px; font-size:0.9em; }
+  pre { background:var(--code-bg); padding:12px; border-radius:8px; font-size:0.85em; overflow-x:auto; color:var(--text); }
+  a { color:var(--accent); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+
+<h1>Claude Code MCPサーバーカタログ</h1>
+<p class="subtitle">外部ツールをClaude Codeに接続するMCPサーバー一覧</p>
+
+<!-- MCPとは -->
+<div class="card">
+  <h2>MCPとは</h2>
+  <p style="font-size:0.9em;margin-bottom:8px;"><b>MCP（Model Context Protocol）</b>は、Claude Codeから外部サービス（GitHub、ブラウザ、検索エンジン等）を直接操作するための標準プロトコルです。</p>
+  <p style="font-size:0.9em;">「万能リモコン」のようなもの — 別々のサービスを1つのインターフェースで操作できます。</p>
+  <div class="tip">
+    設定方法の詳細は <a href="../claude-mcp/">Claude Code MCP設定ガイド</a> を参照。
+  </div>
+</div>
+
+<!-- 代表的なサーバー -->
+<div class="card">
+  <h2>代表的なMCPサーバー</h2>
+  <table>
+    <tr><th>サーバー</th><th>できること</th><th>パッケージ</th></tr>
+    <tr>
+      <td><b>Brave Search</b></td>
+      <td>Web検索で最新情報を取得</td>
+      <td><code>brave-search-mcp-server</code></td>
+    </tr>
+    <tr>
+      <td><b>GitHub</b></td>
+      <td>Issue/PR/コード検索/リリース管理等</td>
+      <td>GitHub公式MCPサーバー</td>
+    </tr>
+    <tr>
+      <td><b>Playwright</b></td>
+      <td>ブラウザ自動操作・スクリーンショット</td>
+      <td><code>@anthropic-ai/mcp-playwright</code></td>
+    </tr>
+    <tr>
+      <td><b>Context7</b></td>
+      <td>ライブラリの最新ドキュメントを取得</td>
+      <td><code>context7</code></td>
+    </tr>
+    <tr>
+      <td><b>Exa</b></td>
+      <td>AI搭載の高精度Web検索</td>
+      <td><code>exa-mcp-server</code></td>
+    </tr>
+    <tr>
+      <td><b>Filesystem</b></td>
+      <td>ローカルファイルの読み書き</td>
+      <td><code>@anthropic-ai/mcp-filesystem</code></td>
+    </tr>
+    <tr>
+      <td><b>Postgres</b></td>
+      <td>PostgreSQLデータベース操作</td>
+      <td><code>@anthropic-ai/mcp-postgres</code></td>
+    </tr>
+    <tr>
+      <td><b>Memory</b></td>
+      <td>永続的なメモリ・会話履歴管理</td>
+      <td><code>@anthropic-ai/mcp-memory</code></td>
+    </tr>
+    <tr>
+      <td><b>Mermaid</b></td>
+      <td>テキストから図表（フローチャート等）を生成</td>
+      <td><code>mermaid-mcp-server</code></td>
+    </tr>
+    <tr>
+      <td><b>Discord</b></td>
+      <td>Discordチャンネルのメッセージ送受信</td>
+      <td>プラグイン経由</td>
+    </tr>
+    <tr>
+      <td><b>Slack</b></td>
+      <td>Slackワークスペース連携</td>
+      <td><code>@anthropic-ai/mcp-slack</code></td>
+    </tr>
+    <tr>
+      <td><b>Google Drive</b></td>
+      <td>Google Driveファイルのアクセス・管理</td>
+      <td><code>@anthropic-ai/mcp-gdrive</code></td>
+    </tr>
+  </table>
+</div>
+
+<!-- コミュニティサーバー -->
+<div class="card">
+  <h2>人気のコミュニティサーバー</h2>
+  <table>
+    <tr><th>サーバー</th><th>できること</th></tr>
+    <tr><td><b>Notion</b></td><td>Notionワークスペースのページ・DB操作</td></tr>
+    <tr><td><b>Obsidian</b></td><td>Obsidian Vaultのノート読み書き</td></tr>
+    <tr><td><b>Redis</b></td><td>Redisデータベースの読み書き</td></tr>
+    <tr><td><b>Web Reader</b></td><td>URLからページ内容をMarkdownで取得</td></tr>
+  </table>
+</div>
+
+<!-- ジャンル別おすすめ -->
+<div class="card">
+  <h2>ジャンル別おすすめ組み合わせ</h2>
+  <table>
+    <tr><th>用途</th><th>おすすめサーバー</th></tr>
+    <tr>
+      <td>Web開発</td>
+      <td>
+        <span class="tag">Filesystem</span>
+        <span class="tag">GitHub</span>
+        <span class="tag">Playwright</span>
+        <span class="tag">Brave Search</span>
+      </td>
+    </tr>
+    <tr>
+      <td>データ分析</td>
+      <td>
+        <span class="tag">Filesystem</span>
+        <span class="tag">Postgres</span>
+        <span class="tag">Exa</span>
+        <span class="tag">Context7</span>
+      </td>
+    </tr>
+    <tr>
+      <td>ドキュメント</td>
+      <td>
+        <span class="tag">Filesystem</span>
+        <span class="tag">Context7</span>
+        <span class="tag">Mermaid</span>
+        <span class="tag">Obsidian</span>
+      </td>
+    </tr>
+    <tr>
+      <td>チーム連携</td>
+      <td>
+        <span class="tag">GitHub</span>
+        <span class="tag">Slack</span>
+        <span class="tag">Discord</span>
+        <span class="tag">Notion</span>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<!-- 追加方法 -->
+<div class="card">
+  <h2>追加方法</h2>
+  <p style="font-size:0.9em;margin-bottom:8px;"><code>~/.claude/settings.json</code> の <code>mcpServers</code> に追加:</p>
+  <pre>{
+  "mcpServers": {
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "brave-search-mcp-server"],
+      "env": { "BRAVE_API_KEY": "你的APIキー" }
+    }
+  }
+}</pre>
+  <p style="font-size:0.9em;margin-top:8px;">または <code>/mcp</code> コマンドで対話的に追加できます。</p>
+  <div class="tip">
+    APIキーは <code>~/.secrets.env</code> に一元管理し、設定ファイルには変数名のみ書くのが安全です。
+  </div>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+
+</body>
+</html>

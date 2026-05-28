@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code 運用ノウハウ集</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:6px; text-align:center; }
+  .subtitle { text-align:center; opacity:0.5; font-size:0.85em; margin-bottom:20px; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.88em; }
+  th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+  td { padding:8px; border-bottom:1px solid var(--border); }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  .warn { background:#2e2a1a; border-left:3px solid var(--yellow); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  code { background:var(--code-bg); padding:2px 6px; border-radius:4px; font-size:0.9em; }
+  pre { background:var(--code-bg); padding:12px; border-radius:8px; font-size:0.85em; overflow-x:auto; color:var(--text); }
+  a { color:var(--accent); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+
+<h1>Claude Code 運用ノウハウ集</h1>
+<p class="subtitle">設定・コスト・セッション管理の実践Tips</p>
+
+<!-- settings.json -->
+<div class="card">
+  <h2>settings.json 主要設定</h2>
+  <p style="font-size:0.9em;margin-bottom:8px;">設定ファイル: <code>~/.claude/settings.json</code></p>
+  <table>
+    <tr><th>設定項目</th><th>説明</th><th>おすすめ値</th></tr>
+    <tr><td><code>defaultModel</code></td><td>デフォルトモデル</td><td>claude-sonnet-4-6（コスト重視）</td></tr>
+    <tr><td><code>defaultMode</code></td><td>権限モード</td><td>default（危険操作のみ確認）</td></tr>
+    <tr><td><code>hooks</code></td><td>自動実行スクリプト</td><td>PreToolUse（安全）/ Stop（日記）</td></tr>
+    <tr><td><code>mcpServers</code></td><td>MCPサーバー設定</td><td>用途に応じて追加</td></tr>
+    <tr><td><code>apiKeyHelper</code></td><td>APIキー取得コマンド</td><td>プロキシ経由の場合に設定</td></tr>
+  </table>
+  <div class="tip">
+    <code>/config</code> で設定画面を開けます。設定変更後はClaude Codeの再起動が必要な場合があります。
+  </div>
+</div>
+
+<!-- 権限モード -->
+<div class="card">
+  <h2>権限モードの選び方</h2>
+  <table>
+    <tr><th>モード</th><th>特徴</th><th>用途</th></tr>
+    <tr><td><b>default</b></td><td>危険操作のみ確認。基本は自動</td><td>日常の開発（推奨）</td></tr>
+    <tr><td><b>plan</b></td><td>実行前に必ず計画を提示</td><td>大規模変更・不慣れなコード</td></tr>
+    <tr><td><b>bypassPermissions</b></td><td>全自動（確認なし）</td><td>自律ループ・CronCreate実行時のみ</td></tr>
+  </table>
+  <div class="warn">
+    <b>bypassPermissions</b>は危険操作も確認なしで実行されます。信頼できるHookで安全網を作ってから使用してください。
+  </div>
+</div>
+
+<!-- コスト節約 -->
+<div class="card">
+  <h2>コスト節約術</h2>
+  <table>
+    <tr><th>方法</th><th>効果</th><th>やり方</th></tr>
+    <tr>
+      <td><b>こまめに /compact</b></td>
+      <td>コンテキスト削減 → トークン節約</td>
+      <td>長い会話の途中で <code>/compact</code> を実行</td>
+    </tr>
+    <tr>
+      <td><b>安いモデルを使う</b></td>
+      <td>Sonnet比で1/5〜1/10</td>
+      <td><code>/model</code> でHaiku等に切替 or プロキシでGLM等へ</td>
+    </tr>
+    <tr>
+      <td><b>不要ファイルを読まない</b></td>
+      <td>読み込みトークンの無駄を削減</td>
+      <td>CLAUDE.mdを短く。参照先方式にする</td>
+    </tr>
+    <tr>
+      <td><b>/context で監視</b></td>
+      <td>使用量を可視化</td>
+      <td><code>/context</code> でグリッド表示。80%超えたら <code>/compact</code></td>
+    </tr>
+    <tr>
+      <td><b>/cost で確認</b></td>
+      <td>リアルタイム料金把握</td>
+      <td><code>/cost</code> でセッション毎の使用量を確認</td>
+    </tr>
+  </table>
+  <div class="tip">
+    <b>最大のコスト削減:</b> LLMルーティング（GLM/MiniMax等の安いモデルに普段は振り分け、必要時だけSonnetを使う）で月額を80%以上削減できます。詳細は <a href="../llm-routing/">LLM切り替えガイド</a> を参照。
+  </div>
+</div>
+
+<!-- セッション管理 -->
+<div class="card">
+  <h2>セッション管理のコツ</h2>
+  <table>
+    <tr><th>状況</th><th>おすすめ</th></tr>
+    <tr><td>長時間作業</td><td>tmux内で起動。切断してもセッションが残る</td></tr>
+    <tr><td>コンテキストがいっぱい</td><td><code>/compact</code> で要約。80%超えたら必ず実行</td></tr>
+    <tr><td>話が脱線した</td><td><code>/clear</code> でリセット。必要なら <code>/branch</code> で分岐</td></tr>
+    <tr><td>別タスクに切り替え</td><td><code>/branch</code> で会話を保存してから <code>/clear</code></td></tr>
+    <tr><td>途中で抜ける</td><td><code>/resume</code> で再開可能。tmuxならデタッチでOK</td></tr>
+    <tr><td>複数作業を並行</td><td><code>/background</code> でバックグラウンド実行</td></tr>
+  </table>
+</div>
+
+<!-- よくある失敗 -->
+<div class="card">
+  <h2>よくある失敗パターン</h2>
+  <table>
+    <tr><th>失敗</th><th>原因</th><th>対策</th></tr>
+    <tr>
+      <td>コンテキスト超過で品質低下</td>
+      <td>会話が長すぎる</td>
+      <td>定期的に <code>/compact</code>。<code>/context</code> で監視</td>
+    </tr>
+    <tr>
+      <td>CLAUDE.mdの指示が無視される</td>
+      <td>ファイルが長すぎる（300行超）</td>
+      <td>100行以内に削る。詳細は別ファイルへ</td>
+    </tr>
+    <tr>
+      <td>セッション切断で作業消失</td>
+      <td>tmuxなしで起動</td>
+      <td><code>tmux new -s claude</code> 内で起動する</td>
+    </tr>
+    <tr>
+      <td>権限プロンプトが多すぎる</td>
+      <td>defaultモードでも頻繁に確認</td>
+      <td><code>/fewer-permission-prompts</code> を実行</td>
+    </tr>
+    <tr>
+      <td>MCPツールが使えない</td>
+      <td>サーバーが起動していない</td>
+      <td><code>/mcp</code> で接続状態確認。settings.jsonを確認</td>
+    </tr>
+    <tr>
+      <td>コミットメッセージが英語</td>
+      <td>CLAUDE.mdに言語指定がない</td>
+      <td>「コミットメッセージは日本語で」と明記</td>
+    </tr>
+  </table>
+</div>
+
+<!-- 自動化のコツ -->
+<div class="card">
+  <h2>自動化のコツ</h2>
+  <table>
+    <tr><th>仕組み</th><th>何ができるか</th><th>詳細</th></tr>
+    <tr><td>Hooks</td><td>危険コマンド防止・自動ログ・日記記録</td><td><a href="../claude-hooks/">Hooks設定ガイド</a></td></tr>
+    <tr><td>CronCreate</td><td>定期自動実行（5分毎・毎時・毎日）</td><td><a href="../claude-code-arsenal/">武器庫ガイド</a></td></tr>
+    <tr><td>/loop</td><td>同じタスクを繰り返し実行</td><td><code>/loop 300 バグを確認して修正して</code></td></tr>
+    <tr><td>/batch</td><td>複数ファイルに一括変更</td><td><code>/batch APIエンドポイントに認証を追加して</code></td></tr>
+    <tr><td>Subagent</td><td>4タスク同時並列実行</td><td>自動で判断・並列化される</td></tr>
+  </table>
+</div>
+
+<!-- 関連ガイド -->
+<div class="card">
+  <h2>関連ガイド</h2>
+  <table>
+    <tr><td><a href="../claude-code/">Claude Code クイックスタート</a></td><td>基本操作の全体像</td></tr>
+    <tr><td><a href="../claude-code-arsenal/">Claude Code 武器庫ガイド</a></td><td>7つの仕組みの概要</td></tr>
+    <tr><td><a href="../claude-code-commands/">コマンド＆スキル集</a></td><td>全スラッシュコマンド一覧</td></tr>
+    <tr><td><a href="../claude-md-guide/">CLAUDE.md 書き方ガイド</a></td><td>設定ファイルの書き方ノウハウ</td></tr>
+    <tr><td><a href="../claude-code-mcp-catalog/">MCPサーバーカタログ</a></td><td>外部ツール連携一覧</td></tr>
+    <tr><td><a href="../llm-routing/">LLM切り替えガイド</a></td><td>モデルの使い分け・コスト削減</td></tr>
+    <tr><td><a href="../claude-troubleshooting/">トラブルシューティング</a></td><td>エラー対応方法</td></tr>
+  </table>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+
+</body>
+</html>
