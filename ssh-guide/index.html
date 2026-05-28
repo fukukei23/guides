@@ -146,6 +146,22 @@
   </div>
 </div>
 
+<!-- tmuxあり/なし -->
+<input type="checkbox" id="s5" class="section-toggle">
+<label for="s5" class="section-label">▶ tmuxなしで直接起動してもいい？</label>
+<div class="section-content">
+  <div class="card">
+    <table>
+      <tr><th></th><th>tmuxなし</th><th>tmuxあり（推奨）</th></tr>
+      <tr><td>起動</td><td><code>claude</code> だけ</td><td><code>tmux new -s claude</code> → <code>claude</code></td></tr>
+      <tr><td>接続切れた時</td><td>Claude Codeも終了</td><td>バックグラウンドで動き続ける</td></tr>
+      <tr><td>再接続</td><td>最初からやり直し</td><td><code>tmux attach -t claude</code></td></tr>
+      <tr><td>用途</td><td>サクッと使う時</td><td>長時間作業・途中で離れる時</td></tr>
+    </table>
+    <div class="tip">スマホからは接続が切れやすいので tmux あり推奨</div>
+  </div>
+</div>
+
 <!-- つながらない時 -->
 <input type="checkbox" id="s4" class="section-toggle">
 <label for="s4" class="section-label">▶ つながらない時</label>
@@ -156,7 +172,10 @@
       <tr><td>パスワード聞かれる</td><td><code>yn4416@</code> を付けてるか確認</td></tr>
       <tr><td>Connection refused</td><td>PCでWSLターミナルを開く</td></tr>
       <tr><td>Time out</td><td>両デバイスのTailscale起動確認</td></tr>
+      <tr><td>Software caused connection abort</td><td>一時的な通信エラー。<code>ping 100.115.156.98</code> で確認後、SSH再試行</td></tr>
       <tr><td>画面乱れ</td><td><code>reset</code> or Termux再起動</td></tr>
+    </table>
+    <div class="tip" style="margin-top:8px;">pingが通るのにSSHが失敗する場合 → 少し待ってから <code>ssh yn4416@100.115.156.98</code> を再実行</div>
     </table>
   </div>
 </div>

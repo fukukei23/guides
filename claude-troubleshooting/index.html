@@ -101,6 +101,18 @@
   <div class="cmd">cd ~/projects/my-project && claude</div>
 </div>
 
+<div class="card">
+  <h2>スマホからのSSH接続トラブル</h2>
+  <table>
+    <tr><th>症状</th><th>原因</th><th>対処</th></tr>
+    <tr><td>Software caused connection abort</td><td>一時的な通信エラー</td><td><code>ping 100.115.156.98</code> で確認後、SSH再試行</td></tr>
+    <tr><td>Connection timed out</td><td>PCがスリープ or Tailscaleオフライン</td><td>PC画面をつける / Tailscale起動確認</td></tr>
+    <tr><td>tmux: not found</td><td>Termux（スマホ側）に入力してる</td><td>PC側で実行: 先にSSHで入ってから</td></tr>
+    <tr><td>wsl: not found</td><td>TermuxはLinux（WSLではない）</td><td>PC側のコマンド。SSHで入ってから使う</td></tr>
+    <tr><td>接続切れてClaudeが消えた</td><td>tmuxを使っていない</td><td>次回から <code>tmux new -s claude</code> 経由で起動</td></tr>
+  </table>
+</div>
+
 <script>function copyCmd(el){const t=el.textContent.trim();navigator.clipboard.writeText(t).then(()=>{el.style.background='var(--green)';el.style.color='var(--bg)';setTimeout(()=>{el.style.background='';el.style.color='';},500);});}</script>
 <a class="back" href="../">← ガイド一覧に戻る</a>
 </body>
