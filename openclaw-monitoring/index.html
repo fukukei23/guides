@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OpenClaw 運用監視ガイド</title>
+<style>
+:root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+.cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.9em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; }
+.cmd:active { background:var(--accent); color:var(--bg); }
+.label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+.desc { font-size:0.9em; margin-bottom:4px; }
+pre { background:var(--code-bg); padding:12px; border-radius:8px; font-size:0.85em; overflow-x:auto; color:var(--text); margin:4px 0; }
+.tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+.warn { background:#2e2a1a; border-left:3px solid var(--red); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.9em; }
+th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+td { padding:8px; border-bottom:1px solid var(--border); }
+a { color:var(--accent); text-decoration:none; }
+.back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+
+<h1>OpenClaw 運用監視ガイド</h1>
+
+<div class="card">
+  <h2>OpenClaw とは？</h2>
+  <p class="desc">OpenClawは、VPS（仮想サーバー）上で動く <strong>AIエージェントプラットフォーム</strong> です。</p>
+  <p class="desc">Docker Composeを使って複数のコンテナ（プログラムのまとまり）を一元管理しており、以下のような機能を提供しています：</p>
+  <ul style="margin:8px 0 0 20px;font-size:0.9em;">
+    <li>Discord Botによる自動応答</li>
+    <li>AIニュースの自動収集・投稿</li>
+    <li>動画の自動要約</li>
+    <li>各種APIの統合管理</li>
+  </ul>
+</div>
+
+<h2>日次ヘルスチェック</h2>
+<div class="card">
+  <p class="label">コンテナ全体の状態確認</p>
+  <div class="cmd">docker compose ps</div>
+  <p class="desc">すべてのコンテナが動いているか一目で確認できます。</p>
+</div>
+
+<div class="card">
+  <p class="label">最新ログの確認</p>
+  <div class="cmd">docker compose logs --tail=50</div>
+  <p class="desc">直近50行のログを表示。エラーが出ていないか確認します。</p>
+</div>
+
+<div class="tip">
+  毎朝1回、この2つのコマンドを実行する習慣をつけると安心です。
+</div>
+
+<h2>コンテナの状態の読み方</h2>
+<div class="card">
+  <table>
+    <tr><th>状態（STATUS）</th><th>意味</th><th>対応</th></tr>
+    <tr><td style="color:var(--green);">Up</td><td>正常稼働中</td><td>対応不要（OK）</td></tr>
+    <tr><td style="color:var(--red);">Restarting</td><td>何度も再起動を繰り返している</td><td>ログを確認して原因調査</td></tr>
+    <tr><td style="color:var(--yellow);">Exited</td><td>停止している</td><td>意図的でなければ再起動</td></tr>
+  </table>
+</div>
+
+<h2>主要コンテナ一覧</h2>
+<div class="card">
+  <table>
+    <tr><th>コンテナ名</th><th>役割</th><th>確認方法</th></tr>
+    <tr><td>gateway</td><td>メインAPIサーバー。すべての処理の中継地点</td><td><span class="cmd" style="display:inline;padding:4px 8px;">docker compose logs gateway --tail=20</span></td></tr>
+    <tr><td>provider-discord</td><td>Discord Bot。チャットへの反応を担当</td><td>Discord上でBotがオンラインか確認</td></tr>
+    <tr><td>news-collector</td><td>AIニュースの収集・要約</td><td>ニュース投稿チャンネルを確認</td></tr>
+    <tr><td>video-summarizer</td><td>動画の自動要約生成</td><td>投稿チャンネルを確認</td></tr>
+  </table>
+</div>
+
+<h2>ログの詳しい確認方法</h2>
+<div class="card">
+  <p class="label">特定コンテナのログを見る</p>
+  <div class="cmd">docker compose logs gateway --tail=20</div>
+  <p class="desc">「gateway」の部分を別のコンテナ名に変えれば、そのコンテナのログが見られます。</p>
+</div>
+
+<div class="card">
+  <p class="label">リアルタイムでログを監視する</p>
+  <div class="cmd">docker compose logs -f</div>
+  <p class="desc">新しいログがリアルタイムで表示されます。終了する場合は <strong>Ctrl+C</strong> を押します。</p>
+</div>
+
+<div class="tip">
+  <code>-f</code> は「follow（追跡）」の意味です。ログを流れ続けて見たい時に使います。
+</div>
+
+<h2>Discord Bot のオンライン確認</h2>
+<div class="card">
+  <p class="desc">Discordアプリを開き、Botが以下の状態であることを確認します：</p>
+  <ul style="margin:8px 0 0 20px;font-size:0.9em;">
+    <li>Botのアイコンに「オンライン」の緑色の丸が付いている</li>
+    <li>メンションに反応する（テストで <code>@bot ping</code> を送ってみる）</li>
+  </ul>
+</div>
+
+<div class="warn">
+  Botがオフラインの場合、<strong>provider-discord</strong> コンテナを再起動してください。<br>
+  詳細は「OpenClaw 再起動・復旧手順」ガイドを参照。
+</div>
+
+<h2>スケジュールジョブの確認</h2>
+<div class="card">
+  <p class="desc">以下のスケジュールで自動実行されています：</p>
+  <table>
+    <tr><th>時刻</th><th>タスク</th><th>頻度</th></tr>
+    <tr><td>04:00</td><td>バックアップ</td><td>毎日</td></tr>
+    <tr><td>07:00 / 19:00</td><td>AIニュース収集</td><td>1日2回</td></tr>
+    <tr><td>20:00</td><td>動画要約</td><td>毎日</td></tr>
+    <tr><td>6時間ごと</td><td>ヘルスチェック</td><td>1日4回</td></tr>
+  </table>
+</div>
+
+<div class="tip">
+  ジョブが実行されたかは、該当時刻以降のログに記録が残っているかで確認できます。
+</div>
+
+<h2>アラートパターン：ログで危険信号を見つける</h2>
+<div class="card">
+  <p class="desc">ログの中に以下のキーワードが含まれていたら要注意です：</p>
+  <table>
+    <tr><th>キーワード</th><th>意味</th><th>緊急度</th></tr>
+    <tr><td style="color:var(--red);">ERROR</td><td>何らかのエラーが発生</td><td>要確認</td></tr>
+    <tr><td style="color:var(--red);">FATAL</td><td>致命的なエラー。システム停止の可能性</td><td>至急対応</td></tr>
+    <tr><td style="color:var(--yellow);">connection refused</td><td>他のサービスへの接続に失敗</td><td>要確認</td></tr>
+    <tr><td style="color:var(--yellow);">timeout</td><td>通信がタイムアウト（時間切れ）</td><td>監視</td></tr>
+    <tr><td style="color:var(--yellow);">OOM / out of memory</td><td>メモリ不足</td><td>要対応</td></tr>
+  </table>
+</div>
+
+<div class="warn">
+  <strong>FATAL</strong> や <strong>OOM</strong> が続く場合、速やかに再起動・復旧手順を実行してください。
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+
+<script>function copyCmd(el){const t=el.textContent.trim();navigator.clipboard.writeText(t).then(()=>{el.style.background='var(--green)';el.style.color='var(--bg)';setTimeout(()=>{el.style.background='';el.style.color='';},500);});}</script>
+</body>
+</html>

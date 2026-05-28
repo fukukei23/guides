@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OpenClaw スケジュール一覧</title>
+<style>
+:root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+.cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.9em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; }
+.cmd:active { background:var(--accent); color:var(--bg); }
+.label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+.desc { font-size:0.9em; margin-bottom:4px; }
+pre { background:var(--code-bg); padding:12px; border-radius:8px; font-size:0.85em; overflow-x:auto; color:var(--text); margin:4px 0; }
+.tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+.warn { background:#2e2a1a; border-left:3px solid var(--red); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.9em; }
+th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+td { padding:8px; border-bottom:1px solid var(--border); }
+a { color:var(--accent); text-decoration:none; }
+.back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+
+<h1>OpenClaw スケジュール一覧</h1>
+
+<div class="card">
+  <p class="desc">OpenClawでは、複数のタスクが自動でスケジュール実行されています。<br>
+  このページでは、各タスクの実行時刻・内容・確認方法をまとめています。</p>
+</div>
+
+<h2>スケジュール一覧表</h2>
+<div class="card">
+  <table>
+    <tr><th>タスク名</th><th>実行時刻</th><th>頻度</th><th>概要</th></tr>
+    <tr><td style="color:var(--accent);">AIニュース収集</td><td>07:00 / 19:00</td><td>1日2回</td><td>AI関連ニュースを収集・要約してDiscordに投稿</td></tr>
+    <tr><td style="color:var(--accent);">動画要約</td><td>20:00</td><td>毎日</td><td>指定動画の要約を生成して投稿</td></tr>
+    <tr><td style="color:var(--green);">バックアップ</td><td>04:00</td><td>毎日</td><td>設定やデータの自動バックアップ</td></tr>
+    <tr><td style="color:var(--yellow);">ヘルスチェック</td><td>6時間ごと</td><td>1日4回</td><td>各コンテナの稼働状態を自動確認</td></tr>
+    <tr><td style="color:var(--yellow);">SSOT自動コミット</td><td>5分ごと</td><td>常時</td><td>知識ベースの変更を自動保存</td></tr>
+  </table>
+</div>
+
+<h2>AIニュース収集（07:00 / 19:00）</h2>
+<div class="card">
+  <p class="desc"><strong>何をする？</strong><br>
+  AI関連のニュースをRSSやAPIから収集し、重複を除去して重要度を判定。各記事を日本語で要約し、Discordチャンネルにフォーマット済みで投稿します。</p>
+  <p class="desc"><strong>実行確認方法：</strong></p>
+  <ul style="margin:4px 0 0 20px;font-size:0.9em;">
+    <li>Discordのニュース投稿チャンネルに新しいメッセージがあるか確認</li>
+    <li>ログに「news」関連の実行記録が残っているか確認</li>
+  </ul>
+  <div class="cmd">docker compose logs news-collector --tail=20</div>
+  <p class="desc"><strong>手動実行：</strong></p>
+  <div class="cmd">docker compose exec news-collector npm run collect</div>
+</div>
+
+<h2>動画要約（20:00）</h2>
+<div class="card">
+  <p class="desc"><strong>何をする？</strong><br>
+  指定された動画（YouTubeなど）の内容をテキスト化し、AIで要約を生成。Discordに要約結果を投稿します。ショート動画の自動生成も行う場合があります。</p>
+  <p class="desc"><strong>実行確認方法：</strong></p>
+  <ul style="margin:4px 0 0 20px;font-size:0.9em;">
+    <li>Discordの動画要約チャンネルに投稿があるか確認</li>
+    <li>ログに実行記録があるか確認</li>
+  </ul>
+  <div class="cmd">docker compose logs video-summarizer --tail=20</div>
+  <p class="desc"><strong>手動実行：</strong></p>
+  <div class="cmd">docker compose exec video-summarizer npm run summarize</div>
+</div>
+
+<h2>バックアップ（04:00）</h2>
+<div class="card">
+  <p class="desc"><strong>何をする？</strong><br>
+  OpenClawの設定ファイル、データベース、ログなどをアーカイブして安全な場所に保存します。万が一のデータ消失時に復旧できます。</p>
+  <p class="desc"><strong>実行確認方法：</strong></p>
+  <ul style="margin:4px 0 0 20px;font-size:0.9em;">
+    <li>バックアップディレクトリに最新のファイルがあるか確認</li>
+    <li>ログにバックアップ完了の記録があるか確認</li>
+  </ul>
+  <div class="cmd">docker compose logs --tail=30 | grep -i backup</div>
+  <p class="desc"><strong>結果の確認先：</strong>バックアップ保存ディレクトリ（環境依存）</p>
+</div>
+
+<h2>ヘルスチェック（6時間ごと）</h2>
+<div class="card">
+  <p class="desc"><strong>何をする？</strong><br>
+  各コンテナが正常に動いているか自動確認。問題があればDiscordにアラートを通知します。</p>
+  <p class="desc"><strong>実行確認方法：</strong></p>
+  <ul style="margin:4px 0 0 20px;font-size:0.9em;">
+    <li>問題がない場合、通知は来ない（＝正常）</li>
+    <li>Discordにアラートメッセージが来た場合は要対応</li>
+  </ul>
+  <p class="desc"><strong>手動確認：</strong></p>
+  <div class="cmd">docker compose ps</div>
+</div>
+
+<h2>SSOT自動コミット（5分ごと）</h2>
+<div class="card">
+  <p class="desc"><strong>何をする？</strong><br>
+  知識ベース（Obsidian SSOT）の変更を検知し、自動でGitにコミット・プッシュします。変更が失われるのを防ぎます。</p>
+  <p class="desc"><strong>実行確認方法：</strong></p>
+  <ul style="margin:4px 0 0 20px;font-size:0.9em;">
+    <li>Gitのコミット履歴に自動コミットが追加されているか確認</li>
+  </ul>
+  <div class="cmd">git log --oneline -10</div>
+</div>
+
+<h2>Discordチャンネル早見表</h2>
+<div class="card">
+  <table>
+    <tr><th>チャンネル</th><th>投稿される内容</th><th>関連スケジュール</th></tr>
+    <tr><td style="color:var(--accent);">#ai-news</td><td>AIニュースの要約</td><td>07:00 / 19:00</td></tr>
+    <tr><td style="color:var(--accent);">#video-summary</td><td>動画要約の結果</td><td>20:00</td></tr>
+    <tr><td style="color:var(--red);">#alerts</td><td>システムアラート・エラー通知</td><td>ヘルスチェック時（異常時のみ）</td></tr>
+    <tr><td style="color:var(--green);">#general</td><td>Botの応答・日常的なやり取り</td><td>常時</td></tr>
+  </table>
+</div>
+
+<div class="tip">
+  各チャンネル名は環境により異なる場合があります。実際のDiscordサーバーで確認してください。
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+
+<script>function copyCmd(el){const t=el.textContent.trim();navigator.clipboard.writeText(t).then(()=>{el.style.background='var(--green)';el.style.color='var(--bg)';setTimeout(()=>{el.style.background='';el.style.color='';},500);});}</script>
+</body>
+</html>

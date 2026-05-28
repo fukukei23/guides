@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OpenClaw AIニュースパイプライン</title>
+<style>
+:root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+.cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.9em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; }
+.cmd:active { background:var(--accent); color:var(--bg); }
+.label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+.desc { font-size:0.9em; margin-bottom:4px; }
+pre { background:var(--code-bg); padding:12px; border-radius:8px; font-size:0.85em; overflow-x:auto; color:var(--text); margin:4px 0; }
+.tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+.warn { background:#2e2a1a; border-left:3px solid var(--red); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.9em; }
+th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+td { padding:8px; border-bottom:1px solid var(--border); }
+a { color:var(--accent); text-decoration:none; }
+.back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+.step { background:var(--card); border:1px solid var(--border); border-left:4px solid var(--accent); border-radius:0 12px 12px 0; padding:16px; margin-bottom:16px; }
+.step-num { display:inline-block; background:var(--accent); color:var(--bg); width:28px; height:28px; text-align:center; line-height:28px; border-radius:50%; font-weight:bold; font-size:0.9em; margin-right:8px; }
+.flow { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:8px; margin:16px 0; }
+.flow-box { background:var(--code-bg); border:1px solid var(--border); border-radius:8px; padding:8px 16px; text-align:center; font-size:0.85em; min-width:120px; }
+.flow-arrow { color:var(--accent); font-size:1.2em; }
+</style>
+</head>
+<body>
+
+<h1>OpenClaw AIニュースパイプライン</h1>
+
+<div class="card">
+  <p class="desc">AI関連のニュースが、収集からDiscordへの投稿まで自動で処理される仕組み（パイプライン）を解説します。</p>
+</div>
+
+<h2>パイプライン全体の流れ</h2>
+<div class="card">
+  <div class="flow">
+    <div class="flow-box" style="border-color:var(--green);">
+      <div style="color:var(--green);">1. Collect</div>
+      <div style="font-size:0.8em;">収集</div>
+    </div>
+    <span class="flow-arrow">&rarr;</span>
+    <div class="flow-box" style="border-color:var(--yellow);">
+      <div style="color:var(--yellow);">2. Filter</div>
+      <div style="font-size:0.8em;">フィルタ</div>
+    </div>
+    <span class="flow-arrow">&rarr;</span>
+    <div class="flow-box" style="border-color:var(--accent);">
+      <div style="color:var(--accent);">3. Summarize</div>
+      <div style="font-size:0.8em;">要約</div>
+    </div>
+    <span class="flow-arrow">&rarr;</span>
+    <div class="flow-box" style="border-color:var(--text);">
+      <div>4. Format</div>
+      <div style="font-size:0.8em;">フォーマット</div>
+    </div>
+    <span class="flow-arrow">&rarr;</span>
+    <div class="flow-box" style="border-color:var(--green);">
+      <div style="color:var(--green);">5. Post</div>
+      <div style="font-size:0.8em;">投稿</div>
+    </div>
+  </div>
+  <div class="flow" style="margin-top:4px;">
+    <span class="flow-arrow">&darr;</span>
+  </div>
+  <div class="flow" style="margin-top:0;">
+    <div class="flow-box" style="border-color:var(--red);">
+      <div style="color:var(--red);">6. Video（任意）</div>
+      <div style="font-size:0.8em;">ショート動画生成</div>
+    </div>
+  </div>
+</div>
+
+<h2>各ステップの詳細</h2>
+
+<div class="step">
+  <h2 style="border:none;margin:0 0 8px;padding:0;"><span class="step-num">1</span> Collect（収集）</h2>
+  <table>
+    <tr><th style="width:100px;">入力</th><td>RSS フィード、外部API（Brave Search 等）</td></tr>
+    <tr><th>処理</th><td>複数のソースからAI関連ニュース記事のURL・タイトル・本文を取得</td></tr>
+    <tr><th>出力</th><td>未加工の記事データ一覧</td></tr>
+    <tr><th>技術</th><td>RSS Parser、HTTP Client、Brave Search API</td></tr>
+  </table>
+</div>
+
+<div class="step">
+  <h2 style="border:none;margin:0 0 8px;padding:0;"><span class="step-num">2</span> Filter（フィルタリング）</h2>
+  <table>
+    <tr><th style="width:100px;">入力</th><td>未加工の記事データ一覧</td></tr>
+    <tr><th>処理</th><td>
+      <ul style="margin:4px 0 0 16px;font-size:0.9em;">
+        <li>重複記事の除去（同じ話題の記事をまとめる）</li>
+        <li>重要度判定（GLM-5.1 / MiniMaxでAI関連の重要度をスコアリング）</li>
+        <li>カテゴリ分類（LLM、画像生成、ロボット等）</li>
+      </ul>
+    </td></tr>
+    <tr><th>出力</th><td>重複除去済み・重要度付きの記事リスト</td></tr>
+    <tr><th>技術</th><td>GLM-5.1、MiniMax（LLM API）</td></tr>
+  </table>
+</div>
+
+<div class="step">
+  <h2 style="border:none;margin:0 0 8px;padding:0;"><span class="step-num">3</span> Summarize（要約）</h2>
+  <table>
+    <tr><th style="width:100px;">入力</th><td>フィルタリング済みの記事リスト</td></tr>
+    <tr><th>処理</th><td>各記事の本文をAIで読み込み、日本語の要約を作成。重要ポイントを3〜5行にまとめる</td></tr>
+    <tr><th>出力</th><td>各記事の日本語要約テキスト</td></tr>
+    <tr><th>技術</th><td>GLM-5.1、MiniMax（LLM API）</td></tr>
+  </table>
+</div>
+
+<div class="step">
+  <h2 style="border:none;margin:0 0 8px;padding:0;"><span class="step-num">4</span> Format（フォーマット）</h2>
+  <table>
+    <tr><th style="width:100px;">入力</th><td>要約テキスト</td></tr>
+    <tr><th>処理</th><td>Discordで読みやすい形式に整形。絵文字、リンク、カテゴリタグ、見出しを追加</td></tr>
+    <tr><th>出力</th><td>Discord投稿用のフォーマット済みメッセージ</td></tr>
+    <tr><th>技術</th><td>テンプレートエンジン、Discord Embed</td></tr>
+  </table>
+</div>
+
+<div class="step">
+  <h2 style="border:none;margin:0 0 8px;padding:0;"><span class="step-num">5</span> Post（投稿）</h2>
+  <table>
+    <tr><th style="width:100px;">入力</th><td>フォーマット済みメッセージ</td></tr>
+    <tr><th>処理</th><td>Discord Botを通じて指定チャンネルに自動投稿</td></tr>
+    <tr><th>出力</th><td>Discordチャンネルに表示されたニュース投稿</td></tr>
+    <tr><th>技術</th><td>Discord.js / Discord API</td></tr>
+  </table>
+</div>
+
+<div class="step">
+  <h2 style="border:none;margin:0 0 8px;padding:0;"><span class="step-num">6</span> Video（ショート動画生成・任意）</h2>
+  <table>
+    <tr><th style="width:100px;">入力</th><td>要約テキスト</td></tr>
+    <tr><th>処理</th><td>Remotionを使って、要約内容をショート動画として自動生成</td></tr>
+    <tr><th>出力</th><td>MP4動画ファイル</td></tr>
+    <tr><th>技術</th><td>Remotion、FFmpeg</td></tr>
+  </table>
+</div>
+
+<h2>結果の確認先</h2>
+<div class="card">
+  <table>
+    <tr><th>確認先</th><th>内容</th></tr>
+    <tr><td style="color:var(--accent);">Discord #ai-news</td><td>ニュース要約の投稿結果</td></tr>
+    <tr><td style="color:var(--accent);">Discord #video-summary</td><td>動画要約の結果（Video有効時）</td></tr>
+    <tr><td>Dockerログ</td><td>各ステップの実行ログ</td></tr>
+  </table>
+</div>
+
+<h2>手動実行方法</h2>
+<div class="card">
+  <p class="label">ニュースパイプライン全体を手動実行</p>
+  <div class="cmd">docker compose exec news-collector npm run collect</div>
+  <p class="desc">スケジュールを待たずに、今すぐニュース収集を開始できます。</p>
+</div>
+
+<div class="card">
+  <p class="label">実行ログの確認</p>
+  <div class="cmd">docker compose logs news-collector --tail=30</div>
+  <p class="desc">最近の実行状況を確認できます。各ステップの進捗がログに出力されます。</p>
+</div>
+
+<div class="tip">
+  手動実行した場合も、結果は同じDiscordチャンネルに投稿されます。
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+
+<script>function copyCmd(el){const t=el.textContent.trim();navigator.clipboard.writeText(t).then(()=>{el.style.background='var(--green)';el.style.color='var(--bg)';setTimeout(()=>{el.style.background='';el.style.color='';},500);});}</script>
+</body>
+</html>

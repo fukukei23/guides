@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OpenClaw Docker Compose操作</title>
+<style>
+:root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+.cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.9em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; }
+.cmd:active { background:var(--accent); color:var(--bg); }
+.label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+.desc { font-size:0.9em; margin-bottom:4px; }
+pre { background:var(--code-bg); padding:12px; border-radius:8px; font-size:0.85em; overflow-x:auto; color:var(--text); margin:4px 0; }
+.tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+.warn { background:#2e2a1a; border-left:3px solid var(--red); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.9em; }
+th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+td { padding:8px; border-bottom:1px solid var(--border); }
+a { color:var(--accent); text-decoration:none; }
+.back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+
+<h1>OpenClaw Docker Compose操作</h1>
+
+<div class="card">
+  <p class="desc">OpenClawの運用に最低限必要なDocker Composeコマンドをまとめました。<br>
+  Dockerは「コンテナ（独立したプログラムの実行環境）」を管理するツールです。コマンドを叩くだけで操作できます。</p>
+</div>
+
+<h2>基本コマンド一覧</h2>
+<div class="card">
+  <table>
+    <tr><th>コマンド</th><th>説明</th><th>使用場面</th></tr>
+    <tr>
+      <td><div class="cmd" style="margin:0;padding:6px 10px;font-size:0.85em;">docker compose ps</div></td>
+      <td>コンテナの状態確認</td>
+      <td>毎日のヘルスチェック</td>
+    </tr>
+    <tr>
+      <td><div class="cmd" style="margin:0;padding:6px 10px;font-size:0.85em;">docker compose up -d</div></td>
+      <td>コンテナをバックグラウンドで起動</td>
+      <td>起動・再起動時</td>
+    </tr>
+    <tr>
+      <td><div class="cmd" style="margin:0;padding:6px 10px;font-size:0.85em;">docker compose down</div></td>
+      <td>全コンテナを停止</td>
+      <td>メンテナンス・設定変更時</td>
+    </tr>
+    <tr>
+      <td><div class="cmd" style="margin:0;padding:6px 10px;font-size:0.85em;">docker compose restart サービス名</div></td>
+      <td>特定のコンテナだけ再起動</td>
+      <td>一部のサービスが不調な時</td>
+    </tr>
+    <tr>
+      <td><div class="cmd" style="margin:0;padding:6px 10px;font-size:0.85em;">docker compose logs --tail=20</div></td>
+      <td>最新20行のログを表示</td>
+      <td>エラー確認</td>
+    </tr>
+    <tr>
+      <td><div class="cmd" style="margin:0;padding:6px 10px;font-size:0.85em;">docker compose logs -f</div></td>
+      <td>リアルタイムでログを監視</td>
+      <td>問題の調査中</td>
+    </tr>
+    <tr>
+      <td><div class="cmd" style="margin:0;padding:6px 10px;font-size:0.85em;">docker stats</div></td>
+      <td>リソース使用量を表示</td>
+      <td>動作が重い時の調査</td>
+    </tr>
+  </table>
+</div>
+
+<div class="tip">
+  <code>-d</code> は「detach」の意味で、バックグラウンドで動かすという指定です。これがないとターミナルが専有されます。<br>
+  <code>-f</code> は「follow」の意味で、ログをリアルタイムで追いかけ続けます。終了は Ctrl+C です。
+</div>
+
+<h2>OpenClawサービス一覧</h2>
+<div class="card">
+  <p class="desc">OpenClawは複数のサービス（コンテナ）で構成されています。以下は主要なサービス一覧です。</p>
+  <table>
+    <tr><th>サービス名</th><th>役割</th><th>トラブル時の影響</th></tr>
+    <tr>
+      <td style="color:var(--accent);">gateway</td>
+      <td>メインAPIサーバー。全サービスの中継点</td>
+      <td style="color:var(--red);">全機能が停止</td>
+    </tr>
+    <tr>
+      <td style="color:var(--accent);">provider-discord</td>
+      <td>Discord Bot。チャット応答を担当</td>
+      <td style="color:var(--yellow);">Botがオフラインになる</td>
+    </tr>
+    <tr>
+      <td style="color:var(--accent);">caddy</td>
+      <td>リバースプロキシ。通信を適切に振り分け</td>
+      <td style="color:var(--red);">外部からのアクセス不可</td>
+    </tr>
+    <tr>
+      <td style="color:var(--accent);">news-collector</td>
+      <td>AIニュースの自動収集・要約</td>
+      <td style="color:var(--yellow);">ニュースが投稿されない</td>
+    </tr>
+    <tr>
+      <td style="color:var(--accent);">video-summarizer</td>
+      <td>動画の自動要約生成</td>
+      <td style="color:var(--yellow);">動画要約が生成されない</td>
+    </tr>
+  </table>
+</div>
+
+<h2>ディレクトリ構造</h2>
+<div class="card">
+  <p class="desc">Docker Compose関連のファイルは以下の場所にあります：</p>
+  <pre>openclaw/
+  ├── docker-compose.yml    ← コンテナ構成の定義ファイル
+  ├── .env                  ← 環境変数（APIキー等）
+  ├── gateway/              ← gatewayサービスのコード
+  ├── provider-discord/     ← Discord Botのコード
+  ├── news-collector/       ← ニュース収集のコード
+  ├── video-summarizer/     ← 動画要約のコード
+  └── caddy/                ← Caddy（プロキシ）の設定</pre>
+</div>
+
+<div class="warn">
+  <code>.env</code>ファイルにはAPIキーなどの秘密情報が含まれています。絶対に公開しないでください。
+</div>
+
+<h2>よく使うワークフロー</h2>
+
+<div class="card">
+  <h2 style="border:none;margin:0 0 8px;padding:0;">確認 → 再起動 → 検証</h2>
+  <p class="desc">最も基本的な運用パターンです。問題を見つけたら再起動し、直ったか確認します。</p>
+  <ol style="margin:8px 0 0 20px;font-size:0.9em;">
+    <li><strong>確認：</strong>状態とログを見る</li>
+  </ol>
+  <div class="cmd">docker compose ps</div>
+  <div class="cmd">docker compose logs --tail=30</div>
+  <ol start="2" style="margin:8px 0 0 20px;font-size:0.9em;">
+    <li><strong>再起動：</strong>問題のコンテナを再起動</li>
+  </ol>
+  <div class="cmd">docker compose restart gateway</div>
+  <ol start="3" style="margin:8px 0 0 20px;font-size:0.9em;">
+    <li><strong>検証：</strong>状態を再確認</li>
+  </ol>
+  <div class="cmd">docker compose ps</div>
+</div>
+
+<div class="card">
+  <h2 style="border:none;margin:0 0 8px;padding:0;">設定変更時の手順</h2>
+  <p class="desc">.envファイルを編集した後は、down → up で再作成が必要です。</p>
+  <div class="cmd">docker compose down && docker compose up -d</div>
+  <div class="warn" style="margin-top:8px;">
+    <code>restart</code>では.envの変更が反映されません。必ず <code>down</code> → <code>up</code> の手順を使ってください。
+  </div>
+</div>
+
+<div class="card">
+  <h2 style="border:none;margin:0 0 8px;padding:0;">メモリ問題の調査</h2>
+  <p class="desc">動作が遅い場合、メモリ使用量を確認します。</p>
+  <div class="cmd">docker stats</div>
+  <p class="desc">各コンテナのCPU・メモリ使用量がリアルタイムで表示されます。異常に高いコンテナがあれば再起動を検討します。終了は Ctrl+C です。</p>
+</div>
+
+<div class="tip">
+  <strong>コマンドのクリックについて：</strong>上記のコマンドボックスをクリックすると、コマンドがクリップボードにコピーされます。ターミナルに貼り付けて実行してください。
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+
+<script>function copyCmd(el){const t=el.textContent.trim();navigator.clipboard.writeText(t).then(()=>{el.style.background='var(--green)';el.style.color='var(--bg)';setTimeout(()=>{el.style.background='';el.style.color='';},500);});}</script>
+</body>
+</html>

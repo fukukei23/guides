@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OpenClaw 再起動・復旧手順</title>
+<style>
+:root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+.cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.9em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; }
+.cmd:active { background:var(--accent); color:var(--bg); }
+.label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+.desc { font-size:0.9em; margin-bottom:4px; }
+pre { background:var(--code-bg); padding:12px; border-radius:8px; font-size:0.85em; overflow-x:auto; color:var(--text); margin:4px 0; }
+.tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+.warn { background:#2e2a1a; border-left:3px solid var(--red); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.9em; }
+th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+td { padding:8px; border-bottom:1px solid var(--border); }
+a { color:var(--accent); text-decoration:none; }
+.back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+
+<h1>OpenClaw 再起動・復旧手順</h1>
+
+<div class="card">
+  <h2>まず初めに：状況を把握する</h2>
+  <p class="desc">何が起きているかを確認してから対応しましょう。以下の順番で確認します：</p>
+  <ol style="margin:8px 0 0 20px;font-size:0.9em;">
+    <li>コンテナの状態を見る</li>
+    <li>ログで原因を探る</li>
+    <li>問題のコンテナを特定する</li>
+  </ol>
+</div>
+
+<div class="card">
+  <p class="label">Step 1: コンテナ状態確認</p>
+  <div class="cmd">docker compose ps</div>
+  <p class="desc">どのコンテナが「Up」で、どれが「Exited」や「Restarting」か確認します。</p>
+</div>
+
+<div class="card">
+  <p class="label">Step 2: ログで原因を探る</p>
+  <div class="cmd">docker compose logs --tail=50</div>
+  <p class="desc">赤い「ERROR」や「FATAL」が含まれていないか確認します。</p>
+</div>
+
+<div class="card">
+  <p class="label">Step 3: 特定コンテナのログを見る</p>
+  <div class="cmd">docker compose logs gateway --tail=30</div>
+  <p class="desc">怪しいコンテナ名に置き換えて、詳細なログを確認します。</p>
+</div>
+
+<h2>フル再起動（すべてやり直す）</h2>
+<div class="card">
+  <p class="desc">すべてのコンテナを停止して、再度起動します。原因不明の時はまずこれを試します。</p>
+  <div class="cmd">cd /path/to/openclaw && docker compose down && docker compose up -d</div>
+  <div class="warn">
+    <strong>注意：</strong>実際のパス（/path/to/openclaw）は環境に合わせて変更してください。<br>
+    <code>down</code> で全停止 → <code>up -d</code> でバックグラウンド起動の順番です。
+  </div>
+</div>
+
+<h2>個別コンテナの再起動</h2>
+<div class="card">
+  <p class="desc">特定のコンテナだけ問題がある場合、それだけ再起動できます。</p>
+  <p class="label">例：gatewayコンテナを再起動</p>
+  <div class="cmd">docker compose restart gateway</div>
+  <p class="desc">他のサービスは止まらず、指定したコンテナだけ再起動されます。</p>
+</div>
+
+<div class="tip">
+  個別再起動は他のサービスに影響しないため、まずはこれを試すのが安全です。
+</div>
+
+<h2>環境変数の変更後の手順</h2>
+<div class="card">
+  <p class="desc">.envファイル（設定ファイル）を編集した場合は、コンテナの再作成が必要です。</p>
+  <ol style="margin:8px 0 0 20px;font-size:0.9em;">
+    <li>.envファイルを編集する</li>
+    <li>以下のコマンドで再起動</li>
+  </ol>
+  <div class="cmd">docker compose down && docker compose up -d</div>
+  <div class="warn">
+    <strong>restartでは反映されません。</strong> down → up の手順が必要です。
+  </div>
+</div>
+
+<h2>VPSへの接続方法</h2>
+<div class="card">
+  <p class="label">SSHで接続（ホスト名を使う場合）</p>
+  <div class="cmd">ssh openclaw-vps</div>
+  <p class="label">TailscaleのローカルIPを使う場合</p>
+  <div class="cmd">ssh user@100.x.x.x</div>
+  <p class="desc">Tailscaleを使っている場合、プライベートIPで直接接続できます。</p>
+</div>
+
+<h2>よくある復旧シナリオ</h2>
+
+<div class="card">
+  <h2 style="border:none;margin:0;padding:0;">Botがオフラインになった</h2>
+  <p class="desc"><strong>症状：</strong>Discord上でBotがオフライン表示</p>
+  <p class="desc"><strong>対応：</strong></p>
+  <div class="cmd">docker compose restart provider-discord</div>
+  <p class="desc">再起動後、DiscordでBotがオンラインに戻るか確認します。</p>
+  <div class="tip">戻らない場合は、フル再起動を試してください。Discord Botのトークン（.env内）が正しいかも確認。</div>
+</div>
+
+<div class="card">
+  <h2 style="border:none;margin:0;padding:0;">ニュースが収集されない</h2>
+  <p class="desc"><strong>症状：</strong>ニュースチャンネルに新しい投稿がない</p>
+  <p class="desc"><strong>対応：</strong></p>
+  <div class="cmd">docker compose restart news-collector</div>
+  <p class="desc">それでも動かない場合、APIキーが正しく設定されているか .env を確認します。</p>
+</div>
+
+<div class="card">
+  <h2 style="border:none;margin:0;padding:0;">メモリ使用量が高い</h2>
+  <p class="desc"><strong>症状：</strong>動作が遅い、OOMエラーが出る</p>
+  <p class="desc"><strong>対応：</strong></p>
+  <div class="cmd">docker stats</div>
+  <p class="desc">どのコンテナがメモリを大量消費しているか確認し、そのコンテナを再起動します。</p>
+  <div class="cmd">docker compose restart （重いコンテナ名）</div>
+</div>
+
+<div class="card">
+  <h2 style="border:none;margin:0;padding:0;">VPS再起動後の復旧</h2>
+  <p class="desc"><strong>症状：</strong>VPS自体が再起動された</p>
+  <p class="desc"><strong>対応：</strong></p>
+  <div class="cmd">docker compose up -d</div>
+  <p class="desc">Dockerが自動起動に設定されていない場合、手動で起動が必要です。</p>
+</div>
+
+<h2>再起動後の確認手順</h2>
+<div class="card">
+  <p class="desc">再起動が完了したら、以下を確認してください：</p>
+  <ol style="margin:8px 0 0 20px;font-size:0.9em;">
+    <li><strong>全コンテナがUpか確認</strong></li>
+  </ol>
+  <div class="cmd">docker compose ps</div>
+  <p class="desc">すべてのコンテナのSTATUSが「Up」になっていることを確認。</p>
+  <ol start="2" style="margin:8px 0 0 20px;font-size:0.9em;">
+    <li><strong>Discord Botがオンラインか確認</strong></li>
+  </ol>
+  <p class="desc">DiscordアプリでBotのステータスを確認。</p>
+  <ol start="3" style="margin:8px 0 0 20px;font-size:0.9em;">
+    <li><strong>エラーログがないか確認</strong></li>
+  </ol>
+  <div class="cmd">docker compose logs --tail=20</div>
+  <p class="desc">ERRORやFATALが含まれていないことを確認。</p>
+</div>
+
+<div class="tip">
+  <strong>復旧確認の3点セット：</strong><br>
+  ① 全コンテナUp　② Botオンライン　③ エラーログなし
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+
+<script>function copyCmd(el){const t=el.textContent.trim();navigator.clipboard.writeText(t).then(()=>{el.style.background='var(--green)';el.style.color='var(--bg)';setTimeout(()=>{el.style.background='';el.style.color='';},500);});}</script>
+</body>
+</html>
