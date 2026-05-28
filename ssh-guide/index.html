@@ -120,6 +120,23 @@
   </div>
 </div>
 
+<!-- 新しいスマホを追加 -->
+<input type="checkbox" id="s6" class="section-toggle">
+<label for="s6" class="section-label">▶ 新しいスマホを追加する（4ステップ）</label>
+<div class="section-content">
+  <div class="card">
+    <p style="font-size:0.95em;margin-bottom:12px;"><b>Step 1</b>: Play Storeで「Tailscale」インストール → 同じアカウントでログイン → VPNオン</p>
+    <p style="font-size:0.95em;margin-bottom:12px;"><b>Step 2</b>: F-Droidアプリインストール → F-Droidで「Termux」をインストール<br><span style="opacity:0.6;font-size:0.85em;">※Play Store版Termuxは古いのでNG</span></p>
+    <p style="font-size:0.95em;margin-bottom:12px;"><b>Step 3</b>: Termuxで以下を実行:</p>
+    <div class="cmd" onclick="copyCmd(this)">pkg update && pkg install openssh -y</div>
+    <div class="cmd" onclick="copyCmd(this)">ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519</div>
+    <div class="cmd" onclick="copyCmd(this)">ssh-copy-id yn4416@100.115.156.98</div>
+    <p style="font-size:0.95em;margin-top:12px;margin-bottom:12px;"><b>Step 4</b>: 接続確認:</p>
+    <div class="cmd" onclick="copyCmd(this)">ssh yn4416@100.115.156.98</div>
+    <p style="font-size:0.95em;margin-top:8px;">パスワードなしでPCプロンプトが出たら完了！</p>
+  </div>
+</div>
+
 <!-- tmux操作 -->
 <input type="checkbox" id="s2" class="section-toggle">
 <label for="s2" class="section-label">▶ tmux 操作</label>
