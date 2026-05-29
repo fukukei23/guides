@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CI/CD — 継続的インテグレーション/デプロイ</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --yellow:#e0af68; --red:#f7768e; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.05em; margin:18px 0 8px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  pre { background:var(--code-bg); padding:12px; border-radius:8px; overflow-x:auto; font-size:0.82em; line-height:1.5; margin:8px 0; }
+  pre code { background:none; padding:0; }
+  code { background:var(--code-bg); padding:2px 6px; border-radius:4px; font-size:0.88em; }
+  a { color:var(--accent); text-decoration:none; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  table { width:100%; border-collapse:collapse; font-size:0.88em; }
+  th { background:#1a2540; color:var(--accent); padding:8px; text-align:left; }
+  td { padding:6px 8px; border-bottom:1px solid var(--border); }
+  .badge { padding:1px 6px; border-radius:4px; font-size:0.75em; }
+  .badge-py { background:#3572A5; color:white; }
+  .badge-ts { background:#3178c6; color:white; }
+  .flow { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:10px 0; }
+  .flow-item { background:#1a2540; padding:8px 12px; border-radius:8px; text-align:center; font-size:0.85em; }
+  .flow-arrow { color:var(--accent); font-size:1.1em; }
+  .trunk { background:#1a2540; padding:12px; border-radius:8px; margin:8px 0; }
+  .trunk-step { display:flex; gap:8px; margin:6px 0; align-items:center; font-size:0.9em; }
+  .trunk-num { color:var(--yellow); font-weight:bold; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+  .combo { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  .combo-item { background:#1a2540; padding:6px 10px; border-radius:6px; font-size:0.85em; }
+</style>
+</head>
+<body>
+<h1>CI/CD — 継続的インテグレーション/デプロイ</h1>
+
+<div class="card">
+  <h2>一言で</h2>
+  <p style="font-size:1.05em; color:var(--yellow);">コードをpushするたびにテスト・Lint・デプロイを自動実行し、常に動く状態を保つ手法。</p>
+</div>
+
+<div class="card">
+  <h2>CI/CD の違い</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+    <div class="trunk">
+      <div style="color:var(--accent); font-weight:bold; margin-bottom:6px;">CI — 継続的インテグレーション</div>
+      <div style="font-size:0.88em;">pushのたびに自動で:</div>
+      <div style="font-size:0.85em; opacity:0.85; margin-top:4px;">• テスト実行</div>
+      <div style="font-size:0.85em; opacity:0.85;">• Lint・型チェック</div>
+      <div style="font-size:0.85em; opacity:0.85;">• ビルド確認</div>
+    </div>
+    <div class="trunk">
+      <div style="color:var(--green); font-weight:bold; margin-bottom:6px;">CD — 継続的デプロイ</div>
+      <div style="font-size:0.88em;">CIが通ったら自動で:</div>
+      <div style="font-size:0.85em; opacity:0.85; margin-top:4px;">• ステージング/本番デプロイ</div>
+      <div style="font-size:0.85em; opacity:0.85;">• パッケージ公開（ライブラリ）</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Trunk-Based Development</h2>
+  <div class="trunk">
+    <div class="trunk-step"><span class="trunk-num">1.</span> <code>main</code>ブランチを常にデプロイ可能に保つ</div>
+    <div class="trunk-step"><span class="trunk-num">2.</span> 短命のブランチで作業 → すぐmainにマージ</div>
+    <div class="trunk-step"><span class="trunk-num">3.</span> 長期間放置するブランチを作らない</div>
+  </div>
+  <p style="font-size:0.85em; opacity:0.7; margin-top:8px;">個人開発なら feature ブランチ不要。main 直 push が基本。</p>
+</div>
+
+<div class="card">
+  <h2>いつ使うか</h2>
+  <table>
+    <tr><th style="width:50px;"></th><th>対象</th></tr>
+    <tr><td><span class="badge badge-green">✅</span></td><td><strong>全プロジェクト</strong>（最低でもCIは導入推奨）</td></tr>
+    <tr><td><span class="badge badge-green">✅</span></td><td>テストがあるプロジェクト（CIで自動実行）</td></tr>
+    <tr><td><span class="badge badge-green">✅</span></td><td>公開ライブラリ（CDで自動公開）</td></tr>
+    <tr><td><span class="badge badge-red">❌</span></td><td>プロトタイプ・使い捨てスクリプト</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>CI設定例 — Python <span class="badge badge-py">pytest + ruff</span></h2>
+  <pre><code># .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest ruff mypy
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Type check
+        run: mypy src/ --ignore-missing-imports
+
+      - name: Test
+        run: pytest tests/ -v</code></pre>
+</div>
+
+<div class="card">
+  <h2>CI設定例 — TypeScript <span class="badge badge-ts">vitest + biome</span></h2>
+  <pre><code># .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20, 22]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npx biome check src/
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Test
+        run: npx vitest run</code></pre>
+</div>
+
+<div class="card">
+  <h2>CD設定例 — ライブラリ公開</h2>
+  <pre><code># .github/workflows/publish.yml
+name: Publish
+
+on:
+  push:
+    tags: ["v*"]  # タグpushで自動公開
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: "https://registry.npmjs.org"
+      - run: npm ci
+      - run: npm test
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}</code></pre>
+</div>
+
+<div class="card">
+  <h2>よくあるつまずき</h2>
+  <table>
+    <tr><th>つまずき</th><th>解決策</th></tr>
+    <tr><td>「CIの設定に時間がかかる」</td><td>最初はテストだけ。Lint・型チェックは後で追加</td></tr>
+    <tr><td>「CIが遅い」</td><td>キャッシュを使う（<code>cache: npm</code>等）</td></tr>
+    <tr><td>「テストがないのにCIを作った」</td><td>先にテストを書く。<a href="../tdd/">TDD</a>を参照</td></tr>
+    <tr><td>「mainに直接pushしてよいか」</td><td>個人開発ならOK。Trunk-Basedの原則に従う</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>組み合わせ</h2>
+  <div class="combo">
+    <a href="../tdd/" class="combo-item">TDD — TDDで書いたテストをCIで自動実行</a>
+    <a href="../design-principles/" class="combo-item">設計原則 — CIが品質の安全網</a>
+    <a href="../specification-driven/" class="combo-item">仕様駆動開発 — 仕様テストをCIで常時検証</a>
+  </div>
+</div>
+
+<div class="tip">
+  <strong>CLAUDE.md用プロンプト:</strong>
+  <pre style="background:transparent; padding:6px 0 0; font-size:0.82em;"><code>## 開発手法: CI/CD
+- push時にテスト・Lint・型チェックを自動実行（GitHub Actions）
+- mainブランチは常にデプロイ可能な状態を保つ
+- 個人開発はmain直push運用（Trunk-Based）。featureブランチは放置禁止
+- テストツール: Python=pytest+ruff, TypeScript=vitest+biome
+- CI設定: .github/workflows/ci.yml</code></pre>
+</div>
+
+<a class="back" href="../development-methods/">← 開発手法セレクタに戻る</a>
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

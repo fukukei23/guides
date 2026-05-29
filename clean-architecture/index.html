@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>クリーンアーキテクチャ</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --yellow:#e0af68; --red:#f7768e; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.05em; margin:18px 0 8px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  pre { background:var(--code-bg); padding:12px; border-radius:8px; overflow-x:auto; font-size:0.82em; line-height:1.5; margin:8px 0; }
+  pre code { background:none; padding:0; }
+  code { background:var(--code-bg); padding:2px 6px; border-radius:4px; font-size:0.88em; }
+  a { color:var(--accent); text-decoration:none; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  table { width:100%; border-collapse:collapse; font-size:0.88em; }
+  th { background:#1a2540; color:var(--accent); padding:8px; text-align:left; }
+  td { padding:6px 8px; border-bottom:1px solid var(--border); }
+  .layer-diagram { display:flex; flex-direction:column; gap:4px; margin:10px 0; }
+  .layer { padding:10px 14px; border-radius:8px; text-align:center; font-weight:bold; }
+  .layer-fw { background:#2d1f3d; color:#bb9af7; border:1px solid #5a4a7a; }
+  .layer-adapter { background:#1f2d3d; color:#7aa2f7; border:1px solid #3b5a7a; }
+  .layer-usecase { background:#1f3d2d; color:#9ece6a; border:1px solid #3b6a4a; }
+  .layer-domain { background:#3d2d1f; color:#e0af68; border:1px solid #7a5a3b; }
+  .layer-arrow { text-align:center; color:var(--border); font-size:0.8em; }
+  .dir { background:#1a2540; padding:10px 12px; border-radius:8px; margin:6px 0; font-family:monospace; font-size:0.88em; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+  .combo { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  .combo-item { background:#1a2540; padding:6px 10px; border-radius:6px; font-size:0.85em; }
+</style>
+</head>
+<body>
+<h1>クリーンアーキテクチャ</h1>
+
+<div class="card">
+  <h2>一言で</h2>
+  <p style="font-size:1.05em; color:var(--yellow);">ビジネスロジックを外部依存から隔離し、依存関係を一方向に制限する設計手法。</p>
+</div>
+
+<div class="card">
+  <h2>4層アーキテクチャ</h2>
+  <div class="layer-diagram">
+    <div class="layer layer-fw">Framework/Driver層 — Web、DB、外部API</div>
+    <div class="layer-arrow">↓</div>
+    <div class="layer layer-adapter">Interface Adapter層 — コントローラー、ゲートウェイ</div>
+    <div class="layer-arrow">↓</div>
+    <div class="layer layer-usecase">Use Case層 — アプリケーションロジック</div>
+    <div class="layer-arrow">↓</div>
+    <div class="layer layer-domain">Domain層 — ビジネスルール・エンティティ</div>
+  </div>
+  <p style="font-size:0.85em; opacity:0.7; margin-top:8px;">ルール: 内側の層は外側の層を知らない。外→内への依存のみ。</p>
+</div>
+
+<div class="card">
+  <h2>ディレクトリ構成</h2>
+  <div class="dir">src/<br>
+  &nbsp;&nbsp;domain/&nbsp;&nbsp;&nbsp;&nbsp;← エンティティ・ポート（外部依存ゼロ）<br>
+  &nbsp;&nbsp;usecases/&nbsp;&nbsp;← ユースケース（ドメインのみに依存）<br>
+  &nbsp;&nbsp;adapters/&nbsp;&nbsp;← DB・APIの実装（ポートを実装）<br>
+  &nbsp;&nbsp;frameworks/&nbsp;← Webルーティング・DI設定</div>
+</div>
+
+<div class="card">
+  <h2>いつ使うか</h2>
+  <table>
+    <tr><th style="width:50px;"></th><th>対象</th></tr>
+    <tr><td><span class="badge badge-green">✅</span></td><td>中〜大規模で長期間保守するアプリ</td></tr>
+    <tr><td><span class="badge badge-green">✅</span></td><td>ビジネスロジックが複雑（ドメインルールが多い）</td></tr>
+    <tr><td><span class="badge badge-green">✅</span></td><td>外部依存（DB、API）が変わる可能性がある</td></tr>
+    <tr><td><span class="badge badge-red">❌</span></td><td>小規模スクリプト・CLI（レイヤー分け過多）</td></tr>
+    <tr><td><span class="badge badge-red">❌</span></td><td>プロトタイプ（動くもの最優先）</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>コード例 — Python</h2>
+  <pre><code># === Domain層（外部依存ゼロ）===
+# domain/entities.py
+from dataclasses import dataclass
+
+@dataclass
+class Reservation:
+    id: str; guest_name: str; party_size: int; date: str
+    def is_valid(self) -> bool:
+        return self.party_size > 0 and len(self.guest_name) > 0
+
+# domain/ports.py（インターフェース定義）
+from typing import Protocol
+
+class ReservationRepository(Protocol):
+    def save(self, reservation: Reservation) -> str: ...
+    def find_by_date(self, date: str) -> list[Reservation]: ...
+
+class NotificationSender(Protocol):
+    def send_confirmation(self, email: str, reservation_id: str) -> None: ...
+
+# === Use Case層 ===
+# usecases/create_reservation.py
+class CreateReservationUseCase:
+    def __init__(self, repo: ReservationRepository,
+                 notifier: NotificationSender):
+        self.repo = repo; self.notifier = notifier
+
+    def execute(self, guest_name: str, party_size: int, date: str) -> str:
+        reservation = Reservation(id="", guest_name=guest_name,
+                                  party_size=party_size, date=date)
+        if not reservation.is_valid():
+            raise ValueError("Invalid reservation")
+        existing = self.repo.find_by_date(date)
+        if len(existing) >= 10:
+            raise ValueError("No availability")
+        reservation_id = self.repo.save(reservation)
+        self.notifier.send_confirmation(guest_name, reservation_id)
+        return reservation_id
+
+# === Adapter層（外部依存はここだけ）===
+# adapters/sqlite_repository.py
+import sqlite3
+from domain.entities import Reservation
+from domain.ports import ReservationRepository
+
+class SqliteReservationRepository:
+    def __init__(self, db_path: str):
+        self.conn = sqlite3.connect(db_path)
+    def save(self, reservation: Reservation) -> str:
+        # SQLで保存
+        ...
+    def find_by_date(self, date: str) -> list[Reservation]:
+        # SQLで検索
+        ...</code></pre>
+</div>
+
+<div class="card">
+  <h2>コード例 — TypeScript</h2>
+  <pre><code>// === Domain層 ===
+// domain/entities.ts
+export interface Reservation {
+  id: string; guestName: string; partySize: number; date: string;
+}
+export function isValidReservation(r: Reservation): boolean {
+  return r.partySize > 0 && r.guestName.length > 0;
+}
+
+// domain/ports.ts
+export interface ReservationRepository {
+  save(reservation: Reservation): Promise<string>;
+  findByDate(date: string): Promise<Reservation[]>;
+}
+export interface NotificationSender {
+  sendConfirmation(email: string, reservationId: string): Promise<void>;
+}
+
+// === Use Case層 ===
+// usecases/createReservation.ts
+export class CreateReservationUseCase {
+  constructor(private repo: ReservationRepository,
+              private notifier: NotificationSender) {}
+
+  async execute(guestName: string, partySize: number,
+                date: string): Promise<string> {
+    const reservation: Reservation = { id: "", guestName, partySize, date };
+    if (!isValidReservation(reservation))
+      throw new Error("Invalid reservation");
+    const existing = await this.repo.findByDate(date);
+    if (existing.length >= 10) throw new Error("No availability");
+    const id = await this.repo.save(reservation);
+    await this.notifier.sendConfirmation(guestName, id);
+    return id;
+  }
+}</code></pre>
+</div>
+
+<div class="card">
+  <h2>組み合わせ</h2>
+  <div class="combo">
+    <a href="../ddd/" class="combo-item">DDD — ドメインモデルをDomain層に配置</a>
+    <a href="../tdd/" class="combo-item">TDD — Domain・UseCase層は外部依存なしで高速テスト</a>
+    <a href="../design-principles/" class="combo-item">設計原則 — DIPがクリーンアーキテクチャの前提</a>
+    <a href="../bdd/" class="combo-item">BDD — UseCaseのテストにBDDが最適</a>
+  </div>
+</div>
+
+<div class="tip">
+  <strong>CLAUDE.md用プロンプト:</strong>
+  <pre style="background:transparent; padding:6px 0 0; font-size:0.82em;"><code>## 開発手法: クリーンアーキテクチャ
+- コードを4層に分ける: Domain → UseCase → Adapter → Framework
+- 依存関係は内側にのみ向ける。Domain層は外部ライブラリに依存しない
+- 外部依存（DB、API）はPort（Protocol/Interface）で抽象化、Adapter層で実装
+- ディレクトリ構成: domain/ usecases/ adapters/ frameworks/
+- テストはDomain・UseCase層を中心に（外部依存なしで高速）</code></pre>
+</div>
+
+<a class="back" href="../development-methods/">← 開発手法セレクタに戻る</a>
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

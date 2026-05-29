@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>設計原則 — SOLID + DRY + KISS + YAGNI</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --yellow:#e0af68; --red:#f7768e; --purple:#bb9af7; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.05em; margin:18px 0 8px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  pre { background:var(--code-bg); padding:12px; border-radius:8px; overflow-x:auto; font-size:0.82em; line-height:1.5; margin:8px 0; }
+  pre code { background:none; padding:0; }
+  code { background:var(--code-bg); padding:2px 6px; border-radius:4px; font-size:0.88em; }
+  a { color:var(--accent); text-decoration:none; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  table { width:100%; border-collapse:collapse; font-size:0.88em; }
+  th { background:#1a2540; color:var(--accent); padding:8px; text-align:left; }
+  td { padding:6px 8px; border-bottom:1px solid var(--border); }
+  .badges { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+  .badge { background:#1a2540; padding:3px 8px; border-radius:4px; font-size:0.75em; }
+  .badge-srp { color:#bb9af7; }
+  .badge-ocp { color:#7aa2f7; }
+  .badge-lsp { color:#9ece6a; }
+  .badge-isp { color:#e0af68; }
+  .badge-dip { color:#f7768e; }
+  .badge-dry { color:#73daca; }
+  .badge-kiss { color:#2ac3de; }
+  .badge-yagni { color:#ff9e64; }
+  .p-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .p-box { background:#1a2540; padding:10px 12px; border-radius:8px; }
+  .p-title { font-weight:bold; font-size:0.88em; margin-bottom:4px; }
+  .p-desc { font-size:0.8em; opacity:0.85; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+  .combo { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  .combo-item { background:#1a2540; padding:6px 10px; border-radius:6px; font-size:0.85em; }
+</style>
+</head>
+<body>
+<h1>設計原則</h1>
+
+<div class="card">
+  <h2>一言で</h2>
+  <p style="font-size:1.05em; color:var(--yellow);">コードの変更容易性・可読性・保守性を保つ基本原則。特定アーキテクチャに依存せず全プロジェクトで適用。</p>
+</div>
+
+<div class="card">
+  <h2>4つの基本原則</h2>
+  <div class="p-grid">
+    <div class="p-box">
+      <div class="p-title"><span class="badge badge-dry">DRY</span> Don't Repeat Yourself</div>
+      <div class="p-desc">同じロジックを複数箇所に書かない</div>
+    </div>
+    <div class="p-box">
+      <div class="p-title"><span class="badge badge-kiss">KISS</span> Keep It Simple</div>
+      <div class="p-desc">シンプルに書く。巧妙なコードより読めるコード</div>
+    </div>
+    <div class="p-box">
+      <div class="p-title"><span class="badge badge-yagni">YAGNI</span> You Aren't Gonna Need It</div>
+      <div class="p-desc">今必要ない機能を先回りして作らない</div>
+    </div>
+    <div class="p-box">
+      <div class="p-title"><span class="badge" style="color:#73daca;">SoC</span> Separation of Concerns</div>
+      <div class="p-desc">UI・ビジネスロジック・データを分離</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>SOLID 5原則</h2>
+  <div class="p-grid">
+    <div class="p-box">
+      <div class="p-title"><span class="badge badge-srp">SRP</span> Single Responsibility</div>
+      <div class="p-desc">1つのクラス・関数は1つの責務だけ</div>
+    </div>
+    <div class="p-box">
+      <div class="p-title"><span class="badge badge-ocp">OCP</span> Open/Closed</div>
+      <div class="p-desc">拡張には開き、修正には閉じる</div>
+    </div>
+    <div class="p-box">
+      <div class="p-title"><span class="badge badge-lsp">LSP</span> Liskov Substitution</div>
+      <div class="p-desc">子クラスは親クラスの代わりに使える</div>
+    </div>
+    <div class="p-box">
+      <div class="p-title"><span class="badge badge-isp">ISP</span> Interface Segregation</div>
+      <div class="p-desc">太いインターフェースを細かく分ける</div>
+    </div>
+    <div class="p-box" style="grid-column:span 2;">
+      <div class="p-title"><span class="badge badge-dip">DIP</span> Dependency Inversion</div>
+      <div class="p-desc">上位モジュールは下位モジュールに依存しない。インターフェースを間に挟む</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>いつ使うか</h2>
+  <table>
+    <tr><th style="width:50px;"></th><th>対象</th></tr>
+    <tr><td><span class="badge badge-green">✅</span></td><td><strong>全プロジェクト</strong> — 適用しない理由はない</td></tr>
+    <tr><td><span class="badge badge-green">✅</span></td><td>コードレビューの判断基準として</td></tr>
+    <tr><td><span class="badge badge-red">⚠️</span></td><td>過剰適用（3行のスクリプトにSOLIDを持ち込む等）</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>違反例 → 修正例（Python）</h2>
+  <pre><code># ❌ 悪い例: 1関数・多重責務 + DRY違反
+def process_order_send_email_update_stock(order):
+    total = sum(item["price"] * item["qty"] for item in order["items"])
+    import smtplib
+    smtp = smtplib.SMTP("smtp.example.com")
+    smtp.sendmail("shop@example.com", order["email"], f"合計: {total}円")
+    for item in order["items"]:
+        stock[item["id"]] -= item["qty"]
+
+# ✅ 良い例: 責務を分離（SRP + DIP）
+from typing import Protocol
+class EmailSender(Protocol):
+    def send(self, to: str, body: str) -> None: ...
+class StockRepository(Protocol):
+    def decrement(self, item_id: str, qty: int) -> None: ...
+
+def calculate_total(items: list[OrderItem]) -> float:
+    return sum(item.price * item.qty for item in items)
+
+def process_order(items, email: EmailSender, stock: StockRepository):
+    total = calculate_total(items)
+    for item in items:
+        stock.decrement(item.id, item.qty)</code></pre>
+</div>
+
+<div class="card">
+  <h2>違反例 → 修正例（TypeScript）</h2>
+  <pre><code>// ❌ 悪い例: 新しい決済方法を追加するたびに書き換える（OCP違反）
+function processPayment(method: string, amount: number) {
+  if (method === "credit") { /* クレジットカード処理 */ }
+  else if (method === "bank") { /* 銀行振込処理 */ }
+  // 新しい方法を追加するにはここを変更 → OCP違反
+}
+
+// ✅ 良い例: 拡張には開き、修正には閉じる（OCP）
+interface PaymentProcessor {
+  process(amount: number): Promise<void>;
+}
+class CreditCardProcessor implements PaymentProcessor { /* ... */ }
+class BankTransferProcessor implements PaymentProcessor { /* ... */ }
+
+class CheckoutService {
+  constructor(private processor: PaymentProcessor) {}  // DIP
+  async checkout(amount: number) {
+    await this.processor.process(amount);
+  }
+}</code></pre>
+</div>
+
+<div class="card">
+  <h2>組み合わせ</h2>
+  <div class="combo">
+    <a href="../tdd/" class="combo-item">TDD — SRPを守るとテストが書きやすい</a>
+    <a href="../clean-architecture/" class="combo-item">クリーンアーキテクチャ — DIPが前提</a>
+    <a href="../ddd/" class="combo-item">DDD — SRP・ISPでドメインモデル設計</a>
+    <a href="../cicd/" class="combo-item">CI/CD — OCPを守るとCIが壊れにくい</a>
+  </div>
+</div>
+
+<div class="tip">
+  <strong>CLAUDE.md用プロンプト:</strong>
+  <pre style="background:transparent; padding:6px 0 0; font-size:0.82em;"><code>## 設計原則
+- DRY: 同じロジックを2箇所に書かない。共通関数・クラスに抽出
+- KISS: 複雑な解決策よりシンプルな方を選ぶ
+- YAGNI: 今必要ない機能を先回りして実装しない
+- SRP: 1つの関数・クラスは1つの責務だけ持つ
+- DIP: ビジネスロジックから外部API・DBを直接呼ばない（Protocol/Interfaceを挟む）</code></pre>
+</div>
+
+<a class="back" href="../development-methods/">← 開発手法セレクタに戻る</a>
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

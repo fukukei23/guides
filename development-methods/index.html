@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>開発手法セレクタ — どの手法を選ぶか</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --yellow:#e0af68; --red:#f7768e; --border:#3b4261; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.05em; margin:18px 0 8px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .flow { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:12px; font-family:monospace; font-size:0.9em; }
+  .flow .q { color:var(--yellow); }
+  .flow .a { color:var(--green); padding-left:16px; }
+  .flow .link { color:var(--accent); padding-left:32px; font-size:0.9em; }
+  table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.88em; }
+  th { background:#1a2540; color:var(--accent); padding:8px 6px; text-align:left; }
+  td { padding:6px; border-bottom:1px solid var(--border); }
+  td:first-child { text-align:center; }
+  .badge-must { background:#2d1f3d; color:#bb9af7; padding:1px 6px; border-radius:4px; font-size:0.75em; }
+  .badge-rec { background:#1f2d3d; color:#7aa2f7; padding:1px 6px; border-radius:4px; font-size:0.75em; }
+  a { color:var(--accent); text-decoration:none; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+  .quick-table { font-size:0.82em; }
+  .quick-table th:first-child, .quick-table td:first-child { text-align:center; width:60px; }
+  .quick-table td { vertical-align:middle; padding:5px 6px; }
+</style>
+</head>
+<body>
+<h1>開発手法セレクタ</h1>
+
+<div class="card">
+  <h2>判定フロー — プロジェクトの種類は？</h2>
+  <div class="flow">
+    <div class="q">├─ スクリプト・CLI・データ処理</div>
+    <div class="a">→ <a href="recipe-a/">レシピA: 軽量開発</a></div>
+    <div class="q">├─ Webアプリ・API（要件が明確）</div>
+    <div class="a">→ <a href="recipe-b/">レシピB: 規格駆動開発</a></div>
+    <div class="q">├─ Webアプリ（ビジネスロジックが複雑）</div>
+    <div class="a">→ <a href="recipe-c/">レシピC: ドメイン中心開発</a></div>
+    <div class="q">├─ ライブラリ・パッケージ</div>
+    <div class="a">→ <a href="recipe-d/">レシピD: 品質重視開発</a></div>
+    <div class="q">└─ プロトタイプ・検証用</div>
+    <div class="a">→ <a href="recipe-e/">レシピE: 高速開発</a></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>早見表 — 手法 × プロジェクト</h2>
+  <table class="quick-table">
+    <tr><th></th><th>スクリプト</th><th>Web API</th><th>複雑アプリ</th><th>ライブラリ</th><th>プロトタイプ</th></tr>
+    <tr><td><a href="../tdd/">TDD</a></td><td><span class="badge-rec">推奨</span></td><td><span class="badge-must">必須</span></td><td><span class="badge-must">必須</span></td><td><span class="badge-must">必須</span></td><td>—</td></tr>
+    <tr><td><a href="../bdd/">BDD</a></td><td>—</td><td>—</td><td><span class="badge-rec">推奨</span></td><td>—</td><td>—</td></tr>
+    <tr><td><a href="../ddd/">DDD</a></td><td>—</td><td>—</td><td><span class="badge-must">必須</span></td><td>—</td><td>—</td></tr>
+    <tr><td><a href="../specification-driven/">仕様駆動</a></td><td>—</td><td><span class="badge-must">必須</span></td><td><span class="badge-rec">推奨</span></td><td>—</td><td>—</td></tr>
+    <tr><td><a href="../clean-architecture/">クリーンArchi.</a></td><td>—</td><td><span class="badge-rec">推奨</span></td><td><span class="badge-must">必須</span></td><td><span class="badge-rec">推奨</span></td><td>—</td></tr>
+    <tr><td><a href="../design-principles/">設計原則</a></td><td><span class="badge-must">必須</span></td><td><span class="badge-must">必須</span></td><td><span class="badge-must">必須</span></td><td><span class="badge-must">必須</span></td><td>参考</td></tr>
+    <tr><td><a href="../cicd/">CI/CD</a></td><td><span class="badge-rec">推奨</span></td><td><span class="badge-rec">推奨</span></td><td><span class="badge-must">必須</span></td><td><span class="badge-must">必須</span></td><td>—</td></tr>
+  </table>
+  <p style="font-size:0.8em; opacity:0.6; margin-top:8px;"><span class="badge-must">必須</span> = 全プロジェクトで必ず適用 / <span class="badge-rec">推奨</span> = あると良い / — = 不要</p>
+</div>
+
+<div class="card">
+  <h2>レシピA: 軽量開発 — スクリプト・CLI</h2>
+  <p style="font-size:0.9em; margin-bottom:8px;">対象: スクレイピング、CLIツール、データ変換バッチ</p>
+  <table>
+    <tr><th>手法</th><th>適用</th><th>役割</th></tr>
+    <tr><td><a href="../design-principles/">設計原則</a></td><td><span class="badge-must">必須</span></td><td>DRY・KISS・YAGNIで無駄を省く</td></tr>
+    <tr><td><a href="../tdd/">TDD</a></td><td><span class="badge-rec">推奨</span></td><td>主要関数のテスト（完全網羅は不要）</td></tr>
+    <tr><td><a href="../cicd/">CI/CD</a></td><td><span class="badge-rec">推奨</span></td><td>push時の自動テストのみ</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>レシピB: 規格駆動開発 — Web API</h2>
+  <p style="font-size:0.9em; margin-bottom:8px;">対象: REST API、Webアプリバックエンド、既存仕様あり</p>
+  <table>
+    <tr><th>手法</th><th>適用</th><th>役割</th></tr>
+    <tr><td><a href="../specification-driven/">仕様駆動開発</a></td><td><span class="badge-must">必須</span></td><td>OpenAPI等の仕様を先に書く</td></tr>
+    <tr><td><a href="../tdd/">TDD</a></td><td><span class="badge-must">必須</span></td><td>仕様に基づくテストを先に書く</td></tr>
+    <tr><td><a href="../design-principles/">設計原則</a></td><td><span class="badge-must">必須</span></td><td>SOLIDで保守性を確保</td></tr>
+    <tr><td><a href="../cicd/">CI/CD</a></td><td><span class="badge-rec">推奨</span></td><td>テスト + Lintパイプライン</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>レシピC: ドメイン中心開発 — 複雑アプリ</h2>
+  <p style="font-size:0.9em; margin-bottom:8px;">対象: 予約システム、在庫管理、ワークフロー等</p>
+  <table>
+    <tr><th>手法</th><th>適用</th><th>役割</th></tr>
+    <tr><td><a href="../ddd/">DDD</a></td><td><span class="badge-must">必須</span></td><td>ドメインモデルを先に設計</td></tr>
+    <tr><td><a href="../clean-architecture/">クリーンアーキテクチャ</a></td><td><span class="badge-must">必須</span></td><td>レイヤー分離でドメインを保護</td></tr>
+    <tr><td><a href="../tdd/">TDD</a></td><td><span class="badge-must">必須</span></td><td>ドメインロジックのテストを徹底</td></tr>
+    <tr><td><a href="../bdd/">BDD</a></td><td><span class="badge-rec">推奨</span></td><td>ユースケースをGiven-When-Thenで記述</td></tr>
+    <tr><td><a href="../design-principles/">設計原則</a></td><td><span class="badge-must">必須</span></td><td>SOLID特にSRPとDIP</td></tr>
+    <tr><td><a href="../cicd/">CI/CD</a></td><td><span class="badge-must">必須</span></td><td>全テスト自動実行</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>レシピD: 品質重視開発 — ライブラリ</h2>
+  <p style="font-size:0.9em; margin-bottom:8px;">対象: 公開ライブラリ、npmパッケージ、Pythonパッケージ</p>
+  <table>
+    <tr><th>手法</th><th>適用</th><th>役割</th></tr>
+    <tr><td><a href="../tdd/">TDD</a></td><td><span class="badge-must">必須</span></td><td>公開APIの全テストを書く</td></tr>
+    <tr><td><a href="../design-principles/">設計原則</a></td><td><span class="badge-must">必須</span></td><td>ISPでインターフェース設計を重視</td></tr>
+    <tr><td><a href="../cicd/">CI/CD</a></td><td><span class="badge-must">必須</span></td><td>テスト + 複数バージョン + 自動公開</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>レシピE: 高速開発 — プロトタイプ</h2>
+  <p style="font-size:0.9em; margin-bottom:8px;">対象: アイデア検証、ハッカソン、使い捨てスクリプト</p>
+  <table>
+    <tr><th>手法</th><th>適用</th><th>役割</th></tr>
+    <tr><td><a href="../design-principles/">設計原則</a></td><td>参考</td><td>KISSだけ意識。SOLIDは後回し</td></tr>
+    <tr><td colspan="2">テスト・CI不要。動くものを最速で。</td></tr>
+  </table>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

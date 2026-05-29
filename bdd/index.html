@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BDD — 振舞駆動開発</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --yellow:#e0af68; --red:#f7768e; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.05em; margin:18px 0 8px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .gwt { display:flex; gap:8px; margin:10px 0; flex-wrap:wrap; }
+  .gwt-box { flex:1; min-width:100px; background:#1a2540; padding:10px 12px; border-radius:8px; text-align:center; }
+  .gwt-box.given { border-left:3px solid var(--accent); }
+  .gwt-box.when { border-left:3px solid var(--yellow); }
+  .gwt-box.then { border-left:3px solid var(--green); }
+  .gwt-label { font-size:0.75em; color:var(--accent); font-weight:bold; margin-bottom:4px; }
+  .gwt-box.when .gwt-label { color:var(--yellow); }
+  .gwt-box.then .gwt-label { color:var(--green); }
+  .gwt-text { font-size:0.9em; }
+  pre { background:var(--code-bg); padding:12px; border-radius:8px; overflow-x:auto; font-size:0.82em; line-height:1.5; margin:8px 0; }
+  pre code { background:none; padding:0; }
+  code { background:var(--code-bg); padding:2px 6px; border-radius:4px; font-size:0.88em; }
+  a { color:var(--accent); text-decoration:none; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  table { width:100%; border-collapse:collapse; font-size:0.88em; }
+  th { background:#1a2540; color:var(--accent); padding:8px; text-align:left; }
+  td { padding:6px 8px; border-bottom:1px solid var(--border); }
+  .badge { padding:1px 6px; border-radius:4px; font-size:0.75em; }
+  .badge-py { background:#3572A5; color:white; }
+  .badge-ts { background:#3178c6; color:white; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+  .combo { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  .combo-item { background:#1a2540; padding:6px 10px; border-radius:6px; font-size:0.85em; }
+  .vs { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .vs-box { background:#1a2540; padding:12px; border-radius:8px; }
+  .vs-title { font-weight:bold; margin-bottom:6px; font-size:0.9em; }
+  .vs-box:first-child .vs-title { color:var(--yellow); }
+  .vs-box:last-child .vs-title { color:var(--accent); }
+</style>
+</head>
+<body>
+<h1>BDD — 振舞駆動開発</h1>
+
+<div class="card">
+  <h2>一言で</h2>
+  <p style="font-size:1.05em; color:var(--yellow);">システムの振る舞いを「Given-When-Then」で記述し、自动测试として使う。</p>
+</div>
+
+<div class="card">
+  <h2>Given-When-Then フォーマット</h2>
+  <div class="gwt">
+    <div class="gwt-box given">
+      <div class="gwt-label">Given（前提）</div>
+      <div class="gwt-text">予約が1件ある状態で</div>
+    </div>
+    <div class="gwt-box when">
+      <div class="gwt-label">When（操作）</div>
+      <div class="gwt-text">キャンセルを実行したら</div>
+    </div>
+    <div class="gwt-box then">
+      <div class="gwt-label">Then（結果）</div>
+      <div class="gwt-text">ステータスが「cancelled」になる</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>TDD との違い</h2>
+  <div class="vs">
+    <div class="vs-box">
+      <div class="vs-title">TDD — 関数単位</div>
+      <p style="font-size:0.88em;">関数の<span style="color:var(--yellow);">入出力</span>をテスト<br>実装 details が対象</p>
+    </div>
+    <div class="vs-box">
+      <div class="vs-title">BDD — ユーザー視点</div>
+      <p style="font-size:0.88em;">ユーザーの<span style="color:var(--accent);">操作</span>をテスト<br>振舞い details が対象</p>
+    </div>
+  </div>
+  <p style="font-size:0.85em; margin-top:10px; opacity:0.7;">BDDはTDDの<span style="color:var(--yellow);">上位互換</span>。実装詳細ではなく「何が起きるか」に焦点。</p>
+</div>
+
+<div class="card">
+  <h2>いつ使うか</h2>
+  <table>
+    <tr><th style="width:50px;"></th><th>対象</th></tr>
+    <tr><td><span class="badge badge-green">✅</span></td><td>ユーザー操作があるアプリ（Web、API）</td></tr>
+    <tr><td><span class="badge badge-green">✅</span></td><td>要件を「〜の場合、〜する」形式で整理したい</td></tr>
+    <tr><td><span class="badge badge-green">✅</span></td><td><a href="../ddd/">DDD</a>のユースケースをテストしたい</td></tr>
+    <tr><td><span class="badge badge-red">❌</span></td><td>データ変換・計算処理（TDDで十分）</td></tr>
+    <tr><td><span class="badge badge-red">❌</span></td><td>使い捨てスクリプト</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>コード例 — Python <span class="badge badge-py">pytest</span></h2>
+  <pre><code># tests/test_reservation_bdd.py
+import pytest
+from domain.entities import Reservation, ReservationStatus, GuestCount
+
+class TestReservationCancellation:
+    """予約キャンセルの振舞い"""
+
+    def test_確認済み予約をキャンセルすると_cancelled_になる(self):
+        # Given: 確認済みの予約がある
+        reservation = Reservation(
+            id="R001", guest_name="田中",
+            party_size=GuestCount(4), date="2026-06-01",
+            status=ReservationStatus.CONFIRMED,
+        )
+        # When: キャンセルする
+        reservation.cancel()
+        # Then: ステータスが cancelled になる
+        assert reservation.status == ReservationStatus.CANCELLED
+
+    def test_未確認の予約はキャンセルできない(self):
+        # Given: 未確認（PENDING）の予約
+        reservation = Reservation(
+            id="R002", guest_name="佐藤",
+            party_size=GuestCount(2), date="2026-06-02",
+            status=ReservationStatus.PENDING,
+        )
+        # When + Then
+        with pytest.raises(ValueError, match="Confirmedのみ"):
+            reservation.cancel()</code></pre>
+</div>
+
+<div class="card">
+  <h2>コード例 — TypeScript <span class="badge badge-ts">vitest</span></h2>
+  <pre><code>// tests/reservation.behavior.test.ts
+import { describe, it, expect } from "vitest";
+import { Reservation, ReservationStatus } from "../src/domain/entities";
+
+describe("予約キャンセルの振舞い", () => {
+  it("確認済み予約をキャンセルすると cancelled になる", () => {
+    // Given
+    const reservation = new Reservation({
+      id: "R001", guestName: "田中",
+      partySize: new GuestCount(4), date: "2026-06-01",
+      status: ReservationStatus.Confirmed,
+    });
+    // When
+    reservation.cancel();
+    // Then
+    expect(reservation.status).toBe(ReservationStatus.Cancelled);
+  });
+
+  it("未確認の予約はキャンセルできない", () => {
+    // Given
+    const reservation = new Reservation({
+      id: "R002", guestName: "佐藤",
+      partySize: new GuestCount(2), date: "2026-06-02",
+      status: ReservationStatus.Pending,
+    });
+    // When + Then
+    expect(() => reservation.cancel()).toThrow();
+  });
+});</code></pre>
+</div>
+
+<div class="card">
+  <h2>組み合わせ</h2>
+  <div class="combo">
+    <a href="../ddd/" class="combo-item">DDD — ユースケース→BDDシナリオ</a>
+    <a href="../tdd/" class="combo-item">TDD — BDDの基盤（単体テスト）</a>
+    <a href="../clean-architecture/" class="combo-item">クリーンアーキテクチャ — UseCase層のテスト</a>
+    <a href="../specification-driven/" class="combo-item">仕様駆動開発 — 仕様→Given-When-Then</a>
+  </div>
+</div>
+
+<div class="tip">
+  <strong>CLAUDE.md用プロンプト:</strong>
+  <pre style="background:transparent; padding:6px 0 0; font-size:0.82em;"><code>## 開発手法: BDD（振舞駆動開発）
+- テストは Given-When-Then の形式で書く
+- 実装詳細ではなく、ユーザーから見た振舞いをテストする
+- クラス名は「Test〜の振舞い」、テスト名は日本語で状況を記述
+- テストツール: Python=pytest, TypeScript=vitest</code></pre>
+</div>
+
+<a class="back" href="../development-methods/">← 開発手法セレクタに戻る</a>
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

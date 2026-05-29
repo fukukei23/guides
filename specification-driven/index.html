@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>仕様駆動開発</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --yellow:#e0af68; --red:#f7768e; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.05em; margin:18px 0 8px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  pre { background:var(--code-bg); padding:12px; border-radius:8px; overflow-x:auto; font-size:0.82em; line-height:1.5; margin:8px 0; }
+  pre code { background:none; padding:0; }
+  code { background:var(--code-bg); padding:2px 6px; border-radius:4px; font-size:0.88em; }
+  a { color:var(--accent); text-decoration:none; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  table { width:100%; border-collapse:collapse; font-size:0.88em; }
+  th { background:#1a2540; color:var(--accent); padding:8px; text-align:left; }
+  td { padding:6px 8px; border-bottom:1px solid var(--border); }
+  .flow { display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin:10px 0; }
+  .flow-item { background:#1a2540; padding:8px 12px; border-radius:8px; text-align:center; min-width:80px; }
+  .flow-arrow { color:var(--accent); font-size:1.2em; }
+  .badge { padding:1px 6px; border-radius:4px; font-size:0.75em; }
+  .badge-py { background:#3572A5; color:white; }
+  .badge-ts { background:#3178c6; color:white; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+  .combo { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  .combo-item { background:#1a2540; padding:6px 10px; border-radius:6px; font-size:0.85em; }
+</style>
+</head>
+<body>
+<h1>仕様駆動開発</h1>
+
+<div class="card">
+  <h2>一言で</h2>
+  <p style="font-size:1.05em; color:var(--yellow);">「何を作るか」を先に仕様として書き、仕様を実行可能にする。</p>
+</div>
+
+<div class="card">
+  <h2>開発フロー</h2>
+  <div class="flow">
+    <div class="flow-item"><div style="font-size:0.75em; opacity:0.7;">STEP 1</div>仕様を書く</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item"><div style="font-size:0.75em; opacity:0.7;">STEP 2</div>仕様を実行可能に</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item"><div style="font-size:0.75em; opacity:0.7;">STEP 3</div>テストを通す実装</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item"><div style="font-size:0.75em; opacity:0.7;">STEP 4</div>仕様がSSOT</div>
+  </div>
+  <p style="font-size:0.88em;">TDDが「テスト」を先に書くなら、仕様駆動は「仕様」を先に書く。テストは仕様の一部。</p>
+</div>
+
+<div class="card">
+  <h2>いつ使うか</h2>
+  <table>
+    <tr><th style="width:50px;"></th><th>対象</th></tr>
+    <tr><td><span class="badge badge-green">✅</span></td><td>要件が明確なAPI開発（OpenAPI spec → 実装）</td></tr>
+    <tr><td><span class="badge badge-green">✅</span></td><td>外部システムとのインターフェース設計</td></tr>
+    <tr><td><span class="badge badge-green">✅</span></td><td>データ形式が決まっている処理（JSON Schema → バリデーション）</td></tr>
+    <tr><td><span class="badge badge-red">❌</span></td><td>要件が不確定で試行錯誤が必要な段階</td></tr>
+    <tr><td><span class="badge badge-red">❌</span></td><td>UIの見た目を探っている段階</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>コード例 — Python (OpenAPI + FastAPI)</h2>
+  <pre><code># specs/api.yaml — まず仕様を書く
+openapi: "3.0.0"
+info:
+  title: Reservation API
+  version: "1.0"
+paths:
+  /reservations:
+    post:
+      summary: 予約を作成
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [guest_name, party_size, date]
+              properties:
+                guest_name: { type: string, minLength: 1 }
+                party_size: { type: integer, minimum: 1, maximum: 20 }
+                date: { type: string, format: date }
+      responses:
+        "201":
+          description: 作成成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: { type: string }
+                  status: { type: string, enum: [pending] }</code></pre>
+</div>
+
+<div class="card">
+  <h2>コード例 — Python (Pydantic + FastAPIテスト)</h2>
+  <pre><code>from pydantic import BaseModel, Field
+from datetime import date
+
+class CreateReservationRequest(BaseModel):
+    guest_name: str = Field(min_length=1)
+    party_size: int = Field(ge=1, le=20)
+    date: date
+
+class ReservationResponse(BaseModel):
+    id: str
+    status: str
+
+# テスト（仕様に基づく）
+def test_create_reservation_success(client: TestClient):
+    response = client.post("/reservations", json={
+        "guest_name": "田中",
+        "party_size": 4,
+        "date": "2026-06-01",
+    })
+    assert response.status_code == 201
+    data = response.json()
+    assert "id" in data
+    assert data["status"] == "pending"
+
+def test_create_reservation_invalid_party_size(client: TestClient):
+    response = client.post("/reservations", json={
+        "guest_name": "田中",
+        "party_size": 0,  # 仕様: minimum: 1
+        "date": "2026-06-01",
+    })
+    assert response.status_code == 400  # 仕様: 400エラー</code></pre>
+</div>
+
+<div class="card">
+  <h2>コード例 — TypeScript (Zod)</h2>
+  <pre><code>// schemas/reservation.ts — 仕様をZodスキーマで定義
+import { z } from "zod";
+
+export const CreateReservationSchema = z.object({
+  guest_name: z.string().min(1),
+  party_size: z.number().int().min(1).max(20),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+});
+
+export type CreateReservationRequest = z.infer<typeof CreateReservationSchema>;
+
+// テスト（スキーマに基づく）
+describe("CreateReservationSchema", () => {
+  it("有効なリクエストを受け入れる", () => {
+    const result = CreateReservationSchema.safeParse({
+      guest_name: "田中",
+      party_size: 4,
+      date: "2026-06-01",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("party_sizeが0ならエラー", () => {
+    const result = CreateReservationSchema.safeParse({
+      guest_name: "田中",
+      party_size: 0,  // 仕様: minimum: 1
+      date: "2026-06-01",
+    });
+    expect(result.success).toBe(false);
+  });
+});</code></pre>
+</div>
+
+<div class="card">
+  <h2>組み合わせ</h2>
+  <div class="combo">
+    <a href="../tdd/" class="combo-item">TDD — 仕様→テスト→実装</a>
+    <a href="../bdd/" class="combo-item">BDD — 仕様の書き方がBDDシナリオと互換</a>
+    <a href="../clean-architecture/" class="combo-item">クリーンアーキテクチャ — Interface Adapter層の境界定義</a>
+    <a href="../ddd/" class="combo-item">DDD — ドメインモデルは仕様より抽象度が高い</a>
+  </div>
+</div>
+
+<div class="tip">
+  <strong>CLAUDE.md用プロンプト:</strong>
+  <pre style="background:transparent; padding:6px 0 0; font-size:0.82em;"><code>## 開発手法: 仕様駆動開発
+- 実装の前に仕様（API定義・スキーマ）を書く
+- API: OpenAPI YAML または Pydantic/Zod スキーマで入出力を定義
+- スキーマからテストケースを生成し、テストが通るように実装する
+- 仕様が真実の源。実装と仕様が矛盾したら仕様を正とする</code></pre>
+</div>
+
+<a class="back" href="../development-methods/">← 開発手法セレクタに戻る</a>
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

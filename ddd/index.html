@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DDD — ドメイン駆動設計</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --yellow:#e0af68; --red:#f7768e; --purple:#bb9af7; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.05em; margin:18px 0 8px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  pre { background:var(--code-bg); padding:12px; border-radius:8px; overflow-x:auto; font-size:0.82em; line-height:1.5; margin:8px 0; }
+  pre code { background:none; padding:0; }
+  code { background:var(--code-bg); padding:2px 6px; border-radius:4px; font-size:0.88em; }
+  a { color:var(--accent); text-decoration:none; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  table { width:100%; border-collapse:collapse; font-size:0.88em; }
+  th { background:#1a2540; color:var(--accent); padding:8px; text-align:left; }
+  td { padding:6px 8px; border-bottom:1px solid var(--border); }
+  .badge { padding:1px 6px; border-radius:4px; font-size:0.75em; }
+  .badge-py { background:#3572A5; color:white; }
+  .badge-ts { background:#3178c6; color:white; }
+  .concept-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .concept { background:#1a2540; padding:10px 12px; border-radius:8px; }
+  .concept-title { color:var(--yellow); font-weight:bold; font-size:0.88em; margin-bottom:4px; }
+  .concept-desc { font-size:0.82em; opacity:0.85; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+  .combo { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  .combo-item { background:#1a2540; padding:6px 10px; border-radius:6px; font-size:0.85em; }
+  .lang-tabs { display:flex; gap:6px; margin-bottom:8px; }
+  .lang-tab { background:#1a2540; padding:4px 10px; border-radius:6px; font-size:0.8em; cursor:pointer; }
+  .lang-tab.active { background:var(--accent); color:var(--bg); }
+</style>
+</head>
+<body>
+<h1>DDD — ドメイン駆動設計</h1>
+
+<div class="card">
+  <h2>一言で</h2>
+  <p style="font-size:1.05em; color:var(--yellow);">ソフトウェアの構造を「ビジネスの概念」に合わせて設計し、業務ルールを正確にコードで表現する。</p>
+</div>
+
+<div class="card">
+  <h2>5つの重要な概念</h2>
+  <div class="concept-grid">
+    <div class="concept">
+      <div class="concept-title">ユビキタス言語</div>
+      <div class="concept-desc">開発者とビジネス側で同じ言葉を使う。コード内の名前も業務用語に。</div>
+    </div>
+    <div class="concept">
+      <div class="concept-title">エンティティ</div>
+      <div class="concept-desc">同一性で識別されるオブジェクト。例: 予約IDで識別される「予約」</div>
+    </div>
+    <div class="concept">
+      <div class="concept-title">値オブジェクト</div>
+      <div class="concept-desc">属性だけで識別されるオブジェクト。例: 「金額」は数値+通貨の組み合わせ</div>
+    </div>
+    <div class="concept">
+      <div class="concept-title">集約（Aggregate）</div>
+      <div class="concept-desc">整合性を保つ単位。集約ルート経由でのみアクセス</div>
+    </div>
+    <div class="concept" style="grid-column:span 2;">
+      <div class="concept-title">ドメインイベント</div>
+      <div class="concept-desc">業務上の出来事を明示的に表現。例: 「予約が確定した」</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>いつ使うか</h2>
+  <table>
+    <tr><th style="width:50px;"></th><th>対象</th></tr>
+    <tr><td><span class="badge badge-green">✅</span></td><td>ビジネスルールが複雑（予約、在庫、契約、ワークフロー等）</td></tr>
+    <tr><td><span class="badge badge-green">✅</span></td><td>ルールが頻繁に変わる（業務知識の変化にコードを追従させたい）</td></tr>
+    <tr><td><span class="badge badge-green">✅</span></td><td>ユーザーとの会話から要件を整理したい</td></tr>
+    <tr><td><span class="badge badge-red">❌</span></td><td>単純なCRUD（作る・読む・更新・消すだけのアプリ）</td></tr>
+    <tr><td><span class="badge badge-red">❌</span></td><td>データの変換・加工が中心のツール</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>コード例 — Python</h2>
+  <pre><code>from dataclasses import dataclass
+from enum import Enum
+
+# --- 値オブジェクト（属性で識別・不変）---
+@dataclass(frozen=True)
+class GuestCount:
+    value: int
+    def __post_init__(self):
+        if self.value < 1 or self.value > 20:
+            raise ValueError(f"人数は1〜20人: {self.value}")
+
+class ReservationStatus(Enum):
+    PENDING = "pending"
+    CONFIRMED = "confirmed"
+    CANCELLED = "cancelled"
+
+# --- エンティティ（IDで識別）---
+@dataclass
+class Reservation:
+    id: str
+    guest_name: str
+    party_size: GuestCount
+    date: str
+    status: ReservationStatus = ReservationStatus.PENDING
+
+    def confirm(self) -> None:
+        """予約を確定（ドメインルール: PENDINGのみ確定可能）"""
+        if self.status != ReservationStatus.PENDING:
+            raise ValueError(f"確定できるのはPENDINGのみ: {self.status}")
+        self.status = ReservationStatus.CONFIRMED
+
+    def cancel(self) -> None:
+        """予約をキャンセル（ドメインルール: CONFIRMEDのみ可能）"""
+        if self.status != ReservationStatus.CONFIRMED:
+            raise ValueError(f"キャンセルできるのはCONFIRMEDのみ: {self.status}")
+        self.status = ReservationStatus.CANCELLED
+
+# --- ドメインサービス（単一エンティティに属さないルール）---
+class ReservationDomainService:
+    @staticmethod
+    def check_double_booking(new_res: Reservation, existing: list[Reservation]) -> bool:
+        same = [r for r in existing if r.date == new_res.date
+                and r.guest_name == new_res.guest_name
+                and r.status != ReservationStatus.CANCELLED]
+        return len(same) > 0</code></pre>
+</div>
+
+<div class="card">
+  <h2>コード例 — TypeScript</h2>
+  <pre><code>// --- 値オブジェクト ---
+export class GuestCount {
+  readonly value: number;
+  constructor(value: number) {
+    if (value < 1 || value > 20) throw new Error(`人数は1〜20人: ${value}`);
+    this.value = value;
+  }
+}
+
+export enum ReservationStatus {
+  Pending = "pending",
+  Confirmed = "confirmed",
+  Cancelled = "cancelled",
+}
+
+// --- エンティティ ---
+export class Reservation {
+  readonly id: string;
+  readonly guestName: string;
+  readonly partySize: GuestCount;
+  readonly date: string;
+  private _status: ReservationStatus;
+
+  constructor(props: {
+    id: string; guestName: string;
+    partySize: GuestCount; date: string;
+    status?: ReservationStatus;
+  }) {
+    this.id = props.id; this.guestName = props.guestName;
+    this.partySize = props.partySize; this.date = props.date;
+    this._status = props.status ?? ReservationStatus.Pending;
+  }
+
+  get status(): ReservationStatus { return this._status; }
+
+  confirm(): void {
+    if (this._status !== ReservationStatus.Pending)
+      throw new Error("確定できるのはPendingのみ");
+    this._status = ReservationStatus.Confirmed;
+  }
+
+  cancel(): void {
+    if (this._status !== ReservationStatus.Confirmed)
+      throw new Error("キャンセルできるのはConfirmedのみ");
+    this._status = ReservationStatus.Cancelled;
+  }
+}</code></pre>
+</div>
+
+<div class="card">
+  <h2>組み合わせ</h2>
+  <div class="combo">
+    <a href="../clean-architecture/" class="combo-item">クリーンアーキテクチャ — Domain層に配置</a>
+    <a href="../tdd/" class="combo-item">TDD — ドメインルールは外部依存なしでテスト可能</a>
+    <a href="../bdd/" class="combo-item">BDD — ユースケース→BDDシナリオ</a>
+    <a href="../design-principles/" class="combo-item">設計原則 — SRP・ISPでモデル設計</a>
+  </div>
+</div>
+
+<div class="tip">
+  <strong>CLAUDE.md用プロンプト:</strong>
+  <pre style="background:transparent; padding:6px 0 0; font-size:0.82em;"><code>## 開発手法: DDD（ドメイン駆動設計）
+- ビジネスルールをドメイン層（domain/）に集約する
+- 値オブジェクト: 不変（frozen=True / readonly）、業務上の制約をコンストラクタで検証
+- エンティティ: IDで識別、状態遷移のルールをメソッドとして定義
+- ドメインサービス: 単一エンティティに属さないルール（重複チェック等）
+- コード内の名前は業務用語（ユビキタス言語）に合わせる</code></pre>
+</div>
+
+<a class="back" href="../development-methods/">← 開発手法セレクタに戻る</a>
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>

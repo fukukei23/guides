@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TDD — テスト駆動開発</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --yellow:#e0af68; --red:#f7768e; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.05em; margin:18px 0 8px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.88em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; }
+  .cmd:active { background:var(--accent); color:var(--bg); }
+  .step { display:flex; align-items:flex-start; margin:10px 0; gap:12px; }
+  .step-num { background:var(--accent); color:var(--bg); width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; flex-shrink:0; font-size:0.85em; }
+  .step-content { flex:1; }
+  .step-title { font-weight:bold; margin-bottom:2px; }
+  .step-title.red { color:var(--red); }
+  .step-title.green { color:var(--green); }
+  .step-title.yellow { color:var(--yellow); }
+  code { background:var(--code-bg); padding:2px 6px; border-radius:4px; font-size:0.88em; }
+  pre { background:var(--code-bg); padding:12px; border-radius:8px; overflow-x:auto; font-size:0.82em; line-height:1.5; margin:8px 0; }
+  pre code { background:none; padding:0; }
+  a { color:var(--accent); text-decoration:none; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  table { width:100%; border-collapse:collapse; font-size:0.88em; }
+  th { background:#1a2540; color:var(--accent); padding:8px; text-align:left; }
+  td { padding:6px 8px; border-bottom:1px solid var(--border); }
+  .badge { padding:1px 6px; border-radius:4px; font-size:0.75em; }
+  .badge-py { background:#3572A5; color:white; }
+  .badge-ts { background:#3178c6; color:white; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+  .combo { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  .combo-item { background:#1a2540; padding:6px 10px; border-radius:6px; font-size:0.85em; }
+</style>
+</head>
+<body>
+<h1>TDD — テスト駆動開発</h1>
+
+<div class="card">
+  <h2>一言で</h2>
+  <p style="font-size:1.05em; color:var(--yellow);">「テストありき」で設計を考える。実装より先にテストを書く。</p>
+</div>
+
+<div class="card">
+  <h2>3ステップサイクル</h2>
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <div class="step-title red">赤 — テストを先に書く</div>
+      <p style="font-size:0.9em;">まだ実装がないので、テストは<span style="color:var(--red);">失敗する</span>。入力と期待出力を明確にする。</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <div class="step-title green">緑 — 最小コードで通す</div>
+      <p style="font-size:0.9em;">テストが<span style="color:var(--green);">通る最小のコード</span>を書く。「綺麗さ」より「動くこと」優先。</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <div class="step-title yellow">リファクタリング</div>
+      <p style="font-size:0.9em;">重複を消す、名前を変える、関数を分割。テストが<span style="color:var(--yellow);">緑のまま</span>保たれることを確認。</p>
+    </div>
+  </div>
+  <p style="font-size:0.88em; opacity:0.7; margin-top:8px;">→ 数分単位で高速にサイクルを回す</p>
+</div>
+
+<div class="card">
+  <h2>いつ使うか</h2>
+  <table>
+    <tr><th style="width:50px;"></th><th>対象</th></tr>
+    <tr><td><span class="badge badge-green">✅</span></td><td>ロジック・計算・変換処理があるコード</td></tr>
+    <tr><td><span class="badge badge-green">✅</span></td><td>バグ修正（バグを再現するテストを先に書く）</td></tr>
+    <tr><td><span class="badge badge-green">✅</span></td><td>リファクタリング前（既存動作をテストで固定）</td></tr>
+    <tr><td><span class="badge badge-red">❌</span></td><td>UIのレイアウト調整（目視確認が主）</td></tr>
+    <tr><td><span class="badge badge-red">❌</span></td><td>プロトタイプ・使い捨てスクリプト</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>コード例 — Python <span class="badge badge-py">pytest</span></h2>
+  <pre><code># tests/test_price_calculator.py
+
+# --- サイクル1: 赤 ---
+def test_calculate_tax_included_price():
+    """税込み価格を計算する"""
+    result = calculate_tax_included_price(1000, tax_rate=0.1)
+    assert result == 1100
+
+# --- サイクル1: 緑 ---
+# price_calculator.py
+def calculate_tax_included_price(base_price: float, tax_rate: float) -> float:
+    return base_price * (1 + tax_rate)
+
+# --- サイクル2: 赤 ---
+def test_zero_price():
+    """ 가격이 0이면 0을 반환 """
+    result = calculate_tax_included_price(0, tax_rate=0.1)
+    assert result == 0
+
+# --- サイクル3: 赤 ---
+def test_negative_price_raises():
+    """ 음수 가격은 오류 """
+    import pytest
+    with pytest.raises(ValueError):
+        calculate_tax_included_price(-100, tax_rate=0.1)</code></pre>
+  <div class="cmd">pytest tests/test_price_calculator.py -v</div>
+</div>
+
+<div class="card">
+  <h2>コード例 — TypeScript <span class="badge badge-ts">vitest</span></h2>
+  <pre><code>// src/priceCalculator.test.ts
+import { describe, it, expect } from "vitest";
+import { calculateTaxIncludedPrice } from "./priceCalculator";
+
+describe("calculateTaxIncludedPrice", () => {
+  it("税込み価格を計算する", () => {
+    expect(calculateTaxIncludedPrice(1000, 0.1)).toBe(1100);
+  });
+  it("価格が0の場合は0を返す", () => {
+    expect(calculateTaxIncludedPrice(0, 0.1)).toBe(0);
+  });
+  it("負の価格はエラー", () => {
+    expect(() => calculateTaxIncludedPrice(-100, 0.1)).toThrow();
+  });
+});
+
+// src/priceCalculator.ts
+export function calculateTaxIncludedPrice(basePrice: number, taxRate: number): number {
+  if (basePrice < 0) throw new Error("Price must be non-negative");
+  return basePrice * (1 + taxRate);
+}</code></pre>
+  <div class="cmd">npx vitest run</div>
+</div>
+
+<div class="card">
+  <h2>よくあるつまずき</h2>
+  <table>
+    <tr><th>つまずき</th><th>解決策</th></tr>
+    <tr><td>「何をテストすればいいかわからない」</td><td>入力と期待出力を1つ決める。1つでいい</td></tr>
+    <tr><td>「テストが多すぎて書くのが苦痛」</td><td>テストしにくい = 設計が悪い可能性。関数を小さく分ける</td></tr>
+    <tr><td>「DBやAPIのテストはどう書く」</td><td>DIPで外部依存を注入する（<a href="../design-principles/">設計原則</a>参照）</td></tr>
+    <tr><td>「プライベートメソッドは？」</td><td>不要。公開API経由で検証する</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>組み合わせ</h2>
+  <div class="combo">
+    <a href="../design-principles/" class="combo-item">設計原則 — TDD→自然とSRP・DIP</a>
+    <a href="../bdd/" class="combo-item">BDD — ユーザー視点のテスト</a>
+    <a href="../clean-architecture/" class="combo-item">クリーンアーキテクチャ — 各層を独立テスト</a>
+    <a href="../specification-driven/" class="combo-item">仕様駆動開発 — 仕様→テスト→実装</a>
+  </div>
+</div>
+
+<div class="tip">
+  <strong>CLAUDE.md用プロンプト:</strong>
+  <pre style="background:transparent; padding:6px 0 0; font-size:0.82em;"><code>## 開発手法: TDD
+- 実装の前にテストを書く（赤→緑→リファクタリング）
+- 新機能追加時: まずテストを書き、テストが失敗することを確認してから実装
+- バグ修正時: バグを再現するテストを先に書き、通るように修正
+- テストツール: Python=pytest, TypeScript=vitest</code></pre>
+</div>
+
+<a class="back" href="../development-methods/">← 開発手法セレクタに戻る</a>
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>
