@@ -158,6 +158,28 @@
   </div>
 </div>
 
+<div class="card" style="border-color:var(--green);">
+  <h2>🔄 新バージョンが出たらどうする？</h2>
+  <p>SessionStart hook が新バージョンを検知したら、以下のどちらかで記録:</p>
+
+  <h3>方法A: スキル発動（おすすめ）</h3>
+  <div class="cmd">新機能記録</div>
+  <p style="font-size:0.88em; margin-top:6px;">
+    <code>record-new-feature</code> スキルが自動で:
+    ①バージョン確認 → ②GitHub APIからリリースノート取得 → ③GLM-5.1対応判定 → ④SSOTファイルにテンプレート追記 → ⑤このガイドページも更新
+  </p>
+
+  <h3>方法B: 手動追記</h3>
+  <p style="font-size:0.88em;">
+    下記テンプレートをコピーして、SSOTファイル <code>01_DECISIONS/claude-code/</code> の最新新機能まとめファイルに追記。このガイドの該当バージョンカードも追加。
+  </p>
+
+  <div class="tip">
+    <strong>ヒント</strong>: スキルの場所は <code>~/.claude/skills/record-new-feature/SKILL.md</code><br>
+    新バージョン検知 → セッション内で「新機能記録」と指示 → 完了
+  </div>
+</div>
+
 <a class="back" href="../">← ガイド一覧に戻る</a>
 </body>
 </html>
