@@ -178,6 +178,15 @@
     <strong>ヒント</strong>: スキルの場所は <code>~/.claude/skills/record-new-feature/SKILL.md</code><br>
     新バージョン検知 → セッション内で「新機能記録」と指示 → 完了
   </div>
+
+  <h3>全体の流れ（まとめ）</h3>
+  <table style="font-size:0.85em;">
+    <tr><th>ステップ</th><th>自動/手動</th><th>内容</th></tr>
+    <tr><td>① 新バージョン検知</td><td>🤖 自動</td><td>SessionStart hook（<code>check-version.sh</code>）が画面に警告表示</td></tr>
+    <tr><td>② claude update</td><td>👤 手動</td><td>ターミナルで <code>claude update</code> を実行</td></tr>
+    <tr><td>③ 新機能記録</td><td>👤 手動 + スキル</td><td>セッション内で <code>新機能記録</code> と入力 → スキルがSSOT・ガイドを自動更新</td></tr>
+    <tr><td>④ 確認</td><td>👤 手動</td><td>SSOTファイルとこのガイドページに追記されたか確認</td></tr>
+  </table>
 </div>
 
 <a class="back" href="../">← ガイド一覧に戻る</a>
