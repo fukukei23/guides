@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code 新機能まとめ v2 (2.1.153〜2.1.157)</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.8; }
+  h1 { color:var(--accent); font-size:1.2em; margin-bottom:8px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.05em; margin:22px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  h3 { color:var(--yellow); font-size:0.95em; margin:12px 0 6px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:12px; }
+  .card p { font-size:0.88em; margin-bottom:5px; }
+  .badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:0.72em; margin-right:4px; }
+  .badge-ok { background:#1a3a1a; color:var(--green); }
+  .badge-warn { background:#3a3a1a; color:var(--yellow); }
+  .badge-no { background:#3a1a1a; color:var(--red); }
+  table { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.85em; }
+  th { background:var(--code-bg); color:var(--accent); padding:8px; text-align:left; }
+  td { padding:8px; border-bottom:1px solid var(--border); }
+  .cmd { background:var(--code-bg); color:var(--green); padding:8px 12px; border-radius:6px; font-family:'Fira Code','Courier New',monospace; font-size:0.85em; word-break:break-all; margin:4px 0; }
+  .tip { background:#1a2540; border-left:3px solid var(--green); padding:10px 12px; margin:10px 0; border-radius:0 8px 8px 0; font-size:0.88em; }
+  .warn { background:#2a1a1a; border-left:3px solid var(--red); padding:10px 12px; margin:10px 0; border-radius:0 8px 8px 0; font-size:0.88em; }
+  code { background:var(--code-bg); padding:1px 5px; border-radius:3px; font-size:0.85em; }
+  .ver-badge { display:inline-block; background:var(--accent); color:var(--bg); padding:2px 10px; border-radius:20px; font-size:0.78em; margin:2px; }
+  .summary-box { background:#1a2540; border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:14px; }
+  .summary-box h3 { color:var(--accent); margin-top:0; }
+  a { color:var(--accent); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+</style>
+</head>
+<body>
+<h1>Claude Code 新機能まとめ v2</h1>
+<p style="text-align:center; opacity:0.5; font-size:0.85em; margin-bottom:16px;">2.1.153〜2.1.157対応版</p>
+
+<div class="summary-box">
+  <h3>📋 GLM-5.1ユーザーはここだけ読めばOK</h3>
+  <table>
+    <tr><th>新機能</th><th>GLM対応</th><th>行動</th></tr>
+    <tr>
+      <td>Plugin自動読み込み</td>
+      <td><span class="badge badge-ok">✅</span></td>
+      <td>即実践OK！スキルの整理を始める</td>
+    </tr>
+    <tr>
+      <td>Dynamic Workflows</td>
+      <td><span class="badge badge-no">❌</span></td>
+      <td>様子見（要Anthropic API）</td>
+    </tr>
+    <tr>
+      <td>Opus 4.8 / Fast mode</td>
+      <td><span class="badge badge-no">❌</span></td>
+      <td>様子見（同上）</td>
+    </tr>
+    <tr>
+      <td>/doctor 拡張</td>
+      <td><span class="badge badge-ok">✅</span></td>
+      <td>npm问题时使う</td>
+    </tr>
+    <tr>
+      <td>Status line env vars</td>
+      <td><span class="badge badge-ok">✅</span></td>
+      <td>既に使えている</td>
+    </tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>📦 v2.1.157 — 2026-05-28（Plugin自動読み込み）</h2>
+  <p><span class="badge badge-ok">GLM対応</span> <strong>完全対応</strong></p>
+  <h3>何が変わった？</h3>
+  <p>自作スキルのファイルを <code>~/.claude/skills/</code> に置くだけで、マーケットプレイス登録不要で自動有効化されます。</p>
+
+  <h3>自分の使い道</h3>
+  <div class="tip">
+    プロジェクト固有スキル（NexusCore 2個、reserve-optimizer 7個）を <code>.claude/skills/</code> に集約し、いつでも有効化可能にする
+  </div>
+
+  <h3>機能一覧</h3>
+  <table>
+    <tr><th>機能</th><th>説明</th></tr>
+    <tr><td><code>Plugin自動読み込み</code></td><td><code>.claude/skills/</code> 配下の自作スキルが自動有効化</td></tr>
+    <tr><td><code>claude plugin init</code></td><td>新規プラグインをスキャ폴ド</td></tr>
+    <tr><td><code>/plugin</code> 補完</td><td>subcommands・plugin名が補完候補に出る</td></tr>
+    <tr><td><code>claude agents</code> 改善</td><td>settings.json の agent フィールドがディスパッチ先に適用</td></tr>
+  </table>
+
+  <h3>有効化</h3>
+  <div class="cmd">skillsファイルを ~/.claude/skills/ または プロジェクト/.claude/skills/ に配置 → 自動有効化</div>
+</div>
+
+<div class="card">
+  <h2>🚀 v2.1.154 — 2026-05-14（最大のアップデート）</h2>
+  <p><span class="badge badge-warn">⚠️</span> Dynamic Workflows のみ ❌ 利用不可。他機能（Opus 4.8、fast mode）はGLM経由では不可</p>
+
+  <h3>Dynamic Workflows — 概要</h3>
+  <p>Claude が JavaScript スクリプトを自動生成し、<strong>数十〜数百のサブエージェントを並列実行</strong>する仕組み。</p>
+
+  <div class="tip">
+    <strong>いつ使う？</strong> コードベース全体のバグ監査・数百ファイルのマイグレーション・複数角度からの検証<br>
+    <strong>いつ使わない？</strong> 2〜5個程度の通常委譲（オーバーヘッド过大）
+  </div>
+
+  <h3>Ultracode設定</h3>
+  <div class="cmd">/effort ultracode    ← Dynamic Workflows 有効化</div>
+  <div class="cmd">/effort high         ← 元に戻す</div>
+
+  <h3>注意点</h3>
+  <div class="warn">
+    ⚠️ トークン消費が通常の<strong>5〜10倍</strong>。routine 作業には向かない。<br>
+    ⚠️ Anthropic API（Sonnet/Opus）必需。GLM-5.1環境では動かない。
+  </div>
+
+  <h3>Opus 4.8 関連（GLMでは不可）</h3>
+  <table>
+    <tr><th>機能</th><th>説明</th></tr>
+    <tr><td>Opus 4.8 デフォルト化</td><td>高推論 effort がデフォルトに</td></tr>
+    <tr><td>/effort xhigh</td><td>最も難しいタスク向け</td></tr>
+    <tr><td>Fast mode on Opus 4.8</td><td>標準の2.5倍速、2倍のコスト</td></tr>
+    <tr><td>Lean system prompt</td><td>全モデルのデフォルトに（コンテキスト効率UP）</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>🔧 v2.1.153 — 2026-05-09</h2>
+  <p><span class="badge badge-ok">GLM対応</span> 完全対応</p>
+
+  <table>
+    <tr><th>機能</th><th>説明</th></tr>
+    <tr><td>skipLfsオプション</td><td>github/git plugin取得時にGit LFSダウンロードをスキップ</td></tr>
+    <tr><td>npm更新不可通知</td><td>npmグローバルインストールで自動更新失敗時に通知</td></tr>
+    <tr><td>/doctor 拡張</td><td>npm更新問題の修正方法を表示</td></tr>
+    <tr><td>Status line env vars</td><td>COLUMNS/LINES環境変数がステータスラインに渡る</td></tr>
+    <tr><td>claude agents 補完</td><td>入力補完でslash commandsとbundled skillsが候補に出る</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>🛠️ v2.1.156 — 2026-05-20（バグ修正）</h2>
+  <p><span class="badge badge-warn">⚠️</span> 間接的（Opus 4.8 thinking blocks修正で安定性向上）</p>
+  <p>Opus 4.8使用時に thinking blocks が改変されAPIエラーになる問題の修正。</p>
+</div>
+
+<div class="card">
+  <h2>📝 記録テンプレート（次回用）</h2>
+  <div class="cmd">## vX.X.XXX — YYYY-MM-DD</div>
+  <div class="cmd" style="padding:12px;">
+| 項目 | 内容 |<br>
+|---|---|---|<br>
+| **GLM-5.1対応** | ✅ 完全対応 / ⚠️ 部分的 / ❌ 利用不可 |<br>
+| **メリット** | |<br>
+| **デメリット** | |<br>
+| **自分の使い道** | |<br>
+| **有効化方法** | |
+  </div>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>
