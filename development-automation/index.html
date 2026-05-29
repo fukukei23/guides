@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>開発手法 × 自動化ガイド</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --yellow:#e0af68; --red:#f7768e; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.05em; margin:18px 0 8px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  table { width:100%; border-collapse:collapse; font-size:0.88em; }
+  th { background:#1a2540; color:var(--accent); padding:10px 8px; text-align:center; }
+  td { padding:8px; border-bottom:1px solid var(--border); text-align:center; }
+  td:first-child { text-align:left; }
+  .badge { padding:2px 8px; border-radius:4px; font-size:0.8em; }
+  .badge-on { background:#1f3d2d; color:var(--green); }
+  .badge-off { background:#2d1f2d; color:var(--red); opacity:0.5; }
+  .badge-must { background:#3d2d1f; color:var(--yellow); }
+  .recipe-card { background:#1a2540; padding:14px; border-radius:8px; margin-bottom:10px; }
+  .recipe-title { color:var(--accent); font-weight:bold; margin-bottom:6px; }
+  .recipe-tags { display:flex; gap:6px; margin-bottom:8px; }
+  .recipe-tag { background:var(--card); padding:2px 8px; border-radius:4px; font-size:0.8em; }
+  .recipe-desc { font-size:0.88em; opacity:0.85; }
+  a { color:var(--accent); text-decoration:none; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:10px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+</style>
+</head>
+<body>
+<h1>開発手法 × 自動化ガイド</h1>
+
+<div class="tip">
+  <strong>対象:</strong> <a href="../development-methods/">開発手法セレクタ</a>の各レシピ（A〜E）に合わせた自動化の組み合わせ方。
+  <br>詳細: <a href="../automation-guide/">00_SYSTEM/自動化.md</a>
+</div>
+
+<div class="card">
+  <h2>自動化 × レシピ 早見表</h2>
+  <table>
+    <tr>
+      <th>自動化</th>
+      <th>レシピA<br>軽量</th>
+      <th>レシピB<br>規格駆動</th>
+      <th>レシピC<br>ドメイン中心</th>
+      <th>レシピD<br>品質重視</th>
+      <th>レシピE<br>高速</th>
+    </tr>
+    <tr>
+      <td style="text-align:left;">Hooks（破壊ガード等）</td>
+      <td><span class="badge badge-on">◯</span></td>
+      <td><span class="badge badge-on">◯</span></td>
+      <td><span class="badge badge-on">◯</span></td>
+      <td><span class="badge badge-on">◯</span></td>
+      <td><span class="badge badge-on">◯</span></td>
+    </tr>
+    <tr>
+      <td style="text-align:left;">Cron（SSOT自動同期）</td>
+      <td><span class="badge badge-on">◯</span></td>
+      <td><span class="badge badge-on">◯</span></td>
+      <td><span class="badge badge-on">◯</span></td>
+      <td><span class="badge badge-on">◯</span></td>
+      <td><span class="badge badge-on">◯</span></td>
+    </tr>
+    <tr>
+      <td style="text-align:left;">自律開発ループ（Issue自動実装）</td>
+      <td><span class="badge badge-off">—</span></td>
+      <td><span class="badge badge-on">◯</span></td>
+      <td><span class="badge badge-on">◯</span></td>
+      <td><span class="badge badge-on">◯</span></td>
+      <td><span class="badge badge-off">—</span></td>
+    </tr>
+    <tr>
+      <td style="text-align:left;">自動リファクタリング（大規模修正）</td>
+      <td><span class="badge badge-off">—</span></td>
+      <td><span class="badge badge-on">◯</span></td>
+      <td><span class="badge badge-on">◯</span></td>
+      <td><span class="badge badge-off">—</span></td>
+      <td><span class="badge badge-off">—</span></td>
+    </tr>
+    <tr>
+      <td style="text-align:left;">コード品質スイープ（定期監査）</td>
+      <td><span class="badge badge-off">—</span></td>
+      <td><span class="badge badge-on">◯</span></td>
+      <td><span class="badge badge-on">◯</span></td>
+      <td><span class="badge badge-on">◯</span></td>
+      <td><span class="badge badge-off">—</span></td>
+    </tr>
+    <tr>
+      <td style="text-align:left;">CI/CD（GitHub Actions）</td>
+      <td><span class="badge badge-on">◯</span></td>
+      <td><span class="badge badge-on">◯</span></td>
+      <td><span class="badge badge-must">必</span></td>
+      <td><span class="badge badge-must">必</span></td>
+      <td><span class="badge badge-off">—</span></td>
+    </tr>
+  </table>
+  <p style="font-size:0.82em; opacity:0.6; margin-top:8px;">
+    ◯ = 推奨 / <span class="badge badge-must">必</span> = 必須 / <span class="badge badge-off">—</span> = 不要
+  </p>
+</div>
+
+<div class="card">
+  <h2>各レシピの最小構成</h2>
+</div>
+
+<div class="recipe-card">
+  <div class="recipe-title">レシピA: 軽量開発 — スクリプト・CLI</div>
+  <div class="recipe-tags">
+    <span class="recipe-tag">スクレイピング</span>
+    <span class="recipe-tag">CLIツール</span>
+    <span class="recipe-tag">データ変換</span>
+  </div>
+  <div class="recipe-desc">
+    <strong>最小構成:</strong> Hooksのみ<br>
+    CI/CDはpush時テストがあれば十分。KISS原則を反映し、自動化はシンプルに。
+  </div>
+</div>
+
+<div class="recipe-card">
+  <div class="recipe-title">レシピB: 規格駆動開発 — Web API</div>
+  <div class="recipe-tags">
+    <span class="recipe-tag">REST API</span>
+    <span class="recipe-tag">Webアプリ</span>
+    <span class="recipe-tag">既存仕様あり</span>
+  </div>
+  <div class="recipe-desc">
+    <strong>最小構成:</strong> Hooks + 自律開発ループ + CI（テスト+Lint）<br>
+    継続開発向け。Issue自動実装で開発の自律性を確保。
+  </div>
+</div>
+
+<div class="recipe-card">
+  <div class="recipe-title">レシピC: ドメイン中心開発 — 複雑アプリ</div>
+  <div class="recipe-tags">
+    <span class="recipe-tag">予約システム</span>
+    <span class="recipe-tag">在庫管理</span>
+    <span class="recipe-tag">ワークフロー</span>
+  </div>
+  <div class="recipe-desc">
+    <strong>最小構成:</strong> Hooks + 自律開発ループ + 品質スイープ + CI<strong style="color:var(--yellow);">（必須）</strong><br>
+    複雑なビジネスロジックを守るため、CI/CDは絶対に必要。
+  </div>
+</div>
+
+<div class="recipe-card">
+  <div class="recipe-title">レシピD: 品質重視開発 — ライブラリ</div>
+  <div class="recipe-tags">
+    <span class="recipe-tag">npmパッケージ</span>
+    <span class="recipe-tag">Pythonパッケージ</span>
+    <span class="recipe-tag">公開ライブラリ</span>
+  </div>
+  <div class="recipe-desc">
+    <strong>最小構成:</strong> Hooks + 自律開発ループ + 品質スイープ + CI<strong style="color:var(--yellow);">（必須）</strong><br>
+    複数バージョン対応と自動公開がCI/CDの本領。多様な環境を品質スイープで管理。
+  </div>
+</div>
+
+<div class="recipe-card">
+  <div class="recipe-title">レシピE: 高速開発 — プロトタイプ</div>
+  <div class="recipe-tags">
+    <span class="recipe-tag">アイデア検証</span>
+    <span class="recipe-tag">ハッカソン</span>
+    <span class="recipe-tag">使い捨てスクリプト</span>
+  </div>
+  <div class="recipe-desc">
+    <strong>最小構成:</strong> Hooksのみ<br>
+    動くものを最速で。自動化は障壁になる。元にするのは動作確認だけで十分。
+  </div>
+</div>
+
+<div class="card">
+  <h2>自動化の詳細</h2>
+  <table>
+    <tr>
+      <th>自動化</th>
+      <th>説明</th>
+    </tr>
+    <tr>
+      <td style="text-align:left;"><strong>Hooks（破壊ガード等）</strong></td>
+      <td style="text-align:left; font-size:0.88em;">PreToolUseで危険コマンドをブロック、PostToolUseでツール使用を記録。SessionStartでハンドオフ表示。</td>
+    </tr>
+    <tr>
+      <td style="text-align:left;"><strong>Cron（SSOT自動同期）</strong></td>
+      <td style="text-align:left; font-size:0.88em;">30分ごとにobsidian-ssotを自動commit & push。プロジェクトとの submodule 同期。</td>
+    </tr>
+    <tr>
+      <td style="text-align:left;"><strong>自律開発ループ</strong></td>
+      <td style="text-align:left; font-size:0.88em;">CronCreate(durable, 毎時実行)でGitHub Issueを自律実装。優先度ソート→1Issue選択→実装→PR作成。</td>
+    </tr>
+    <tr>
+      <td style="text-align:left;"><strong>自動リファクタリング</strong></td>
+      <td style="text-align:left; font-size:0.88em;">Plan→Tracker→CronCreateの3層で50項目超の大規模修正を並行実行。</td>
+    </tr>
+    <tr>
+      <td style="text-align:left;"><strong>コード品質スイープ</strong></td>
+      <td style="text-align:left; font-size:0.88em;">全ソースの品質を定期監査（読み取り専用）。Issue実装前の健全性確認。</td>
+    </tr>
+    <tr>
+      <td style="text-align:left;"><strong>CI/CD（GitHub Actions）</strong></td>
+      <td style="text-align:left; font-size:0.88em;">push時にテスト+Lint+型チェックを自動実行。レシピC/Dは必須（外部提供者が多い）。</td>
+    </tr>
+  </table>
+</div>
+
+<div class="tip">
+  <strong>設定場所:</strong> <code>~/.claude/settings.json</code>（Hooks）、<code>~/.claude/scheduled_tasks.json</code>（Cron）<br>
+  SSOT記録: <code>00_SYSTEM/自動化.md</code> — Hooks/Cron/スクリプトの現状一覧
+</div>
+
+<a class="back" href="../development-methods/">← 開発手法セレクタに戻る</a>
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>
