@@ -128,11 +128,79 @@ claude</div>
 <div class="card">
   <h2>現在の設定確認方法</h2>
   <div class="cmd"># プロキシの状態確認
-curl http://127.0.0.1:8787/proxy/status</div>
+curl -s http://127.0.0.1:8787/proxy/status | python3 -m json.tool</div>
   <div class="cmd"># settings.jsonの確認
 grep ANTHROPIC_BASE_URL ~/.claude/settings.json</div>
   <div class="cmd"># 環境変数の確認
 echo $ANTHROPIC_BASE_URL</div>
+  <div class="tip">注意: /status は404。正しいエンドポイントは /proxy/status</div>
+</div>
+
+<div class="card">
+  <h2>⑦-ZAIエラー時のMiniMax自動切替</h2>
+  <p>Z.AI（GLM）でエラーが発生した場合、自動的にMiniMaxにフォールバックします:</p>
+  <table>
+    <tr><th>エラー種類</th><th>動作</th><th>安全性</th></tr>
+    <tr><td>429（レートリミット）</td><td>GLM-4.7 → MiniMax</td><td>✅ 自動切替</td></tr>
+    <tr><td>500/502/503（サーバーエラー）</td><td>→ MiniMax</td><td>✅ 自動切替</td></tr>
+    <tr><td>タイムアウト（1200s）</td><td>→ MiniMax</td><td>✅ 自動切替</td></tr>
+    <tr><td>接続エラー</td><td>→ MiniMax</td><td>✅ 自動切替</td></tr>
+    <tr><td>MiniMaxもエラー</td><td>503返す</td><td>⚠️ 全滅</td></tr>
+  </table>
+  <div class="tip">これにより、Z.AIの調子が悪くても自動的にMiniMaxがバックアップとして動作し、タスクが中断しにくくなります。MiniMaxはGLM-5.1比78%安い($0.30/$1.20)ため、コスト面も有利です。</div>
+</div>
+
+<div class="card">
+  <h2>⑧-フォールバックチェーン全景</h2>
+  <div class="cmd">リクエスト → ①正常: ZAI(GLM-5.1)
+        → ②ピーク時間帯(13-19時): MiniMax
+        → ③429エラー: GLM-4.7 → MiniMax
+        → ④その他エラー(500/502等): → MiniMax【NEW】
+        → ⑤MiniMax死亡: 503返す</div>
+  <div class="tip">どこかで障害が起きても、最後までMiniMaxが守り抜きます。Claude Codeを再起動するまでもありません。</div>
+</div>
+
+<div class="card">
+  <h2>自動フォールバック機構</h2>
+  <p>Claude Code起動時にプロキシ生死を自動判定します:</p>
+  <table>
+    <tr><th>プロキシ状態</th><th>実際の接続先</th><th>安全性</th></tr>
+    <tr><td>生存</td><td>プロキシ経由（ピーク時間帯はMiniMax）</td><td>✅ 自动切替</td></tr>
+    <tr><td>死亡</td><td>Z.AI（GLM）に直結</td><td>✅ 安全フォールバック</td></tr>
+  </table>
+  <div class="tip">sync-secrets-to-settings.sh Hookが起動時に以下を実行:
+1. .secrets.env を source
+2. プロキシ生存チェック
+3. 生存→プロキシURL、死亡→直結URL
+4. settings.json に書き込み</div>
+</div>
+
+<div class="card">
+  <h2>セッション途中の緊急対処（プロキシ死亡時）</h2>
+  <div class="label">症状: 突然API接続エラー</div>
+  <div class="cmd"># 1. 手動再起動
+pkill -f glm_rate_proxy; sleep 1
+cd ~/.claude/scripts/glm-rate-proxy && \
+PYTHONPATH=src nohup python3 -m glm_rate_proxy > /tmp/glm-proxy.log 2>&1 &
+
+# 2. 確認
+sleep 2
+curl -sf http://127.0.0.1:8787/proxy/status
+
+# 3. 繋がらない場合: ログ確認
+tail /tmp/glm-proxy.log</div>
+  <div class="tip">プロキシは約40MBの軽量プロセス。5/23から6日間連続で稼働実績あり。稀に落ちるケースはSSHセッション切断時のSIGTERM伝播。</div>
+</div>
+
+<div class="card">
+  <h2>プロキシ経由にする理由</h2>
+  <table>
+    <tr><th>benefit</th><th>説明</th></tr>
+    <tr><td>429対策</td><td>使用率に応じてGLM-5.1→4.7→Flash→MiniMaxと自動降格</td></tr>
+    <tr><td>ピークブロック</td><td>13-19時のピーク時間帯はMiniMaxに自動ルーティング（GLM消費抑制）</td></tr>
+    <tr><td>安全補償</td><td>プロキシ死亡時は自動的にGLM直結にフォールバック</td></tr>
+    <tr><td>⑦全エラー対策【NEW】</td><td>429/500/502/タイムアウト/接続エラー → MiniMax自動切替</td></tr>
+  </table>
 </div>
 
 <a class="back" href="../">← ガイド一覧に戻る</a>
