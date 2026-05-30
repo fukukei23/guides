@@ -153,7 +153,7 @@ echo $ANTHROPIC_BASE_URL</div>
 <div class="card">
   <h2>⑧-フォールバックチェーン全景</h2>
   <div class="cmd">リクエスト → ①正常: ZAI(GLM-5.1)
-        → ②ピーク時間帯(13-19時): MiniMax
+        → ②ピーク時間帯(15-19時): MiniMax
         → ③429エラー: GLM-4.7 → MiniMax
         → ④その他エラー(500/502等): → MiniMax【NEW】
         → ⑤MiniMax死亡: 503返す</div>
@@ -197,7 +197,7 @@ tail /tmp/glm-proxy.log</div>
   <table>
     <tr><th>benefit</th><th>説明</th></tr>
     <tr><td>429対策</td><td>使用率に応じてGLM-5.1→4.7→Flash→MiniMaxと自動降格</td></tr>
-    <tr><td>ピークブロック</td><td>13-19時のピーク時間帯はMiniMaxに自動ルーティング（GLM消費抑制）</td></tr>
+    <tr><td>ピークブロック</td><td>15-19時のピーク時間帯はMiniMaxに自動ルーティング（GLM消費抑制）</td></tr>
     <tr><td>安全補償</td><td>プロキシ死亡時は自動的にGLM直結にフォールバック</td></tr>
     <tr><td>⑦全エラー対策【NEW】</td><td>429/500/502/タイムアウト/接続エラー → MiniMax自動切替</td></tr>
   </table>

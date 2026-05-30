@@ -65,7 +65,28 @@
       <td><span class="badge badge-ok">✅</span></td>
       <td>既に使えている</td>
     </tr>
+    <tr>
+      <td>MCP deferred化（自力解決）</td>
+      <td><span class="badge badge-ok">✅</span></td>
+      <td>Desktop版 213k→23.9kに削減済み</td>
+    </tr>
   </table>
+</div>
+
+<div class="card">
+  <h2>🛠️ 2026-05-30 — Desktop版MCP deferred化（自力解決）</h2>
+  <p><span class="badge badge-ok">GLM対応</span> <strong>完全対応・解決済み</strong></p>
+  <h3>何が変わった？</h3>
+  <p>Desktop版でMCPツールが多いとコンテキストを食い潰す問題（213k消費・会話制限リスク）を、<strong>deferredツール化</strong>で自力解決。Anthropicのアップデート待ちは不要だった。</p>
+  <table>
+    <tr><th>項目</th><th>改善前</th><th>改善後</th></tr>
+    <tr><td>MCPコンテキスト</td><td>213k（固定・削減不可と思っていた）</td><td>23.9k（87ツール）</td></tr>
+    <tr><td>Free space</td><td>少ない</td><td>115.3k（57.7%）</td></tr>
+  </table>
+  <h3>仕組み</h3>
+  <p>deferredツールはスキーマを即時ロードせず、<code>ToolSearch</code>で呼び出した時だけ定義を取得する。87ツールあっても名前リストのみ保持するため軽量。</p>
+  <h3>自分の使い道</h3>
+  <p>Desktop版も通常作業に使用可能な水準になった。WSL CLI版をメインにしつつ、Desktop版も普通に使える。</p>
 </div>
 
 <div class="card">

@@ -148,6 +148,14 @@
   <div class="metaphor">
     <strong>例え話:</strong> 「万能リモコン」です。TV、エアコン、照明、カーテン等、別々のメーカーの機器を1つのリモコンで操作できるようなもの。
   </div>
+
+  <h3>コンテキスト節約: deferred（遅延ロード）</h3>
+  <p>MCPツールが多いとコンテキストを食い潰す問題があったが、<strong>deferredツール化</strong>で解決済み（2026-05-30）。</p>
+  <table>
+    <tr><th></th><th>改善前</th><th>改善後</th></tr>
+    <tr><td>Desktop版コンテキスト</td><td>213k（会話制限リスク）</td><td>23.9k（87ツール）</td></tr>
+    <tr><td>仕組み</td><td>全ツール定義を即時ロード</td><td>ToolSearch呼び出し時だけスキーマ取得</td></tr>
+  </table>
   <span class="tag">GitHub</span> <span class="tag">ブラウザ自動操作</span> <span class="tag">検索</span> <span class="tag">Discord</span>
 </div>
 
