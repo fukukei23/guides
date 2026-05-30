@@ -228,7 +228,22 @@ print('停止:', s)
     <tr><td>通知が来ない</td><td>PowerShell 非起動</td><td><code>powershell.exe -c 'echo ok'</code> で確認</td></tr>
     <tr><td>CI 失敗で詰まる</td><td>テストエラー</td><td>loop.log 確認 → 手動対応 → 再 start.sh</td></tr>
     <tr><td>Issue が自動取得されない</td><td>ラベルなし</td><td>priority:high/medium/low ラベルを付与</td></tr>
+    <tr><td>完走後もcronが発動し続ける</td><td>自動停止未設定</td><td>下記「自動停止ルール」参照</td></tr>
   </table>
+</div>
+
+<h2>🛑 自動停止ルール（必須）</h2>
+<div class="card">
+  <p><strong>問題:</strong> Issue完走後もcronが毎時発動し、トークンが無駄に消費され続ける。</p>
+  <p><strong>対策:</strong> プロンプト末尾に以下の指示を必ず含める。</p>
+  <pre><code>自動停止条件:
+- GitHub API確認の結果、対象ラベルのオープンIssueが0件の場合:
+  1. CronList でこのループのcron IDを特定
+  2. CronDelete でcronを削除
+  3. state.json の active を false に更新
+  4. SSOT日記に「自律ループ完走・自動停止」を記録</code></pre>
+  <p><strong>二重安全装置:</strong> next-issue.py は pending 空の時点で <code>active: false</code> に設定。次回cron発動でも即終了する。</p>
+  <p><strong>再開方法:</strong> <code>CronCreate</code> 再設定 + <code>state.json</code> の <code>active: true</code> + pending にIssue番号追加。</p>
 </div>
 
 <a class="back" href="../">← ガイド一覧に戻る</a>
