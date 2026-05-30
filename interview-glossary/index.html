@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>面接用語解説 — 自分用教科書</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --yellow:#e0af68; --red:#f7768e; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:12px 8px 80px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.2em; margin-bottom:12px; text-align:center; }
+  h2 { color:var(--accent); font-size:0.95em; margin:14px 0 6px; border-bottom:1px solid var(--border); padding-bottom:3px; }
+  h3 { color:var(--yellow); font-size:0.88em; margin:10px 0 4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px; margin-bottom:10px; }
+  .section-title { background:var(--accent); color:var(--bg); padding:6px 10px; border-radius:8px; font-weight:bold; font-size:0.85em; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+  .tag { background:var(--code-bg); color:var(--green); padding:2px 8px; border-radius:4px; font-size:0.78em; }
+  .term { background:#1a2540; border-radius:8px; padding:10px 12px; margin-bottom:10px; }
+  .term-label { font-size:0.75em; color:var(--accent); font-weight:bold; margin-bottom:2px; }
+  .one-liner { color:var(--yellow); font-size:0.9em; font-weight:bold; margin-bottom:6px; }
+  .example { color:var(--text); opacity:0.75; font-size:0.85em; margin-bottom:6px; }
+  .my-words { color:var(--green); font-size:0.88em; line-height:1.5; }
+  code { background:var(--code-bg); padding:1px 5px; border-radius:3px; font-size:0.85em; }
+  .search-bar { position:sticky; top:0; background:var(--bg); padding:8px 0; z-index:10; }
+  .search-bar input { width:100%; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:10px 12px; color:var(--text); font-size:0.95em; }
+  .search-bar input::placeholder { color:#565f89; }
+  .toc { background:#1a2540; border-radius:8px; padding:10px 12px; margin-bottom:12px; font-size:0.82em; }
+  .toc a { color:var(--accent); text-decoration:none; display:block; padding:3px 0; }
+  .toc a:hover { text-decoration:underline; }
+  .meta { font-size:0.78em; opacity:0.6; margin-bottom:12px; text-align:center; }
+  .counter { font-size:0.8em; color:var(--green); text-align:center; margin-bottom:8px; }
+  .project-badge { display:inline-flex; align-items:center; gap:4px; font-size:0.75em; padding:2px 8px; border-radius:4px; margin-bottom:6px; }
+  .project-badge.nexus { background:#1a3a5c; color:#7aa2f7; }
+  .project-badge.reserve { background:#1a3c2a; color:#9ece6a; }
+  .project-badge.atelier { background:#3c2a1a; color:#e0af68; }
+  .project-badge.openclaw { background:#2a1a3c; color:#bb9af7; }
+  .project-badge.base { background:#1a2a2a; color:#7dcfff; }
+  .hidden { display:none; }
+</style>
+</head>
+<body>
+
+<div class="search-bar">
+  <input type="text" id="search" placeholder="用語を検索... (例: マルチエージェント)" oninput="filterTerms()">
+</div>
+
+<p class="counter" id="counter">32用語 / 6プロジェクト</p>
+<p class="meta">👆 タップして検索 | 面接前に全用語を確認しよう</p>
+
+<div class="toc">
+  <a href="#nexus">🔵 NexusCore（6用語）</a>
+  <a href="#reserve">🟢 reserve-optimizer（6用語）</a>
+  <a href="#atelier">🟡 atelier-kyo-manager（3用語）</a>
+  <a href="#openclaw">🟣 OpenClaw（4用語）</a>
+  <a href="#base">🔷 AI開発基盤（8用語）</a>
+  <a href="#common">⭐ 共通キーワード（5用語）</a>
+</div>
+
+<!-- ===== NexusCore ===== -->
+<div class="card" id="nexus">
+  <div class="section-title">🔵 NexusCore — AIエージェントフレームワーク</div>
+
+  <div class="term" data-term="マルチエージェント">
+    <div class="term-label">用語</div>
+    <div class="project-badge nexus">NexusCore</div>
+    <div class="one-liner">複数のAIが役割分担して協力して仕事する仕組み</div>
+    <div class="example">💬 例え: 会社の部署のようなもの。「営業部」「開発部」「品質管理部」がそれぞれ専門の仕事をして、結果を共有しながら一つのプロジェクトを進める</div>
+    <div class="my-words">🎤 自分の言葉: NexusCoreでは10以上の専門エージェント（テスト担当、コードレビュー担当など）がそれぞれ役割を持っていて、それらが協調して動くように設計しました</div>
+  </div>
+
+  <div class="term" data-term="品質ゲート">
+    <div class="term-label">用語</div>
+    <div class="project-badge nexus">NexusCore</div>
+    <div class="one-liner">次の工程に進む前に「品質が基準を満たしているか」を自動チェックする関所</div>
+    <div class="example">💬 例え: 工場の出荷検査。「この基準をクリアしてないと出荷できない」というルール</div>
+    <div class="my-words">🎤 自分の言葉: コードが書かれた後、自動テストとレビューを通過しないとmainブランチにマージできない仕組みです。バグの混入を防ぐための自動ガバナンスです</div>
+  </div>
+
+  <div class="term" data-term="pytest テストスイート">
+    <div class="term-label">用語</div>
+    <div class="project-badge nexus">NexusCore</div>
+    <div class="one-liner">Pythonのテスト自動化ツール群</div>
+    <div class="example">💬 例え: 自動車の安全確認シート。「ブレーキOK、エンジンOK、ライトOK...」を自動で全項目チェックする仕組み</div>
+    <div class="my-words">🎤 自分の言葉: pytestというPythonのテストフレームワークを使って4,895個のテストを自動実行しています。コードを変更するたびに全テストが走り、デグレードを防ぎます</div>
+  </div>
+
+  <div class="term" data-term="LLMルーティング">
+    <div class="term-label">用語</div>
+    <div class="project-badge nexus">NexusCore</div>
+    <div class="one-liner">複数のLLMを用途・コストに応じて自動で切り替える仕組み</div>
+    <div class="example">💬 例え: 交通手段の選択。「近所は自転車、遠い場合は電車、急ぎならタクシー」と使い分ける</div>
+    <div class="my-words">🎤 自分の言葉: 3層構成。平时はGLM-5.1（安い）、混雑時はMiniMax（月$30）、複雑な処理だけSonnet（月$100）に自動切替。月額$180で通常$600以上を67%削減</div>
+  </div>
+
+  <div class="term" data-term="Docker コンテナ化">
+    <div class="term-label">用語</div>
+    <div class="project-badge nexus">NexusCore</div>
+    <div class="one-liner">アプリを「どこでも同じ環境で動く箱」に詰める技術</div>
+    <div class="example">💬 例え: 引っ越し用の段ボール。中身をそのまま別の場所に持っていける</div>
+    <div class="my-words">🎤 自分の言葉: NexusCoreはDockerコンテナで動いています。開発環境と本番環境の差異をなくすためです</div>
+  </div>
+
+  <div class="term" data-term="CI/CD 継続的インテグレーション">
+    <div class="term-label">用語</div>
+    <div class="project-badge nexus">NexusCore</div>
+    <div class="one-liner">コード変更→テスト→自動デプロイまでを一気通貫で自動化する仕組み</div>
+    <div class="example">💬 例え: 工場の生産ライン。材料を入れると、検品→組み立て→出荷まで自動で進む</div>
+    <div class="my-words">🎤 自分の言葉: GitHub Actionsを使って、コードをpushすると自動でテストが走り、全通過すれば自動デプロイされる仕組みです</div>
+  </div>
+</div>
+
+<!-- ===== reserve-optimizer ===== -->
+<div class="card" id="reserve">
+  <div class="section-title">🟢 reserve-optimizer — LINE予約システム</div>
+
+  <div class="term" data-term="ステートマシン 状態遷移">
+    <div class="term-label">用語</div>
+    <div class="project-badge reserve">reserve</div>
+    <div class="one-liner">「今どの状態にいるか」で次の動作を決める仕組み</div>
+    <div class="example">💬 例え: 電話の自動応答。「予約変更ですね→日付を選んでください→時間を選んでください」と状態によって次の質問が変わる</div>
+    <div class="my-words">🎤 自分の言葉: LINE Botの会話フローを状態として定義しました。「初期→日付選択→時間選択→確認→完了」のように、どこにいるかで次の返答を変えています</div>
+  </div>
+
+  <div class="term" data-term="サーバーレス">
+    <div class="term-label">用語</div>
+    <div class="project-badge reserve">reserve</div>
+    <div class="one-liner">サーバーを自分で管理せず、クラウドが自動で動かしてくれる仕組み</div>
+    <div class="example">💬 例え: タクシーとレンタカー。タクシーは乗るだけでOK、レンタカーは自分で運転・メンテする</div>
+    <div class="my-words">🎤 自分の言葉: サーバーの保守・監視をせずに済むため、Cloudflare WorkersとGASのサーバーレス構成にしました</div>
+  </div>
+
+  <div class="term" data-term="Cloudflare Workers エッジコンピューティング">
+    <div class="term-label">用語</div>
+    <div class="project-badge reserve">reserve</div>
+    <div class="one-liner">世界中の最寄りサーバーでプログラムを動かす仕組み</div>
+    <div class="example">💬 例え: 全国の支店で受付。お客さんは最寄り支店に行くので速い</div>
+    <div class="my-words">🎤 自分の言葉: 予約BotのバックエンドAPIをCloudflare Workersで動かしています。ユーザーの地域に最も近いサーバーが自動選ばれるため、レスポンスが速いです</div>
+  </div>
+
+  <div class="term" data-term="Firestore">
+    <div class="term-label">用語</div>
+    <div class="project-badge reserve">reserve</div>
+    <div class="one-liner">GoogleのNoSQLデータベース。リアルタイム同期が得意</div>
+    <div class="example">💬 例え: Googleドキュメントのデータベース版。複数人が同時に見ても最新状態が反映される</div>
+    <div class="my-words">🎤 自分の言葉: 予約データの保存に使っています。LINEからのリクエストと管理画面の両方から同じデータにアクセスでき、リアルタイムで同期されます</div>
+  </div>
+
+  <div class="term" data-term="GAS Google Apps Script">
+    <div class="term-label">用語</div>
+    <div class="project-badge reserve">reserve</div>
+    <div class="one-liner">Googleサービス（スプレッドシート等）を自動操作できるプログラミング言語</div>
+    <div class="example">💬 例え: Google製品専用のマクロ。「この条件になったらメール送って」を設定できる</div>
+    <div class="my-words">🎤 自分の言葉: 予約のトリガー処理（リマインド送信、キャンセル待ち昇格など17種）をGASで動かしています</div>
+  </div>
+
+  <div class="term" data-term="Stripe API 決済">
+    <div class="term-label">用語</div>
+    <div class="project-badge reserve">reserve</div>
+    <div class="one-liner">オンライン決済を簡単に組み込めるサービス</div>
+    <div class="example">💬 例え: お店のレジシステム。商品と金額を渡せば、カードをよしなに処理してくれる</div>
+    <div class="my-words">🎤 自分の言葉: 回数券，购买にStripe決済リンクを使っています。決済のセキュリティやカード情報管理はStripeに任せています</div>
+  </div>
+</div>
+
+<!-- ===== atelier-kyo-manager ===== -->
+<div class="card" id="atelier">
+  <div class="section-title">🟡 atelier-kyo-manager — 物販管理システム</div>
+
+  <div class="term" data-term="スクレイピング Webスクレイピング">
+    <div class="term-label">用語</div>
+    <div class="project-badge atelier">atelier</div>
+    <div class="one-liner">Web日から自動で情報を収集する技術</div>
+    <div class="example">💬 例え: 競合のチラシを毎日チェックして安い商品メモする作業を自動化</div>
+    <div class="my-words">🎤 自分の言葉: BUYMAの競合価格を自動監視するため、価格スクレイピング機能を実装しました。これで最適価格を常に把握できます</div>
+  </div>
+
+  <div class="term" data-term="SQLite">
+    <div class="term-label">用語</div>
+    <div class="project-badge atelier">atelier</div>
+    <div class="one-liner">ファイル1つで動く軽量データベース。サーバー不要</div>
+    <div class="example">💬 例え: エクセルのデータベース版。1ファイルで完結し、設定不要ですぐ使える</div>
+    <div class="my-words">🎤 自分の言葉: 物販データの管理にSQLiteを使いました。個人開発ではMySQLのような大規模DBは不要で、SQLiteで十分なパフォーマンスが出ます</div>
+  </div>
+
+  <div class="term" data-term="Playwright">
+    <div class="term-label">用語</div>
+    <div class="project-badge atelier">atelier</div>
+    <div class="one-liner">ブラウザ操作を自動化するテストツール</div>
+    <div class="example">💬 例え: ロボットが代わりにブラウザを操作。「このボタンをクリック→ページが表示されるはず」を自動確認する</div>
+    <div class="my-words">🎤 自分の言葉: E2Eテスト（実際のブラウザ操作のテスト）にPlaywrightを使っています。ユーザーが画面で行う操作を自動でシミュレーションして確認します</div>
+  </div>
+</div>
+
+<!-- ===== OpenClaw ===== -->
+<div class="card" id="openclaw">
+  <div class="section-title">🟣 OpenClaw — AIエージェントインフラ</div>
+
+  <div class="term" data-term="Docker Compose">
+    <div class="term-label">用語</div>
+    <div class="project-badge openclaw">OpenClaw</div>
+    <div class="one-liner">複数コンテナを定義・操作するツール。一つのymlファイルで一式の手順書を管理</div>
+    <div class="example">💬 例え: 料理レシピ。「鍋A + 鍋B + 鍋Cを 이렇게組み合わせて」という一式の手順書</div>
+    <div class="my-words">🎤 自分の言葉: 59体の専門エージェントをDocker Composeで管理しています。全部で一つのymlファイルに定義して、起動・停止を一括管理しています</div>
+  </div>
+
+  <div class="term" data-term="Caddy Webサーバー">
+    <div class="term-label">用語</div>
+    <div class="project-badge openclaw">OpenClaw</div>
+    <div class="one-liner">自動HTTPSが組み込まれた軽量Webサーバー</div>
+    <div class="example">💬 例え: 鍵の自動交付所。証明書を取得してHTTPSにする作業を自分でやってくれる</div>
+    <div class="my-words">🎤 自分の言葉: リバースプロキシ（外部→内部へのアクセス制御）に使っています。SSL証明書の更新も自動化されているので運用負荷がありません</div>
+  </div>
+
+  <div class="term" data-term="Heartbeat監視">
+    <div class="term-label">用語</div>
+    <div class="project-badge openclaw">OpenClaw</div>
+    <div class="one-liner">「生きてるか？」を定期的に確認する仕組み。1分/5分/30分の3層で監視</div>
+    <div class="example">💬 例え: 企業の大小の確認業務。「毎朝点在確認」「週次」「月次」のように頻度を変える</div>
+    <div class="my-words">🎤 自分の言葉: エージェント的健康管理を3層にしています。1分間隔で「応答なし」チェック、5分間隔で定期レポート、30分間隔で深い診断。これで異常をすぐ検知できます</div>
+  </div>
+
+  <div class="term" data-term="コスト管理">
+    <div class="term-label">用語</div>
+    <div class="project-badge openclaw">OpenClaw</div>
+    <div class="one-liner">LLM利用コストを制御するための仕組み</div>
+    <div class="example">💬 例え: 車の航続距離管理。「この月はBudgetこれくらい」と上限を決めて、超えそうになったらアラート</div>
+    <div class="my-words">🎤 自分の言葉: 月額数千円を実現しています。ミニマムなモデル利用と、必要なときだけ高性能モデルに振るという戦略です</div>
+  </div>
+</div>
+
+<!-- ===== AI開発基盤 ===== -->
+<div class="card" id="base">
+  <div class="section-title">🔷 AI開発基盤 — Claude Code フルカスタマイズ</div>
+
+  <div class="term" data-term="Hooks">
+    <div class="term-label">用語</div>
+    <div class="project-badge base">AI開発基盤</div>
+    <div class="one-liner">Claude Codeの動作に介入するフックポイント。特定の条件で自作スクリプトを実行</div>
+    <div class="example">💬 例え: ドラマの編集で「ある場面が来たらCMを挟む」の自動版</div>
+    <div class="my-words">🎤 自分の言葉: 5種類のHooksを作っています。例えば破壊的コマンド（rm -rf等）を実行前に検知して警告を出すHooksで、事故防止に貢献しています</div>
+  </div>
+
+  <div class="term" data-term="Skills">
+    <div class="term-label">用語</div>
+    <div class="project-badge base">AI開発基盤</div>
+    <div class="one-liner">再利用可能なワークフロー定義。定型的な一連の作業を「スキル」として保存</div>
+    <div class="example">💬 例え: 料理の基本の「卵を割る」。毎回やり方を説明するのではなく、「卵割って」と指示すればできるように</div>
+    <div class="my-words">🎤 自分の言葉: TDD、体系的デバッグ、コードレビューなどのワークフローをSkillsとして定義しています</div>
+  </div>
+
+  <div class="term" data-term="MCP Model Context Protocol">
+    <div class="term-label">用語</div>
+    <div class="project-badge base">AI開発基盤</div>
+    <div class="one-liner">Claude Codeが外部ツールと繋がるための接続規格</div>
+    <div class="example">💬 例え: USB	Type-C。種類が異なっても共通の端子で接続できるようにする規格</div>
+    <div class="my-words">🎤 自分の言葉: 10以上のMCPサーバーを統合しています。Brave Searchで調べ、GitHubで管理、Playwrightでテスト、Discordで通知という連携を可能にしています</div>
+  </div>
+
+  <div class="term" data-term="Subagent サブエージェント">
+    <div class="term-label">用語</div>
+    <div class="project-badge base">AI開発基盤</div>
+    <div class="one-liner">並列で動く子プロセス。複数の作業を同時に進行させる仕組み</div>
+    <div class="example">💬 例え: 分身術。一人の指示で複数の自分が同時に別のことをする</div>
+    <div class="my-words">🎤 自分の言葉: コードレビュー、テスト実行、調査などを同時に4並列で走らせています。これにより待ち時間を削減し効率的な開発が可能です</div>
+  </div>
+
+  <div class="term" data-term="Memory">
+    <div class="term-label">用語</div>
+    <div class="project-badge base">AI開発基盤</div>
+    <div class="one-liner">セッション間で情報を永続化させる仕組み</div>
+    <div class="example">💬 例え: 企業の知識ライブラリ。「これ覚えておいて」と保存すれば、次の日からその知識に基づいて仕事を進められる</div>
+    <div class="my-words">🎤 自分の言葉: ユーザー属性やプロジェクトの文脈を保存しています。前回中断したところから再開したり、ずっと前に決めたルールを忘れません</div>
+  </div>
+
+  <div class="term" data-term="CronCreate">
+    <div class="term-label">用語</div>
+    <div class="project-badge base">AI開発基盤</div>
+    <div class="one-liner">定期実行タスクのスケジューラー。指定時間に自動的にスクリプトを実行</div>
+    <div class="example">💬 例え: タイマー炊飯器。「このの時間になったら保温開始」の自動版</div>
+    <div class="my-words">🎤 自分の言葉: 週3回の自動lintチェック、Issue自動実装、定期コミットなどをCronCreateで自動化しています</div>
+  </div>
+
+  <div class="term" data-term="LLMルーティング 3層">
+    <div class="term-label">用語</div>
+    <div class="project-badge base">AI開発基盤</div>
+    <div class="one-liner">用途に応じて複数のLLMを自動で切り替える仕組み</div>
+    <div class="example">💬 例え: 交通手段の使い分け。近距離は自転車（安い）、都市部は電車（中コスト）、急ぎはタクシー（高い）</div>
+    <div class="my-words">🎤 自分の言葉: Layer 1: GLM-5.1（85%・安い・高精度）/ Layer 2: MiniMax（14%・さらに安い）/ Layer 3: Claude Sonnet（1%・複雑な処理のみ）→ 月額$180で通常$600以上を67%削減</div>
+  </div>
+
+  <div class="term" data-term="技術記事 ガイド公開">
+    <div class="term-label">用語</div>
+    <div class="project-badge base">AI開発基盤</div>
+    <div class="one-liner">知見を文書化して外部発信すること</div>
+    <div class="example">💬 例え: 料理のレシピ公開。自分が作ったおいしい料理の作り方を共有する</div>
+    <div class="my-words">🎤 自分の言葉: Zennに技術記事を20本、GitHub Pagesで開発ガイドを40冊以上公開しています。これらの発信を通じて自分の理解を整理しています</div>
+  </div>
+</div>
+
+<!-- ===== 共通キーワード ===== -->
+<div class="card" id="common">
+  <div class="section-title">⭐ 共通キーワード</div>
+
+  <div class="term" data-term="Requirements 要件定義">
+    <div class="term-label">用語</div>
+    <div class="one-liner">「何を届けるか」を明確に定義する工程</div>
+    <div class="example">💬 例え: 料理を作る前の「これを作ります」のPlanning</div>
+    <div class="my-words">🎤 自分の言葉: 私はコードを書きません。AIに「こういうシステムを作って」と要件を渡し、その要件が満たされているかの判定を行います</div>
+  </div>
+
+  <div class="term" data-term="ガバナンス">
+    <div class="term-label">用語</div>
+    <div class="one-liner">ルール守り・統制の仕組み</div>
+    <div class="example">💬 例え: 交通ルール。「信号を必ず守る」という общесплавно なルール</div>
+    <div class="my-words">🎤 自分の言葉: AI駆動開発でもコード品質・セキュリティ・コスト管理のガバナンスは手放しません。自動化されたガバナンスで「うっかり事故」を防いでいます</div>
+  </div>
+
+  <div class="term" data-term="Vibe Coding バイブコーディング">
+    <div class="term-label">用語</div>
+    <div class="one-liner">言葉で命令してコードを動かす新しい開発手法</div>
+    <div class="example">💬 例え: 料理で「これ作って」と言えばシェフが作るように、コードを言葉で依頼してAIが書く</div>
+    <div class="my-words">🎤 自分の言葉: 私はコードを書かずに、AIに要件を伝えて実装させます。1年以内に20以上のプロジェクトを完成させた実績がこの方法の有効性を証明しています</div>
+  </div>
+
+  <div class="term" data-term="フォールバック 耐障害性">
+    <div class="term-label">用語</div>
+    <div class="one-liner">メインが故障した時に予備に自動で切り替える仕組み</div>
+    <div class="example">💬 例え: メインの道路が堵塞したら替代ルートに自动切換</div>
+    <div class="my-words">🎤 自分の言葉: LLMが応答不能になったら次のLLMに自動フォールバックさせる仕組みを作っています。GLM→MiniMax→Sonnetの3層フォールバックで99%+の可用性を実現しています</div>
+  </div>
+
+  <div class="term" data-term="ガバナンス 品質">
+    <div class="term-label">補足</div>
+    <div class="one-liner">品質ゲートはNexusCoreで解説済み（上記参照）。ここは約束・統制の全体概念。</div>
+    <div class="example">💬 例え: 法律と条例の関係。品質ゲートは具体則、ガバナンスはそれらを包含する枠組み</div>
+    <div class="my-words">🎤 自分の言葉: システム全体の「ちゃんと動くことを保ち続ける」仕組みです。ツールや人是示、甘okeアップ、火災報知器など全部込みます</div>
+  </div>
+</div>
+
+<p style="text-align:center; font-size:0.8em; opacity:0.5; margin-top:20px;">最終更新: 2026-05-30 | 32用語 / 6プロジェクト</p>
+
+<script>
+function filterTerms() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const terms = document.querySelectorAll('.term');
+  let visible = 0;
+  terms.forEach(t => {
+    const text = t.textContent.toLowerCase();
+    if (q === '' || text.includes(q)) {
+      t.classList.remove('hidden');
+      visible++;
+    } else {
+      t.classList.add('hidden');
+    }
+  });
+  document.getElementById('counter').textContent = visible + '用語表示中';
+}
+</script>
+
+</body>
+</html>
