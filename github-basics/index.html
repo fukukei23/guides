@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub 基礎ガイド</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:16px; text-align:center; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .cmd { background:var(--code-bg); color:var(--green); padding:10px 14px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.9em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; }
+  .cmd:active { background:var(--accent); color:var(--bg); }
+  .label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; }
+  .desc { font-size:0.9em; margin-bottom:4px; }
+  pre { background:var(--code-bg); padding:12px; border-radius:8px; font-size:0.85em; overflow-x:auto; color:var(--text); margin:4px 0; }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  .warn { background:#2a1a1a; border-left:3px solid var(--red); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  table { width:100%; border-collapse:collapse; font-size:0.9em; }
+  th { padding:8px; color:var(--accent); text-align:left; background:var(--code-bg); }
+  td { padding:8px; border-bottom:1px solid var(--border); }
+  .flow { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:8px 0; font-size:0.9em; }
+  .flow-box { background:var(--code-bg); padding:6px 12px; border-radius:6px; color:var(--green); }
+  .flow-arrow { color:var(--yellow); }
+  a { color:var(--accent); text-decoration:none; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+  .tag { display:inline-block; background:#1a2540; color:var(--green); padding:1px 7px; border-radius:4px; font-size:0.75em; margin-left:6px; }
+</style>
+</head>
+<body>
+<h1>GitHub 基礎ガイド</h1>
+
+<div class="card">
+  <h2>GitHubとは</h2>
+  <p class="desc">コードをインターネット上に保存・共有・管理するサービス。<br>
+  「Gitの履歴」をクラウドに置いて、チームで共有したり、自動テストを走らせたりできる。</p>
+  <div class="tip">Git = バージョン管理ツール（ローカル）／GitHub = それを置くクラウドサービス（リモート）</div>
+</div>
+
+<div class="card">
+  <h2>基本用語</h2>
+  <table>
+    <tr><th>用語</th><th>意味（素人向け）</th></tr>
+    <tr><td><strong>リポジトリ（repo）</strong></td><td>プロジェクトの保管庫。コードの履歴ごと入っている</td></tr>
+    <tr><td><strong>コミット</strong></td><td>「この状態を保存した」という記録。セーブポイント</td></tr>
+    <tr><td><strong>ブランチ</strong></td><td>本流を壊さずに変更を試せる作業コピー</td></tr>
+    <tr><td><strong>プルリクエスト（PR）</strong></td><td>「このブランチの変更を本流に取り込んでいいですか？」という申請</td></tr>
+    <tr><td><strong>マージ</strong></td><td>ブランチの変更を本流に取り込む操作</td></tr>
+    <tr><td><strong>Issue</strong></td><td>バグ報告・タスク・相談を管理するチケット</td></tr>
+    <tr><td><strong>Fork</strong></td><td>他人のリポジトリを自分のアカウントにコピー</td></tr>
+    <tr><td><strong>Clone</strong></td><td>GitHubのリポジトリを自分のPCにダウンロード</td></tr>
+    <tr><td><strong>Actions</strong></td><td>コードをpushしたら自動でテスト・デプロイなどを走らせる仕組み</td></tr>
+    <tr><td><strong>webhook</strong></td><td>特定のイベントが起きたら指定したURLに自動通知する仕組み</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>コードが世に出るまでの流れ</h2>
+  <div class="flow">
+    <div class="flow-box">ブランチ作成</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-box">コード変更</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-box">コミット</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-box">push</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-box">PR作成</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-box">レビュー</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-box">マージ</div>
+  </div>
+  <div class="tip">一人開発の場合はレビューを省略してそのままマージしてよい</div>
+</div>
+
+<div class="card">
+  <h2>よく見る画面</h2>
+  <table>
+    <tr><th>画面</th><th>何をする場所か</th></tr>
+    <tr><td>Code タブ</td><td>ファイル一覧・最新のコードを確認</td></tr>
+    <tr><td>Issues タブ</td><td>タスク・バグのチケット管理</td></tr>
+    <tr><td>Pull requests タブ</td><td>変更申請の一覧・レビュー</td></tr>
+    <tr><td>Actions タブ</td><td>自動テスト・デプロイのログ確認</td></tr>
+    <tr><td>Settings タブ</td><td>リポジトリの設定（権限・webhook等）</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>gh コマンド（GitHub CLI）とは</h2>
+  <p class="desc">上記の操作をターミナルから文字で実行できる公式ツール。<br>
+  ブラウザを開かずに Issue作成・PR確認・CI結果確認ができる。</p>
+  <table>
+    <tr><th>やりたいこと</th><th>gh コマンド</th></tr>
+    <tr><td>Issue作成</td><td><code style="color:var(--green);">gh issue create</code></td></tr>
+    <tr><td>PR作成</td><td><code style="color:var(--green);">gh pr create</code></td></tr>
+    <tr><td>CI結果を見る</td><td><code style="color:var(--green);">gh run watch</code></td></tr>
+    <tr><td>PRをマージ</td><td><code style="color:var(--green);">gh pr merge --squash</code></td></tr>
+  </table>
+  <div class="tip">→ コマンド一覧は <a href="../gh-cheatsheet/">GitHub CLI 逆引き</a> を参照</div>
+</div>
+
+<div class="card">
+  <h2>MCPサーバー vs gh コマンド</h2>
+  <p class="desc">ClaudeからGitHubを操作する方法は2つある。</p>
+  <table>
+    <tr><th>方式</th><th>仕組み</th><th>コンテキスト消費</th><th>使いどころ</th></tr>
+    <tr><td><strong>GitHub MCP</strong></td><td>MCPサーバーが常時起動してClaudeと橋渡し</td><td>多い（常時接続）</td><td>「このIssue見て」と会話しながら操作</td></tr>
+    <tr><td><strong>gh コマンド</strong></td><td>スクリプトがGitHub APIを直接叩く</td><td>少ない</td><td>Issue作成・PR確認などの定型処理</td></tr>
+  </table>
+  <div class="tip">定型操作はスクリプトに gh コマンドを書いておく → MCP不要 → コンテキスト節約</div>
+</div>
+
+<div class="card">
+  <h2>webhook（Discordへの通知など）</h2>
+  <p class="desc">「特定のイベントが起きたら自動で通知する」仕組み。Discord への完了通知などに使う。</p>
+  <div class="label">Discord に通知を送る（curlで直接）</div>
+  <div class="cmd">curl -X POST "$DISCORD_WEBHOOK_URL" -H "Content-Type: application/json" -d '{"content":"作業完了しました"}'</div>
+  <div class="tip">Discord MCP（MCPサーバー）を使わなくてもこれだけで通知できる → MCP不要</div>
+  <div class="warn">⚠️ webhook URLは秘密情報。.secrets.env に保存してコードに直接書かない</div>
+</div>
+
+<div class="card">
+  <h2>関連ガイド</h2>
+  <ul style="list-style:none;">
+    <li>→ <a href="../gh-cheatsheet/">GitHub CLI (gh) 逆引き</a> — gh コマンド一覧</li>
+    <li>→ <a href="../github-actions/">GitHub Actions 基礎</a> — 自動テスト・デプロイ</li>
+    <li>→ <a href="../git-cheatsheet/">Git 逆引き</a> — ローカルの git コマンド</li>
+  </ul>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>
