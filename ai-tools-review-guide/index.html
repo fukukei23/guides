@@ -56,8 +56,9 @@
   <div class="label">導入方法</div>
   <div class="cmd">curl -fsSL https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.sh | bash</div>
   <div class="desc">依存ゼロの単一バイナリ。Claude Code等11エージェントを自動検出して設定まで自動構成。グラフは <code>.codebase-memory/graph.db.zst</code> に圧縮保存（8〜13倍）でチーム共有可能</div>
-  <div class="verdict v-go">判定: 部分採用（1プロジェクトで試験導入）</div>
-  <div class="desc">NexusCore・atelier-kyo-manager等の大規模プロジェクトで「このコードどこから呼ばれてる？」をエージェントに聞ける。SSOTのコードベース理解を直接補完</div>
+  <div class="verdict v-go">判定: 試験導入済み（2026-06-25・NexusCore）</div>
+  <div class="desc">WSL CLI側のClaude Code設定に自動登録（MCPサーバー・スキル・PreToolUse/SessionStartフックを自動構成）。NexusCoreをインデックス化（21,922ノード・60,383エッジ）。<code>search_code</code>の構造化検索は実用的だが、フリーテキストgrepはdocs配下の脆弱性レポートがノイズとして混入しSNRが悪い</div>
+  <div class="tip">要確認: インストール時自動追加のPreToolUse hookと既存セキュリティガード系hookの衝突有無</div>
 </div>
 
 <div class="card">
