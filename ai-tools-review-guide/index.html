@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIツール評価ノート</title>
+<style>
+  :root { --bg:#1a1b26; --card:#24283b; --text:#c0caf5; --accent:#7aa2f7; --green:#9ece6a; --red:#f7768e; --yellow:#e0af68; --border:#3b4261; --code-bg:#414868; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,'Noto Sans JP',sans-serif; background:var(--bg); color:var(--text); padding:16px; line-height:1.7; max-width:760px; margin:0 auto; }
+  h1 { color:var(--accent); font-size:1.3em; margin-bottom:6px; text-align:center; }
+  .concept { text-align:center; font-size:0.85em; color:var(--yellow); margin-bottom:16px; }
+  h2 { color:var(--accent); font-size:1.1em; margin:20px 0 10px; border-bottom:1px solid var(--border); padding-bottom:4px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; }
+  .score-badge { display:inline-block; font-weight:bold; border-radius:20px; padding:2px 12px; font-size:0.9em; margin-left:6px; }
+  .s-high { background:#1f3a2a; color:var(--green); }
+  .s-mid { background:#3a3520; color:var(--yellow); }
+  .s-low { background:#3a1f24; color:var(--red); }
+  .label { color:var(--yellow); font-size:0.85em; margin-bottom:2px; margin-top:8px; }
+  .desc { font-size:0.9em; margin-bottom:4px; }
+  .cmd { background:var(--code-bg); color:var(--green); padding:8px 12px; border-radius:8px; font-family:'Fira Code','Courier New',monospace; font-size:0.85em; word-break:break-all; cursor:pointer; user-select:all; margin:4px 0; }
+  .cmd:active { background:var(--accent); color:var(--bg); }
+  .tip { background:#1a2540; border-left:3px solid var(--accent); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  .risk { background:#3a1f24; border-left:3px solid var(--red); padding:10px 12px; margin:8px 0; border-radius:0 8px 8px 0; font-size:0.9em; }
+  .verdict { font-weight:bold; margin-top:6px; }
+  .v-go { color:var(--green); }
+  .v-hold { color:var(--yellow); }
+  .v-no { color:var(--red); }
+  table { width:100%; border-collapse:collapse; font-size:0.85em; margin-top:8px; }
+  th, td { border-bottom:1px solid var(--border); padding:6px 4px; text-align:left; }
+  th { color:var(--yellow); }
+  a { color:var(--accent); text-decoration:none; }
+  .links { display:flex; gap:8px; justify-content:center; margin:20px 0; flex-wrap:wrap; }
+  .links a { background:var(--card); border:1px solid var(--border); padding:6px 14px; border-radius:20px; font-size:0.85em; }
+  .back { display:block; text-align:center; margin-top:20px; padding:10px; background:var(--card); border-radius:8px; }
+  .src { font-size:0.75em; color:var(--border); text-align:center; margin-top:4px; }
+</style>
+</head>
+<body>
+<h1>AIツール評価ノート</h1>
+<div class="concept">GitHubで見つけたAI/MCP関連ツールを、自分のSSOT運用観点で評価点数つきで蓄積するチートシート</div>
+
+<h2>評価基準</h2>
+<div class="card">
+  <div class="desc">SSOT運用（MCPツール管理・自律開発ループ・ナレッジ管理・スキル管理・セキュリティ）への当てはめやすさで採点。10点満点</div>
+</div>
+
+<h2>2026-06-24 GitHub急上昇AIリポジトリ10選</h2>
+
+<div class="card">
+  <h2 style="margin-top:0">codebase-memory-mcp <span class="score-badge s-high">9点</span></h2>
+  <div class="label">目的</div>
+  <div class="desc">コードベースを永続的な知識グラフにインデックスし、AIコーディングエージェントが構造化されたコード情報をクエリできるMCPサーバー</div>
+  <div class="label">主な機能</div>
+  <div class="desc">158言語対応のtree-sitter解析・14個のMCPツール（呼び出し追跡・デッドコード検出・アーキテクチャ分析・HTTPルートリンク等）</div>
+  <div class="label">導入方法</div>
+  <div class="cmd">curl -fsSL https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.sh | bash</div>
+  <div class="desc">依存ゼロの単一バイナリ。Claude Code等11エージェントを自動検出して設定まで自動構成。グラフは <code>.codebase-memory/graph.db.zst</code> に圧縮保存（8〜13倍）でチーム共有可能</div>
+  <div class="verdict v-go">判定: 部分採用（1プロジェクトで試験導入）</div>
+  <div class="desc">NexusCore・atelier-kyo-manager等の大規模プロジェクトで「このコードどこから呼ばれてる？」をエージェントに聞ける。SSOTのコードベース理解を直接補完</div>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0">Agent-skills (addyosmani) <span class="score-badge s-high">9点</span></h2>
+  <div class="label">目的</div>
+  <div class="desc">シニアエンジニアの実践手法をAIエージェントが一貫して適用するための、本番品質エンジニアリングワークフロー集（24スキル）</div>
+  <div class="label">主な機能</div>
+  <div class="desc">Define/Plan/Build/Verify/Review/Shipの6段階・8つのスラッシュコマンド（/spec /plan /build /test /review /webperf /code-simplify /ship）</div>
+  <div class="label">導入方法</div>
+  <div class="cmd">/plugin marketplace add addyosmani/agent-skills</div>
+  <div class="cmd">/plugin install agent-skills@addy-agent-skills</div>
+  <div class="tip">懸念: 自作の code-review / simplify / verify / dev-cycle スキルと役割が重複。導入すると「どっちを使うか」の判断コストが発生</div>
+  <div class="verdict v-hold">判定: 保留（丸ごと導入ではなく設計だけ参考にする）</div>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0">Headroom <span class="score-badge s-mid">8点</span></h2>
+  <div class="label">目的</div>
+  <div class="desc">LLMに渡す前にツール出力・ログ・RAGチャンク・会話履歴を圧縮し、トークンを60〜95%削減するツール</div>
+  <div class="label">主な機能</div>
+  <div class="desc">3層構造（ContentRouter→SmartCrusher/CodeCompressor/Kompress-base→CacheAligner）。ライブラリ/プロキシ/MCPサーバーの3形態で導入可</div>
+  <div class="label">導入方法</div>
+  <div class="cmd">pip install "headroom-ai[all]"</div>
+  <div class="cmd">headroom proxy --port 8787</div>
+  <div class="risk">注意: プロキシモードの既定ポート8787は glm-rate-proxy と衝突する可能性。ポート変更必須</div>
+  <div class="verdict v-hold">判定: 保留（現状はRAG検索化していないため効果が薄い。ベクトル検索導入時に再検討）</div>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0">AgentsView <span class="score-badge s-high">8点</span></h2>
+  <div class="label">目的</div>
+  <div class="desc">Claude Code含む20+のAIコーディングエージェントのセッション・コスト・インサイトをローカルファーストで横断分析するツール</div>
+  <div class="label">主な機能</div>
+  <div class="desc">トークン使用量からのコスト自動計算・モデル別内訳・アクティビティヒートマップ・プロジェクト別メトリクス</div>
+  <div class="label">導入方法</div>
+  <div class="cmd">curl -fsSL https://agentsview.io/install.sh | bash</div>
+  <div class="desc">全データはローカル保存・127.0.0.1バインドで外部送信なし</div>
+  <div class="verdict v-go">判定: 即導入候補</div>
+  <div class="desc">GLM/MiniMax/Sonnetのバッジ運用はしているが、実際のコスト配分を可視化できていない盲点を直接埋める</div>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0">SkillSpector (NVIDIA) <span class="score-badge s-mid">7点</span></h2>
+  <div class="label">目的</div>
+  <div class="desc">AIエージェント用スキルに含まれる脆弱性・悪意的パターンを検出するセキュリティスキャナー（スキルの26.1%が脆弱性を含むという調査結果に基づく）</div>
+  <div class="label">主な機能</div>
+  <div class="desc">68パターン・17カテゴリ（プロンプトインジェクション・データ流出・権限昇格・サプライチェーン等）を検出。リスクスコア0-100・SAFE/CAUTION/DO_NOT_INSTALL判定</div>
+  <div class="label">導入方法</div>
+  <div class="cmd">uv tool install git+https://github.com/NVIDIA/skillspector.git</div>
+  <div class="cmd">skillspector scan ./my-skill/</div>
+  <div class="desc">MCP統合: <code>claude mcp add skillspector -- skillspector mcp</code></div>
+  <div class="verdict v-go">判定: 即導入候補</div>
+  <div class="desc">既存skill-test（静的点検）はセキュリティ脆弱性を見ていない。自作スキル群（30件以上）の定期スキャンに補完的に使える</div>
+</div>
+
+<h2>その他5件（簡易評価）</h2>
+<div class="card">
+  <table>
+    <tr><th>リポジトリ</th><th>点数</th><th>コメント</th></tr>
+    <tr><td>flue (withastro)</td><td>6</td><td>自律エージェント構築用TSハーネス。アイデア参照用にとどめる</td></tr>
+    <tr><td>PaddleOCR</td><td>6</td><td>PDF/docx/xlsxスキルと補完的。スキャン文書のOCR前処理に使える</td></tr>
+    <tr><td>Agent-Reach</td><td>5</td><td>SNS横断検索CLI。X検索はCookie認証の規約違反スクレイピング（公式APIではない）。アカウント凍結リスクあり。専用の捨てアカウント前提でなければ非推奨</td></tr>
+    <tr><td>OpenMontage</td><td>4</td><td>動画制作パイプライン。本格運用実績がなく現時点で過剰投資</td></tr>
+    <tr><td>LMCache</td><td>2</td><td>LLM推論KVキャッシュ高速化。自前LLMサーバーを運用していないため効果が及ばない</td></tr>
+  </table>
+</div>
+
+<h2>導入判断まとめ</h2>
+<div class="card">
+  <div class="label">即導入候補</div>
+  <div class="desc"><span class="verdict v-go">AgentsView</span>・<span class="verdict v-go">SkillSpector</span> — リスク最小で既存運用の盲点を直接埋める</div>
+  <div class="label">部分採用</div>
+  <div class="desc"><span class="verdict v-hold">codebase-memory-mcp</span> — 1プロジェクトで試験導入</div>
+  <div class="label">保留</div>
+  <div class="desc"><span class="verdict v-hold">Headroom</span>（ポート衝突懸念）・<span class="verdict v-hold">Agent-skills</span>（既存スキルと重複）</div>
+</div>
+
+<div class="src">元投稿: <a href="https://x.com/so_ainsight/status/2069281811168198760" target="_blank" rel="noopener">@so_ainsight</a></div>
+
+<div class="links">
+  <a href="../claude-code/">Claude Codeガイド</a>
+  <a href="../llm-routing/">LLMルーティング</a>
+</div>
+
+<a class="back" href="../">← ガイド一覧に戻る</a>
+</body>
+</html>
