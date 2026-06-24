@@ -95,22 +95,21 @@
   <div class="label">導入方法</div>
   <div class="cmd">curl -fsSL https://agentsview.io/install.sh | bash</div>
   <div class="desc">全データはローカル保存・127.0.0.1バインドで外部送信なし</div>
-  <div class="verdict v-go">判定: 即導入候補</div>
-  <div class="desc">GLM/MiniMax/Sonnetのバッジ運用はしているが、実際のコスト配分を可視化できていない盲点を直接埋める</div>
+  <div class="verdict v-go">判定: 導入済み（2026-06-25）</div>
+  <div class="desc">検出ロジックがホームディレクトリ<code>~/.claude/projects/</code>配下限定のため、WSL CLI・Windows Desktop両方の利用実態を見るには二重インストールが必須と判明。両方導入し起動確認済み（http://127.0.0.1:8080 / 8081）。コスト実績: WSL側$363.87・Desktop側$426.99（5/26〜6/24）</div>
 </div>
 
 <div class="card">
-  <h2 style="margin-top:0">SkillSpector (NVIDIA) <span class="score-badge s-mid">7点</span></h2>
+  <h2 style="margin-top:0">SkillSpector (NVIDIA) <span class="score-badge s-mid">7点 → 再評価で位置づけ変更</span></h2>
   <div class="label">目的</div>
   <div class="desc">AIエージェント用スキルに含まれる脆弱性・悪意的パターンを検出するセキュリティスキャナー（スキルの26.1%が脆弱性を含むという調査結果に基づく）</div>
   <div class="label">主な機能</div>
   <div class="desc">68パターン・17カテゴリ（プロンプトインジェクション・データ流出・権限昇格・サプライチェーン等）を検出。リスクスコア0-100・SAFE/CAUTION/DO_NOT_INSTALL判定</div>
   <div class="label">導入方法</div>
   <div class="cmd">uv tool install git+https://github.com/NVIDIA/skillspector.git</div>
-  <div class="cmd">skillspector scan ./my-skill/</div>
-  <div class="desc">MCP統合: <code>claude mcp add skillspector -- skillspector mcp</code></div>
-  <div class="verdict v-go">判定: 即導入候補</div>
-  <div class="desc">既存skill-test（静的点検）はセキュリティ脆弱性を見ていない。自作スキル群（30件以上）の定期スキャンに補完的に使える</div>
+  <div class="cmd">skillspector scan --no-llm ./my-skill/</div>
+  <div class="risk">実機検証（2026-06-25）: 自作スキル29件を一括スキャン。gas-autopilot(100点・CRITICAL)・proxy-doctor(63点・HIGH)がDO_NOT_INSTALL判定されたが、内容確認の結果いずれも誤検知（自律実行・OAuth認証・外部通信という本来の機能が危険パターンとして検出されただけ）。パターンマッチベースで「意図」を判断できないため、自作スキルの監査には限界がある</div>
+  <div class="verdict v-hold">判定: 位置づけ変更 — 自作スキル監査ではなく「将来GitHubから拾ってきた未知のスキルを入れる前のチェック専用」とする。MCP登録はせずCLI単体運用</div>
 </div>
 
 <h2>その他5件（簡易評価）</h2>
