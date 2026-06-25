@@ -70,8 +70,9 @@
   <div class="label">導入方法</div>
   <div class="cmd">/plugin marketplace add addyosmani/agent-skills</div>
   <div class="cmd">/plugin install agent-skills@addy-agent-skills</div>
-  <div class="tip">懸念: 自作の code-review / simplify / verify / dev-cycle スキルと役割が重複。導入すると「どっちを使うか」の判断コストが発生</div>
-  <div class="verdict v-hold">判定: 保留（丸ごと導入ではなく設計だけ参考にする）</div>
+  <div class="desc">導入済み（2026-06-25・user scope）。SKILL.md実装を既存スキルと比較した結果、<code>/review</code>(5軸評価・行数ガード)・<code>/test</code>(テストピラミッド比率)・<code>/ship</code>(フィーチャーフラグ・段階的ロールアウト)は既存より体系的または既存に存在しない機能で補完的と判明。コマンド名の衝突も実機確認なし</div>
+  <div class="risk"><code>/code-simplify</code>のみ既存simplifyスキルと方向性が同一のため使用を避ける</div>
+  <div class="verdict v-go">判定: 導入済み・7コマンド試用継続（/code-simplifyのみ除外）</div>
 </div>
 
 <div class="card">
